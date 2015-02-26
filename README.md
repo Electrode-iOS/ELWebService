@@ -23,7 +23,7 @@ At the highest level a request to a service endpoint for a resource could look l
 
 ```
 // fetch list of stores based on zip code value
-let webService = WebService(baseURLString: "https://somehapi.walmart.com")
+let webService = WebService(baseURLString: "https://somehapi.herokuapp.com")
 webService.fetchStores(zipCode: "15217")
           .responseStoreModels { models in
             // models is an array of StoreModel values
@@ -40,7 +40,7 @@ The `WebService` structure and `ServiceTask` class provide the basic building bl
 At the lowest level `WebService` supports an API for making a HTTP request and processing the raw response data.
 
 ```
-WebService(baseURLString: "https://somehapi.walmart.com")
+WebService(baseURLString: "https://somehapi.herokuapp.com")
   .GET("/stores", parameters: ["zip" : "15217"])
   .response { (response: NSURLResponse?, data: NSData?) in
     // process response data
@@ -50,7 +50,7 @@ WebService(baseURLString: "https://somehapi.walmart.com")
 Add a `responseError()` handler to handle the possibility of a failed request.
 
 ```
-WebService(baseURLString: "https://somehapi.walmart.com")
+WebService(baseURLString: "https://somehapi.herokuapp.com")
   .GET("/stores", parameters: ["zip" : "15217"])
   .response { (response: NSURLResponse?, data: NSData?) in
     // process response data
