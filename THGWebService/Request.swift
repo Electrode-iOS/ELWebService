@@ -40,10 +40,10 @@ public struct Request: URLRequestConstructible {
         case JSON
     }
     
-    let method: Method
-    let url: String
-    var parameters: Dictionary<String, String>?
-    var headers: Dictionary<String, String>?
+    public let method: Method
+    public let url: String
+    public var parameters = Dictionary<String, String>()
+    public var headers = Dictionary<String, String>()
     
     // MARK: - Initialization
     
