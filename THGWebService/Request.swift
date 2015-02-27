@@ -25,7 +25,7 @@ extension String: URLConvertible {
 /**
  Encapsulates the model data of an HTTP request.
 */
-public struct Request: URLRequestConstructible {
+public struct Request {
     
     public enum Method: String {
         case GET = "GET"
@@ -51,9 +51,11 @@ public struct Request: URLRequestConstructible {
         self.method = method
         self.url = url
     }
-    
-    // MARK: - URLRequestConstructible
-    
+}
+
+// MARK: - URLRequestConstructible
+
+extension Request: URLRequestConstructible {
     public func constructURLRequest() -> NSURLRequest {
         // TODO: serialize URL parameters
         // TODO: serialize body parameters
@@ -63,3 +65,4 @@ public struct Request: URLRequestConstructible {
         return urlRequest;
     }
 }
+
