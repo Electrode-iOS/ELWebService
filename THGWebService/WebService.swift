@@ -72,7 +72,7 @@ public struct WebService {
     /**
      Create a service task to fulfill a service request. By default the service 
      task is started by calling resume(). To prevent service tasks from 
-     automatically resuming set the `startTasksImmediately` of the WebService 
+     automatically resuming set the `startTasksImmediately` of the WebService
      value to `false`.
     */
     private func request(method: Request.Method, path: String, parameters: Dictionary<String, String>? = nil, options: EndpointOptions?) -> ServiceTask {
@@ -80,11 +80,11 @@ public struct WebService {
         let requestPath = constructRequestPath(relativePath: path)
         let absoluteURLString = constructURLString(requestPath, relativeToURLString: baseURLString)
         let request = Request(.GET, url: absoluteURLString)
-        return serviceTask(request: request)
+        return serviceTask(urlRequestCreator: request)
     }
     
-    private func serviceTask(request aRequest: Request) -> ServiceTask {
-        let task = ServiceTask(request: aRequest, dataTaskCreator: dataTaskCreator)
+    private func serviceTask(#urlRequestCreator: URLRequestConstructible) -> ServiceTask {
+        let task = ServiceTask(urlRequestCreator: urlRequestCreator, dataTaskCreator: dataTaskCreator)
         
         if startTasksImmediately {
             task.resume()

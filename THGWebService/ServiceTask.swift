@@ -28,7 +28,6 @@ public class ServiceTask {
         }
     }
     
-    let request: Request
     let handlerQueue: dispatch_queue_t
     var result: Result?
     private var dataTask: NSURLSessionDataTask?
@@ -36,23 +35,21 @@ public class ServiceTask {
     // MARK: - Intialization
     
     /**
-     Initialize a ServiceTask value to fulfill a Request.
-     @param request Request value used to construct the resulting NSURLRequest
-     @param dataTaskCreator Value responsible for creating NSURLSessionDataTask objects
+     Initialize a ServiceTask value to fulfill an HTTP request.
+     @param urlRequestCreator Value responsible for constructing a NSURLRequest 
+     instance
+     @param dataTaskCreator Value responsible for creating the
+     NSURLSessionDataTask that sends the NSURLRequest
     */
-    init(request aRequest: Request, dataTaskCreator: DataTaskConstructible) {
-        self.request = aRequest
-        
+    init(urlRequestCreator: URLRequestConstructible, dataTaskCreator: DataTaskConstructible) {
         // TODO: replace direct calls to GCD with THGDispatch methods
         self.handlerQueue = {
             let queue = dispatch_queue_create(("com.THGWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
             dispatch_suspend(queue)
             return queue
-            }()
-        
-        
-        let urlRequest = request.constructURLRequest()
-        self.dataTask = dataTaskCreator.constructDataTask(urlRequest, completion: dataTaskCompletionHandler())
+        }()
+
+        self.dataTask = dataTaskCreator.constructDataTask(urlRequestCreator.constructURLRequest(), completion: dataTaskCompletionHandler())
     }
     
     // MARK: - NSURLSesssionDataTask
