@@ -10,7 +10,7 @@ import Foundation
 
 public class ServiceTask {
     
-    public typealias SuccesseHandler = (NSData?, NSURLResponse?) -> Void
+    public typealias SuccessHandler = (NSData?, NSURLResponse?) -> Void
     public typealias ErrorHandler = (NSError?) -> Void
     
     /**
@@ -91,7 +91,7 @@ public class ServiceTask {
      Add a response handler to be called once a successful response has been
      received.
     */
-    public func response(handler: SuccesseHandler) -> Self {
+    public func response(handler: SuccessHandler) -> Self {
         dispatch_async(handlerQueue) {
             dispatch_async(dispatch_get_main_queue()) {
                 if let result = self.result where result.error == nil {
