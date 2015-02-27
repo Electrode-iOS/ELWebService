@@ -59,9 +59,14 @@ extension Request: URLRequestConstructible {
     public func constructURLRequest() -> NSURLRequest {
         // TODO: serialize URL parameters
         // TODO: serialize body parameters
-        // TODO: add headers
+
         var urlRequest = NSMutableURLRequest(URL: url.URLValue)
         urlRequest.HTTPMethod = method.rawValue
+        
+        for (name, value) in headers {
+            urlRequest.addValue(value, forHTTPHeaderField: name)
+        }
+        
         return urlRequest;
     }
 }
