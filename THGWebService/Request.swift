@@ -23,7 +23,7 @@ extension String: URLConvertible {
 }
 
 /**
- Encapsulates the model data of an HTTP request.
+ Encapsulates the data required to send an HTTP request.
 */
 public struct Request {
     
@@ -35,6 +35,13 @@ public struct Request {
         case DELETE = "DELETE"
     }
     
+    public enum Headers {
+        static let userAgent = "User-Agent"
+        static let contentType = "Content-Type"
+        static let accept = "Accept"
+        static let cacheControl = "Cache-Control"
+    }
+    
     public enum ParameterEncoding {
         case URL
         case JSON
@@ -44,6 +51,24 @@ public struct Request {
     public let url: String
     public var parameters = Dictionary<String, String>()
     public var headers = Dictionary<String, String>()
+    
+    public var contentType: String? {
+        set {
+            headers[Headers.contentType] = newValue
+        }
+        get {
+            return headers[Headers.contentType]
+        }
+    }
+    
+    public var userAgent: String? {
+        set {
+            headers[Headers.userAgent] = newValue
+        }
+        get {
+            return headers[Headers.userAgent]
+        }
+    }
     
     // MARK: - Initialization
     
