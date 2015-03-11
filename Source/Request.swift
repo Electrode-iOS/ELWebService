@@ -72,7 +72,7 @@ public struct Request {
     
     // MARK: - Initialization
     
-    init(_ method: Method, url: String) {
+    public init(_ method: Method, url: String) {
         self.method = method
         self.url = url
     }
