@@ -35,11 +35,11 @@ public struct Request {
         case DELETE = "DELETE"
     }
     
-    public enum Headers {
-        static let userAgent = "User-Agent"
-        static let contentType = "Content-Type"
-        static let accept = "Accept"
-        static let cacheControl = "Cache-Control"
+    public struct Headers {
+        public static let userAgent = "User-Agent"
+        public static let contentType = "Content-Type"
+        public static let accept = "Accept"
+        public static let cacheControl = "Cache-Control"
     }
     
     public enum ParameterEncoding {
