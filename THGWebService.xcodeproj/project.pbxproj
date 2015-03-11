@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		179C5C6A1AB079980047169F /* THGWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* THGWebService.framework */; };
-		179C5C711AB079980047169F /* THGWebServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179C5C701AB079980047169F /* THGWebServiceTests.swift */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
+		17C96AAD1AB0D0D700D49071 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C96AAC1AB0D0D700D49071 /* RequestTests.swift */; };
 		17D1879C1AB0B173000742BF /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D187971AB0B173000742BF /* Request.swift */; };
 		17D1879D1AB0B173000742BF /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D187981AB0B173000742BF /* ServiceTask.swift */; };
 		17D1879E1AB0B173000742BF /* THGWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* THGWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,8 +30,8 @@
 		179C5C5E1AB079980047169F /* THGWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = THGWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		179C5C691AB079980047169F /* THGWebServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = THGWebServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		179C5C6F1AB079980047169F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		179C5C701AB079980047169F /* THGWebServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = THGWebServiceTests.swift; sourceTree = "<group>"; };
 		17C96AAA1AB0CBB800D49071 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		17C96AAC1AB0D0D700D49071 /* RequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTests.swift; sourceTree = "<group>"; };
 		17D187961AB0B173000742BF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17D187971AB0B173000742BF /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		17D187981AB0B173000742BF /* ServiceTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTask.swift; sourceTree = "<group>"; };
@@ -80,7 +80,7 @@
 		179C5C6D1AB079980047169F /* THGWebServiceTests */ = {
 			isa = PBXGroup;
 			children = (
-				179C5C701AB079980047169F /* THGWebServiceTests.swift */,
+				17C96AAC1AB0D0D700D49071 /* RequestTests.swift */,
 				179C5C6E1AB079980047169F /* Supporting Files */,
 			);
 			path = THGWebServiceTests;
@@ -233,7 +233,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				179C5C711AB079980047169F /* THGWebServiceTests.swift in Sources */,
+				17C96AAD1AB0D0D700D49071 /* RequestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
