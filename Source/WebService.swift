@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol DataTaskConstructible {
+public protocol DataTaskConstructible {
     func constructDataTask(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
 }
 
-protocol URLStringConstructible {
+public protocol URLStringConstructible {
     func constructURLString(string: String, relativeToURLString: String) -> String
 }
 
@@ -114,7 +114,7 @@ public struct WebService {
 }
 
 extension WebService: URLStringConstructible {
-    func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
+    public func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
         let relativeURL = NSURL(string: relativeURLString)
         return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString!
     }

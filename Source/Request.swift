@@ -8,11 +8,11 @@
 
 import Foundation
 
-protocol URLRequestConstructible {
+public protocol URLRequestConstructible {
     func constructURLRequest() -> NSURLRequest
 }
 
-protocol URLConvertible {
+public protocol URLConvertible {
     var URLValue: NSURL { get }
 }
 
