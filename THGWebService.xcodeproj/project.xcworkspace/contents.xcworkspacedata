@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:THGWebServiceExample.xcodeproj">
+      location = "self:THGWebService.xcodeproj">
    </FileRef>
 </Workspace>

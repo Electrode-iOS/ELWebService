@@ -1,15 +1,15 @@
 //
-//  THGWebServiceExampleTests.swift
-//  THGWebServiceExampleTests
+//  THGWebServiceTests.swift
+//  THGWebServiceTests
 //
-//  Created by Angelo Di Paolo on 2/25/15.
+//  Created by Angelo Di Paolo on 3/11/15.
 //  Copyright (c) 2015 TheHolyGrail. All rights reserved.
 //
 
 import UIKit
 import XCTest
 
-class THGWebServiceExampleTests: XCTestCase {
+class THGWebServiceTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
