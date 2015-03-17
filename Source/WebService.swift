@@ -32,9 +32,9 @@ public struct WebService {
         var cacheTTL: Int? // some default?
     }
     
-    let baseURLString: String
-    var startTasksImmediately = true
-    var dataTaskCreator: DataTaskConstructible = DataTaskCreatorDelegate()
+    public let baseURLString: String
+    public var startTasksImmediately = true
+    public var dataTaskCreator: DataTaskConstructible = DataTaskCreatorDelegate()
     
     // MARK: - Initialization
     
