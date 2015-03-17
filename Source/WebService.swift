@@ -38,7 +38,7 @@ public struct WebService {
     
     // MARK: - Initialization
     
-    init(baseURLString: String) {
+    public init(baseURLString: String) {
         self.baseURLString = baseURLString
     }
     
