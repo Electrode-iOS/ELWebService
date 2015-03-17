@@ -79,7 +79,7 @@ public struct WebService {
         // TODO: use endpoint options to configure HTTP request
         let requestPath = constructRequestPath(relativePath: path)
         let absoluteURLString = constructURLString(requestPath, relativeToURLString: baseURLString)
-        let request = Request(.GET, url: absoluteURLString)
+        let request = constructRequest(method, url: absoluteURLString)
         return serviceTask(urlRequestCreator: request)
     }
     
@@ -108,8 +108,8 @@ public struct WebService {
     /**
      Override to customize how all web service request objects are constructed.
     */
-    public func constructRequest(method: Method, url: String) -> Request {
-        return Request(.GET, url: url)
+    public func constructRequest(method: Request.Method, url: String) -> Request {
+        return Request(method, url: url)
     }
 }
 
