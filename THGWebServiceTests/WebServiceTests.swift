@@ -9,6 +9,7 @@
 import UIKit
 import XCTest
 import THGWebService
+import THGDispatch
 
 class WebServiceTests: XCTestCase {
     
@@ -133,5 +134,18 @@ class WebServiceTests: XCTestCase {
         XCTAssertEqual(request.method, method)
         XCTAssertEqual(request.url, url)
     }
+    
+    func testSpecifyingResponseHandlerQueue() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let handler = responseHandler(expectation: successExpectation)
+        let service = WebService(baseURLString: baseURL)
+        let task = service
+            .GET("/get")
+            .response(.Background, handler: handler)
+        
+        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
 }
 
