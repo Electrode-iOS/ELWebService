@@ -149,5 +149,27 @@ Swallow can be customized to work with any NSURLSession-based API by providing t
 By default Swallow implements the `DataTaskConstructible` protocol as a private structure using the shared session returned from `NSURLSession.sharedSession()`. 
 
 
+### Dispatch Queues
+
+The dispatch queue used to execute the response handler can be specified using a DispatchQueue value from [`KillerRabbit`](https://github.com/TheHolyGrail/KillerRabbit).
+
+```
+WebService(baseURLString: "https://somehapi.herokuapp.com")
+  .GET("/stores", parameters: ["zip" : "15217"])
+  .response(.Background) { (response: NSURLResponse?, data: NSData?) in
+    // process response data
+  }
+```
 
 
+Calls can be chained together to run on different queues.
+
+WebService(baseURLString: "https://somehapi.herokuapp.com")
+  .GET("/stores", parameters: ["zip" : "15217"])
+  .response(.Background) { (response: NSURLResponse?, data: NSData?) in
+    // process raw response on background
+  }
+  .responseJSON(.Main) { json in
+    // use json on main thread
+  }
+```
