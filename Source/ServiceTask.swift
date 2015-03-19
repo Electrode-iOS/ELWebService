@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import THGDispatch
 
 public class ServiceTask {
     
@@ -28,7 +29,7 @@ public class ServiceTask {
         }
     }
     
-    let handlerQueue: dispatch_queue_t
+    private let handlerQueue: DispatchQueue
     var result: Result?
     private var dataTask: NSURLSessionDataTask?
     public var state: NSURLSessionTaskState {
@@ -53,8 +54,8 @@ public class ServiceTask {
     init(urlRequestCreator: URLRequestConstructible, dataTaskCreator: DataTaskConstructible) {
         // TODO: replace direct calls to GCD with THGDispatch methods
         self.handlerQueue = {
-            let queue = dispatch_queue_create(("com.THGWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
-            dispatch_suspend(queue)
+            let queue = DispatchQueue.createSerial("com.THGWebService.ServiceTask")
+            Dispatch().suspend(queue)
             return queue
         }()
 
@@ -87,7 +88,7 @@ public class ServiceTask {
     private func dataTaskCompletionHandler() -> (NSData?, NSURLResponse?, NSError?) -> Void {
         return { data, response, error in
             self.result = Result(data: data, response: response, error: error)
-            dispatch_resume(self.handlerQueue)
+            Dispatch().resume(self.handlerQueue)
         }
     }
     
@@ -98,8 +99,8 @@ public class ServiceTask {
      received.
     */
     public func response(handler: SuccessHandler) -> Self {
-        dispatch_async(handlerQueue) {
-            dispatch_async(dispatch_get_main_queue()) {
+        Dispatch().async(handlerQueue) {
+            Dispatch().async(.Main) {
                 if let result = self.result where result.error == nil {
                     handler(result.data, result.response)
                 }
@@ -113,8 +114,8 @@ public class ServiceTask {
     Add a response handler to be called if a request results in an error.
     */
     public func responseError(handler: ErrorHandler) -> Self {
-        dispatch_async(handlerQueue) {
-            dispatch_async(dispatch_get_main_queue()) {
+        Dispatch().async(handlerQueue) {
+            Dispatch().async(.Main) {
                 if let error = self.result?.error {
                     handler(error)
                 }
@@ -124,7 +125,6 @@ public class ServiceTask {
         return self
     }
 }
-
 
 extension ServiceTask {
     

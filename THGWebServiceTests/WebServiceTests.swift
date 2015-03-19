@@ -80,17 +80,17 @@ class WebServiceTests: XCTestCase {
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
-    func testHeadEndpoint() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
-        let service = WebService(baseURLString: baseURL)
-        let task = service
-            .HEAD("/head")
-            .response(handler)
-        
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
+//    func testHeadEndpoint() {
+//        let successExpectation = expectationWithDescription("Received status 200")
+//        let handler = responseHandler(expectation: successExpectation)
+//        let service = WebService(baseURLString: baseURL)
+//        let task = service
+//            .HEAD("/head")
+//            .response(handler)
+//        
+//        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
+//        waitForExpectationsWithTimeout(2, handler: nil)
+//    }
     
     func testDisableStartTasksImmediately() {
         let baseURL = "http://httpbin.org/"
