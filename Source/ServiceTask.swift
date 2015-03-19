@@ -36,7 +36,7 @@ public class ServiceTask {
         if let state = dataTask?.state {
             return state
         } else {
-            return NSURLSessionTaskState.Suspended
+            return .Suspended
         }
     }
     
@@ -104,7 +104,7 @@ public class ServiceTask {
     /**
     Add a response handler to be called once a successful response has been
     received.
-    @param queue The DispatchQueue used to dispatch the response handler
+    @param queue The DispatchQueue used to dispatch the response handler.
     */
     public func response(queue: DispatchQueue, handler: SuccessHandler) -> Self {
         Dispatch().async(handlerQueue) {
@@ -139,10 +139,19 @@ extension ServiceTask {
     public typealias JSONHandler = (AnyObject?) -> Void
     
     /**
-     Add a response handler to serialize the response body as a JSON object.
+     Add a response handler to serialize the response body as a JSON object. The
+     handler will be dispatched to the main thread.
     */
     public func responseJSON(handler: JSONHandler) -> Self {
-        return response() { data, response in
+        return responseJSON(.Main, handler: handler)
+    }
+    
+    /**
+    Add a response handler to serialize the response body as a JSON object.
+    @param queue The DispatchQueue used to dispatch the response handler.
+    */
+    public func responseJSON(queue: DispatchQueue, handler: JSONHandler) -> Self {
+        return response(queue) { data, response in
             if let data = data {
                 var error: NSError?
                 let json: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: &error)
