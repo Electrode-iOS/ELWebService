@@ -93,12 +93,22 @@ public class ServiceTask {
     // MARK: - Response Handler API
     
     /**
-     Add a response handler to be called once a successful response has been
-     received.
+     Add a response handler to be called on the main thread after a successful
+     response has been received.
+     @param handler Response handler to execute upon receiving a response.
     */
     public func response(handler: SuccessHandler) -> Self {
+        return response(.Main, handler: handler)
+    }
+    
+    /**
+    Add a response handler to be called once a successful response has been
+    received.
+    @param queue The DispatchQueue used to dispatch the response handler
+    */
+    public func response(queue: DispatchQueue, handler: SuccessHandler) -> Self {
         Dispatch().async(handlerQueue) {
-            Dispatch().async(.Main) {
+            Dispatch().async(queue) {
                 if let result = self.result where result.error == nil {
                     handler(result.data, result.response)
                 }
