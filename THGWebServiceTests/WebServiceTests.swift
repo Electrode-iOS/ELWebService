@@ -23,9 +23,19 @@ class WebServiceTests: XCTestCase {
     
     func responseHandler(#expectation: XCTestExpectation) -> (NSData?, NSURLResponse?) -> Void {
         return { data, response in
+            
             let httpResponse = response as! NSHTTPURLResponse
             
             if httpResponse.statusCode == 200 {
+                expectation.fulfill()
+            }
+        }
+    }
+    
+    func jsonResponseHandler(#expectation: XCTestExpectation) -> (AnyObject?) -> Void {
+        return { json in
+            
+            if json is NSDictionary {
                 expectation.fulfill()
             }
         }
@@ -159,6 +169,30 @@ class WebServiceTests: XCTestCase {
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
 
+    }
+    
+    func testGetJSON() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let handler = jsonResponseHandler(expectation: successExpectation)
+        let service = WebService(baseURLString: baseURL)
+        let task = service
+            .GET("/get")
+            .responseJSON(handler)
+        
+        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
+    func testGetJSONWithSpecificQueue() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let handler = jsonResponseHandler(expectation: successExpectation)
+        let service = WebService(baseURLString: baseURL)
+        let task = service
+            .GET("/get")
+            .responseJSON(.Background, handler: handler)
+        
+        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
+        waitForExpectationsWithTimeout(2, handler: nil)
     }
     
 }
