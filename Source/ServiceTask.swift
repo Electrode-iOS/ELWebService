@@ -30,15 +30,13 @@ public class ServiceTask {
     }
     
     private let handlerQueue: DispatchQueue
-    var result: Result?
     private var dataTask: NSURLSessionDataTask?
+    public var result: Result?
     public var state: NSURLSessionTaskState {
-        get {
-            if let state = dataTask?.state {
-                return state
-            } else {
-                return NSURLSessionTaskState.Suspended
-            }
+        if let state = dataTask?.state {
+            return state
+        } else {
+            return NSURLSessionTaskState.Suspended
         }
     }
     
