@@ -18,16 +18,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1768D7D21ABB6AA30061AA7F /* PBXContainerItemProxy */ = {
+		1768D7E71ABB854E0061AA7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 1768D7CC1ABB6AA30061AA7F /* THGDispatch.xcodeproj */;
+			containerPortal = 1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CA0CEA691A8A877200DF93E9;
 			remoteInfo = THGDispatch;
 		};
-		1768D7D41ABB6AA30061AA7F /* PBXContainerItemProxy */ = {
+		1768D7E91ABB854E0061AA7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 1768D7CC1ABB6AA30061AA7F /* THGDispatch.xcodeproj */;
+			containerPortal = 1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CA0CEA741A8A877200DF93E9;
 			remoteInfo = THGDispatchTests;
@@ -42,7 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1768D7CC1ABB6AA30061AA7F /* THGDispatch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = THGDispatch.xcodeproj; path = KillerRabbit/THGDispatch.xcodeproj; sourceTree = "<group>"; };
+		1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = THGDispatch.xcodeproj; path = ../KillerRabbit/THGDispatch.xcodeproj; sourceTree = "<group>"; };
 		179C5C5E1AB079980047169F /* THGWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = THGWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		179C5C691AB079980047169F /* THGWebServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = THGWebServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		179C5C6F1AB079980047169F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -78,16 +78,16 @@
 		1768D7C81ABB68EC0061AA7F /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				1768D7CC1ABB6AA30061AA7F /* THGDispatch.xcodeproj */,
+				1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */,
 			);
 			name = Modules;
 			sourceTree = "<group>";
 		};
-		1768D7CD1ABB6AA30061AA7F /* Products */ = {
+		1768D7E21ABB854E0061AA7F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1768D7D31ABB6AA30061AA7F /* THGDispatch.framework */,
-				1768D7D51ABB6AA30061AA7F /* THGDispatchTests.xctest */,
+				1768D7E81ABB854E0061AA7F /* THGDispatch.framework */,
+				1768D7EA1ABB854E0061AA7F /* THGDispatchTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -230,8 +230,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 1768D7CD1ABB6AA30061AA7F /* Products */;
-					ProjectRef = 1768D7CC1ABB6AA30061AA7F /* THGDispatch.xcodeproj */;
+					ProductGroup = 1768D7E21ABB854E0061AA7F /* Products */;
+					ProjectRef = 1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -243,18 +243,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1768D7D31ABB6AA30061AA7F /* THGDispatch.framework */ = {
+		1768D7E81ABB854E0061AA7F /* THGDispatch.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = THGDispatch.framework;
-			remoteRef = 1768D7D21ABB6AA30061AA7F /* PBXContainerItemProxy */;
+			remoteRef = 1768D7E71ABB854E0061AA7F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1768D7D51ABB6AA30061AA7F /* THGDispatchTests.xctest */ = {
+		1768D7EA1ABB854E0061AA7F /* THGDispatchTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = THGDispatchTests.xctest;
-			remoteRef = 1768D7D41ABB6AA30061AA7F /* PBXContainerItemProxy */;
+			remoteRef = 1768D7E91ABB854E0061AA7F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
