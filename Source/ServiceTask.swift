@@ -22,7 +22,7 @@ public class ServiceTask {
         let response: NSURLResponse?
         let error: NSError?
         
-        init(data theData: NSData?, response: NSURLResponse?, error: NSError?) {
+        public init(data theData: NSData?, response: NSURLResponse?, error: NSError?) {
             self.data = theData
             self.response = response
             self.error = error
