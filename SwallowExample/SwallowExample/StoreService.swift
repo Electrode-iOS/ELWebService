@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import THGWebService
 
 // MARK - Web Service Configuration
 

@@ -7,19 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1765E3551ABC66C200F9E531 /* THGWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1765E3501ABC652C00F9E531 /* THGWebService.framework */; };
 		17B21DC71AB8A10D007E5370 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DC61AB8A10D007E5370 /* AppDelegate.swift */; };
 		17B21DC91AB8A10D007E5370 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DC81AB8A10D007E5370 /* ViewController.swift */; };
 		17B21DCC1AB8A10D007E5370 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17B21DCA1AB8A10D007E5370 /* Main.storyboard */; };
 		17B21DCE1AB8A10D007E5370 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17B21DCD1AB8A10D007E5370 /* Images.xcassets */; };
 		17B21DD11AB8A10D007E5370 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17B21DCF1AB8A10D007E5370 /* LaunchScreen.xib */; };
 		17B21DDD1AB8A10D007E5370 /* SwallowExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DDC1AB8A10D007E5370 /* SwallowExampleTests.swift */; };
-		17B21DF31AB8AAB3007E5370 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DF01AB8AAB3007E5370 /* Request.swift */; };
-		17B21DF41AB8AAB3007E5370 /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DF11AB8AAB3007E5370 /* ServiceTask.swift */; };
-		17B21DF51AB8AAB3007E5370 /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DF21AB8AAB3007E5370 /* WebService.swift */; };
 		17B21DF71AB8AB50007E5370 /* StoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DF61AB8AB50007E5370 /* StoreService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1765E34F1ABC652C00F9E531 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1765E3481ABC652C00F9E531 /* THGWebService.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 179C5C5E1AB079980047169F;
+			remoteInfo = THGWebService;
+		};
+		1765E3511ABC652C00F9E531 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1765E3481ABC652C00F9E531 /* THGWebService.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 179C5C691AB079980047169F;
+			remoteInfo = THGWebServiceTests;
+		};
 		17B21DD71AB8A10D007E5370 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17B21DB91AB8A10D007E5370 /* Project object */;
@@ -30,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1765E3481ABC652C00F9E531 /* THGWebService.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = THGWebService.xcodeproj; path = ../THGWebService.xcodeproj; sourceTree = "<group>"; };
 		17B21DC11AB8A10D007E5370 /* SwallowExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwallowExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17B21DC51AB8A10D007E5370 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17B21DC61AB8A10D007E5370 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -40,9 +53,6 @@
 		17B21DD61AB8A10D007E5370 /* SwallowExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwallowExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17B21DDB1AB8A10D007E5370 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17B21DDC1AB8A10D007E5370 /* SwallowExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwallowExampleTests.swift; sourceTree = "<group>"; };
-		17B21DF01AB8AAB3007E5370 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Request.swift; path = ../Source/Request.swift; sourceTree = "<group>"; };
-		17B21DF11AB8AAB3007E5370 /* ServiceTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceTask.swift; path = ../Source/ServiceTask.swift; sourceTree = "<group>"; };
-		17B21DF21AB8AAB3007E5370 /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebService.swift; path = ../Source/WebService.swift; sourceTree = "<group>"; };
 		17B21DF61AB8AB50007E5370 /* StoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -51,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1765E3551ABC66C200F9E531 /* THGWebService.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,10 +75,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1765E3471ABC652400F9E531 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				1765E3481ABC652C00F9E531 /* THGWebService.xcodeproj */,
+			);
+			name = Modules;
+			sourceTree = "<group>";
+		};
+		1765E3491ABC652C00F9E531 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1765E3501ABC652C00F9E531 /* THGWebService.framework */,
+				1765E3521ABC652C00F9E531 /* THGWebServiceTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		17B21DB81AB8A10D007E5370 = {
 			isa = PBXGroup;
 			children = (
-				17B21DEF1AB8AA9D007E5370 /* Swallow */,
+				1765E3471ABC652400F9E531 /* Modules */,
 				17B21DC31AB8A10D007E5370 /* SwallowExample */,
 				17B21DD91AB8A10D007E5370 /* SwallowExampleTests */,
 				17B21DC21AB8A10D007E5370 /* Products */,
@@ -120,16 +148,6 @@
 				17B21DDB1AB8A10D007E5370 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		17B21DEF1AB8AA9D007E5370 /* Swallow */ = {
-			isa = PBXGroup;
-			children = (
-				17B21DF01AB8AAB3007E5370 /* Request.swift */,
-				17B21DF11AB8AAB3007E5370 /* ServiceTask.swift */,
-				17B21DF21AB8AAB3007E5370 /* WebService.swift */,
-			);
-			name = Swallow;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,6 +217,12 @@
 			mainGroup = 17B21DB81AB8A10D007E5370;
 			productRefGroup = 17B21DC21AB8A10D007E5370 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 1765E3491ABC652C00F9E531 /* Products */;
+					ProjectRef = 1765E3481ABC652C00F9E531 /* THGWebService.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				17B21DC01AB8A10D007E5370 /* SwallowExample */,
@@ -206,6 +230,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		1765E3501ABC652C00F9E531 /* THGWebService.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = THGWebService.framework;
+			remoteRef = 1765E34F1ABC652C00F9E531 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1765E3521ABC652C00F9E531 /* THGWebServiceTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = THGWebServiceTests.xctest;
+			remoteRef = 1765E3511ABC652C00F9E531 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		17B21DBF1AB8A10D007E5370 /* Resources */ = {
@@ -232,10 +273,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17B21DF41AB8AAB3007E5370 /* ServiceTask.swift in Sources */,
 				17B21DC91AB8A10D007E5370 /* ViewController.swift in Sources */,
-				17B21DF31AB8AAB3007E5370 /* Request.swift in Sources */,
-				17B21DF51AB8AAB3007E5370 /* WebService.swift in Sources */,
 				17B21DC71AB8A10D007E5370 /* AppDelegate.swift in Sources */,
 				17B21DF71AB8AB50007E5370 /* StoreService.swift in Sources */,
 			);
@@ -364,6 +402,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/angelo/dev/KillerRabbit/build/Debug-iphoneos",
+				);
 				INFOPLIST_FILE = SwallowExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -374,6 +416,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/angelo/dev/KillerRabbit/build/Debug-iphoneos",
+				);
 				INFOPLIST_FILE = SwallowExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
