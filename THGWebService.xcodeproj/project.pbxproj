@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1765E3581ABC6B8200F9E531 /* THGDispatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1768D7E81ABB854E0061AA7F /* THGDispatch.framework */; };
 		179C5C6A1AB079980047169F /* THGWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* THGWebService.framework */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
 		17C96AAD1AB0D0D700D49071 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C96AAC1AB0D0D700D49071 /* RequestTests.swift */; };
@@ -61,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1765E3581ABC6B8200F9E531 /* THGDispatch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
