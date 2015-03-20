@@ -50,7 +50,6 @@ public class ServiceTask {
      NSURLSessionDataTask that sends the NSURLRequest
     */
     init(urlRequestCreator: URLRequestConstructible, dataTaskCreator: DataTaskConstructible) {
-        // TODO: replace direct calls to GCD with THGDispatch methods
         self.handlerQueue = {
             let queue = DispatchQueue.createSerial("com.THGWebService.ServiceTask")
             Dispatch().suspend(queue)

@@ -13,6 +13,16 @@ A simple and concise API for interacting with HTTP web services in Swift.
   + Dependant on a single protocol method to dispatch and handle NSURLSessionDataTask objects
   + Built-in HTTP networking support using a simple NSURLSession wrapper but is extendable to work with any NSURLSession-based API
 
+## Dependencies
+
+Swallow uses [KillerRabbit](https://github.com/TheHolyGrail/KillerRabbit)(`THGDispatch`) as a convenient wrapper around the Grand Central Dispatch API.
+
+THG projects are designed to live side-by-side in the file system, like so:
+
+- \MyProject
+- \MyProject\Swallow
+- \MyProject\KillerRabbit
+
 ## Example
 
 An example project is included that demonstrates how Swallow can be used to interact with a web service. A stubbed endpoint is available at [https://somehapi.herokuapp.com/stores](https://somehapi.herokuapp.com/stores) for testing.
@@ -151,7 +161,7 @@ By default Swallow implements the `DataTaskConstructible` protocol as a private 
 
 ### Dispatch Queues
 
-The dispatch queue used to execute the response handler can be specified using a DispatchQueue value from [`KillerRabbit`](https://github.com/TheHolyGrail/KillerRabbit).
+The dispatch queue used to execute the response handler can be specified using a DispatchQueue value from [KillerRabbit](https://github.com/TheHolyGrail/KillerRabbit).
 
 ```
 WebService(baseURLString: "https://somehapi.herokuapp.com")
@@ -161,9 +171,9 @@ WebService(baseURLString: "https://somehapi.herokuapp.com")
   }
 ```
 
-
 Calls can be chained together to run on different queues.
 
+```
 WebService(baseURLString: "https://somehapi.herokuapp.com")
   .GET("/stores", parameters: ["zip" : "15217"])
   .response(.Background) { (response: NSURLResponse?, data: NSData?) in
@@ -173,3 +183,43 @@ WebService(baseURLString: "https://somehapi.herokuapp.com")
     // use json on main thread
   }
 ```
+
+## Contributions
+
+We appreciate your contributions to all of our projects and look forward to interacting with you via Pull Requests, the issue tracker, via Twitter, etc.  We're happy to help you, and to have you help us.  We'll strive to answer every PR and issue and be very transparent in what we do.
+
+When contributing code, please refer to our style guide [Dennis](https://github.com/TheHolyGrail/Dennis).
+
+###### THG's Primary Contributors
+
+Dr. Sneed ([@bsneed](https://github.com/bsneed))<br>
+Steve Riggins ([@steveriggins](https://github.com/steveriggins))<br>
+Sam Grover ([@samgrover](https://github.com/samgrover))<br>
+Angelo Di Paolo ([@angelodipaolo](https://github.com/angelodipaolo))<br>
+Cody Garvin ([@migs647](https://github.com/migs647))<br>
+Wes Ostler ([@wesostler](https://github.com/wesostler))<br>
+
+
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2015 Walmart, TheHolyGrail, and other Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
