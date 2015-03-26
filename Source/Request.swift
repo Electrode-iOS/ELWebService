@@ -26,12 +26,12 @@ public struct Request {
     // MARK: Parameter Encodings
     
     public enum ParameterEncoding: ParameterEncodable {
-        case URL
+        case Percent
         case JSON
         
         public func encodeURL(url: NSURL, parameters: Dictionary<String, String>) -> NSURL? {
             if let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) {
-                components.appendPercentEncodedQuery(parameters.queryString)
+                components.appendPercentEncodedQuery(parameters.encodedQueryString)
                 return components.URL
             }
             
@@ -40,8 +40,8 @@ public struct Request {
         
         public func encodeBody(parameters: Dictionary<String, String>) -> NSData? {
             switch self {
-            case .URL:
-                return parameters.encodedQueryString?.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+            case .Percent:
+                return parameters.encodedQueryString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             case .JSON:
                 return NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions.allZeros, error: nil)
             }
@@ -63,7 +63,7 @@ public struct Request {
     public let url: String
     public var parameters = Dictionary<String, String>()
     public var headers = Dictionary<String, String>()
-    public var parameterEncoding = ParameterEncoding.URL
+    public var parameterEncoding = ParameterEncoding.Percent
     
     public var contentType: String? {
         set { headers[Headers.contentType] = newValue }
@@ -147,19 +147,24 @@ extension String: URLConvertible {
 
 extension Dictionary {
     
-    var queryString: String {
+    var encodedQueryString: String {
         var components = [String]()
         
         for (name, value) in self {
-            components.append("\(name)=\(value)")
+            if let percentEncodedPair = percentEncode((name, value)) {
+                components.append(percentEncodedPair)
+            }
         }
         
         return "&".join(components)
     }
     
-    var encodedQueryString: String? {
-        if let components = NSURLComponents(string: queryString) {
-            return components.percentEncodedQuery
+    func percentEncode(element: Element) -> String? {
+        let (name, value) = element
+        
+        if let encodedName  = "\(name)".stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding),
+           let encodedValue = "\(value)".stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
+            return "\(encodedName)=\(encodedValue)"
         }
         
         return nil
