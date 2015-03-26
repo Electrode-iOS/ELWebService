@@ -107,7 +107,7 @@ extension Request: URLRequestEncodable {
             }
         }
 
-        return urlRequest
+        return urlRequest.copy() as! NSURLRequest
     }
 }
 
