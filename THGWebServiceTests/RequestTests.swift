@@ -59,4 +59,25 @@ class RequestTests: XCTestCase {
         XCTAssertEqual(Request.Headers.cacheControl, "Cache-Control")
     }
     
+    func testURLEncodedParameters() {
+        var request = RequestTests.CreateTestRequest()
+        let parameters = ["foo" : "bar", "paramName" : "paramValue"]
+        request.parameters = parameters
+        
+        let urlRequest = request.encodeURLRequest()
+        let components = NSURLComponents(URL: urlRequest.URL!, resolvingAgainstBaseURL: false)!
+        
+        if let queryItems = components.queryItems {
+            for item in queryItems as! [NSURLQueryItem] {
+                let originalValue = parameters[item.name]!
+                XCTAssertEqual(item.value!, originalValue)
+            }
+            
+        } else {
+            XCTAssert(true, "queryItems should not be nil")
+        }
+        
+        XCTAssertEqual(count(components.queryItems!), count(parameters.keys))
+    }
+    
 }
