@@ -30,7 +30,7 @@ class RequestTests: XCTestCase {
     */
     func testConstructURLRequest() {
         let request = RequestTests.CreateTestRequest()
-        let urlRequest = request.constructURLRequest()
+        let urlRequest = request.encodeURLRequest()
         
         XCTAssertEqual(urlRequest.HTTPMethod!, request.method.rawValue)
         

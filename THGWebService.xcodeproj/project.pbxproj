@@ -136,8 +136,8 @@
 			isa = PBXGroup;
 			children = (
 				17D187991AB0B173000742BF /* THGWebService.h */,
-				17D187981AB0B173000742BF /* ServiceTask.swift */,
 				17D1879A1AB0B173000742BF /* WebService.swift */,
+				17D187981AB0B173000742BF /* ServiceTask.swift */,
 				17D187971AB0B173000742BF /* Request.swift */,
 			);
 			path = Source;

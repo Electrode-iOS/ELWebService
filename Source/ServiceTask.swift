@@ -40,26 +40,26 @@ public class ServiceTask {
         }
     }
     
-    // MARK: - Intialization
+    // MARK: Intialization
     
     /**
      Initialize a ServiceTask value to fulfill an HTTP request.
-     @param urlRequestCreator Value responsible for constructing a NSURLRequest 
+     @param urlRequestEncoder Value responsible for encoding a NSURLRequest 
      instance
      @param dataTaskCreator Value responsible for creating the
      NSURLSessionDataTask that sends the NSURLRequest
     */
-    init(urlRequestCreator: URLRequestConstructible, dataTaskCreator: DataTaskConstructible) {
+    init(urlRequestEncoder: URLRequestEncodable, dataTaskCreator: DataTaskConstructible) {
         self.handlerQueue = {
             let queue = DispatchQueue.createSerial("com.THGWebService.ServiceTask")
             Dispatch().suspend(queue)
             return queue
         }()
 
-        self.dataTask = dataTaskCreator.constructDataTask(urlRequestCreator.constructURLRequest(), completion: dataTaskCompletionHandler())
+        self.dataTask = dataTaskCreator.constructDataTask(urlRequestEncoder.encodeURLRequest(), completion: dataTaskCompletionHandler())
     }
     
-    // MARK: - NSURLSesssionDataTask
+    // MARK: NSURLSesssionDataTask
     
     /**
      Call to resume the underlying data task.
@@ -89,7 +89,7 @@ public class ServiceTask {
         }
     }
     
-    // MARK: - Response Handler API
+    // MARK: Response Handler API
     
     /**
      Add a response handler to be called on the main thread after a successful
@@ -132,6 +132,8 @@ public class ServiceTask {
         return self
     }
 }
+
+// MARK: - JSON
 
 extension ServiceTask {
     

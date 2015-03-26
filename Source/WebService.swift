@@ -8,15 +8,9 @@
 
 import Foundation
 
-public protocol DataTaskConstructible {
-    func constructDataTask(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
-}
-
-public protocol URLStringConstructible {
-    func constructURLString(string: String, relativeToURLString: String) -> String
-}
-
 public struct WebService {
+    
+    // MARK: NSURLSessionDataTask
     
     private struct DataTaskCreatorDelegate: DataTaskConstructible {
         func constructDataTask(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
@@ -25,6 +19,8 @@ public struct WebService {
             return task
         }
     }
+    
+    // MARK: Endpoint Configuration
     
     public struct EndpointOptions {
         var parameterEncoding: Request.ParameterEncoding = .URL
@@ -36,13 +32,13 @@ public struct WebService {
     public var startTasksImmediately = true
     public var dataTaskCreator: DataTaskConstructible = DataTaskCreatorDelegate()
     
-    // MARK: - Initialization
+    // MARK: Initialization
     
     public init(baseURLString: String) {
         self.baseURLString = baseURLString
     }
     
-    // MARK: - Request API
+    // MARK: Request API
 
     /**
      Create a service task for a GET HTTP request.
@@ -67,7 +63,7 @@ public struct WebService {
         return request(.HEAD, path: path, parameters: parameters, options: options)
     }
     
-    // MARK: - ServiceTask
+    // MARK: ServiceTask
     
     /**
      Create a service task to fulfill a service request. By default the service 
@@ -80,11 +76,11 @@ public struct WebService {
         let requestPath = constructRequestPath(relativePath: path)
         let absoluteURLString = constructURLString(requestPath, relativeToURLString: baseURLString)
         let request = constructRequest(method, url: absoluteURLString)
-        return serviceTask(urlRequestCreator: request)
+        return serviceTask(urlRequestEncoder: request)
     }
     
-    private func serviceTask(#urlRequestCreator: URLRequestConstructible) -> ServiceTask {
-        let task = ServiceTask(urlRequestCreator: urlRequestCreator, dataTaskCreator: dataTaskCreator)
+    private func serviceTask(#urlRequestEncoder: URLRequestEncodable) -> ServiceTask {
+        let task = ServiceTask(urlRequestEncoder: urlRequestEncoder, dataTaskCreator: dataTaskCreator)
         
         if startTasksImmediately {
             task.resume()
@@ -93,7 +89,7 @@ public struct WebService {
         return task
     }
     
-    // MARK: - URL Construction
+    // MARK: Request Path Construction
     
     /**
      Override to customize how all web service request paths are constructed. 
@@ -103,7 +99,7 @@ public struct WebService {
         return aRelativePath
     }
     
-    // MARK: - Request Construction
+    // MARK: Request
     
     /**
      Override to customize how all web service request objects are constructed.
@@ -113,9 +109,22 @@ public struct WebService {
     }
 }
 
+// MARK: - URL String Construction
+
 extension WebService: URLStringConstructible {
+    
     public func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
         let relativeURL = NSURL(string: relativeURLString)
         return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString!
     }
+}
+
+// MARK: - Protocols
+
+public protocol DataTaskConstructible {
+    func constructDataTask(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
+}
+
+public protocol URLStringConstructible {
+    func constructURLString(string: String, relativeToURLString: String) -> String
 }
