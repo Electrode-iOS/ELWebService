@@ -59,10 +59,11 @@ class RequestTests: XCTestCase {
         XCTAssertEqual(Request.Headers.cacheControl, "Cache-Control")
     }
     
-    func testURLEncodedParameters() {
+    func testPercentEncodedParameters() {
         var request = RequestTests.CreateTestRequest()
-        let parameters = ["foo" : "bar", "paramName" : "paramValue"]
+        let parameters = ["foo" : "bar", "paramName" : "paramValue", "percentEncoded" : "this needs percent encoded"]
         request.parameters = parameters
+        request.parameterEncoding = .Percent
         
         let urlRequest = request.encodeURLRequest()
         let components = NSURLComponents(URL: urlRequest.URL!, resolvingAgainstBaseURL: false)!
@@ -74,7 +75,7 @@ class RequestTests: XCTestCase {
             }
             
         } else {
-            XCTAssert(true, "queryItems should not be nil")
+            XCTAssert(false, "queryItems should not be nil")
         }
         
         XCTAssertEqual(count(components.queryItems!), count(parameters.keys))
