@@ -28,7 +28,7 @@ class RequestTests: XCTestCase {
     /**
      Test Request's conformance to URLRequestConstructible.
     */
-    func testConstructURLRequest() {
+    func testEncodeURLRequest() {
         let request = RequestTests.CreateTestRequest()
         let urlRequest = request.encodeURLRequest()
         

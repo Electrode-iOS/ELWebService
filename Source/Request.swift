@@ -29,19 +29,25 @@ public struct Request {
         case Percent
         case JSON
         
-        public func encodeURL(url: NSURL, parameters: Dictionary<String, String>) -> NSURL? {
+        /**
+         Encode query parameters in an existing URL.
+        */
+        public func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL? {
             if let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) {
-                components.appendPercentEncodedQuery(parameters.encodedQueryString)
+                components.appendPercentEncodedQuery(parameters.percentEncodedQueryString)
                 return components.URL
             }
             
             return nil
         }
         
-        public func encodeBody(parameters: Dictionary<String, String>) -> NSData? {
+        /**
+         Encode query parameters into a NSData value for request body.
+        */
+        public func encodeBody(parameters: [String : AnyObject]) -> NSData? {
             switch self {
             case .Percent:
-                return parameters.encodedQueryString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+                return parameters.percentEncodedQueryString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             case .JSON:
                 return NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions.allZeros, error: nil)
             }
@@ -61,8 +67,8 @@ public struct Request {
     
     public let method: Method
     public let url: String
-    public var parameters = Dictionary<String, String>()
-    public var headers = Dictionary<String, String>()
+    public var parameters = [String : AnyObject]()
+    public var headers = [String : String]()
     public var parameterEncoding = ParameterEncoding.Percent
     
     public var contentType: String? {
@@ -86,7 +92,9 @@ public struct Request {
 // MARK: - URLRequestEncodable
 
 extension Request: URLRequestEncodable {
-    
+    /**
+     Encode a NSURLRequest based on the value of Request.
+    */
     public func encodeURLRequest() -> NSURLRequest {
 
         var urlRequest = NSMutableURLRequest(URL: url.URLValue)
@@ -116,8 +124,8 @@ extension Request: URLRequestEncodable {
 // MARK: Parameter Encoding
 
 public protocol ParameterEncodable {
-    func encodeURL(url: NSURL, parameters: Dictionary<String, String>) -> NSURL?
-    func encodeBody(parameters: Dictionary<String, String>) -> NSData?
+    func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL?
+    func encodeBody(parameters: [String : AnyObject]) -> NSData?
 }
 
 // MARK: NSURLRequest Encoding
@@ -137,7 +145,9 @@ protocol URLConvertible {
 // MARK: String to NSURL
 
 extension String: URLConvertible {
-    
+    /**
+     Converts a string value.
+    */
     public var URLValue: NSURL {
         return NSURL(string: self)!
     }
@@ -146,8 +156,10 @@ extension String: URLConvertible {
 // MARK: Query String
 
 extension Dictionary {
-    
-    var encodedQueryString: String {
+    /**
+     Return an encoded query string using the elements in the dictionary.
+    */
+    var percentEncodedQueryString: String {
         var components = [String]()
         
         for (name, value) in self {
@@ -159,12 +171,15 @@ extension Dictionary {
         return "&".join(components)
     }
     
+    /**
+    Percent encode a Key/Value pair.
+    */
     func percentEncode(element: Element) -> String? {
         let (name, value) = element
         
         if let encodedName  = "\(name)".stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding),
-           let encodedValue = "\(value)".stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
-            return "\(encodedName)=\(encodedValue)"
+            let encodedValue = "\(value)".stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
+                return "\(encodedName)=\(encodedValue)"
         }
         
         return nil
@@ -174,7 +189,9 @@ extension Dictionary {
 // MARK: Percent Encoded Query
 
 extension NSURLComponents {
-    
+    /**
+     Append an encoded query string to the existing percentEncodedQuery value.
+    */
     func appendPercentEncodedQuery(query: String) {
         if percentEncodedQuery == nil {
             percentEncodedQuery = query
