@@ -21,20 +21,22 @@ class RequestTests: XCTestCase {
     Compares values of top-level keys for equality and asserts when unequal.
     Supports Int and String value types only.
     */
-    static func assertRequestParametersNotEqual(parameters: [String: AnyObject], _ originalParameters: [String: AnyObject]) {
-        for (name, value) in parameters {
-            let originalValue: AnyObject? = originalParameters[name]
+    static func assertRequestParametersNotEqual(parameters: [String: AnyObject], toOriginalParameters originalParameters: [String: AnyObject]) {
+        
+        
+        for (name, originalValue) in originalParameters {
+            let comparisonValue: AnyObject? = parameters[name]
             
-            XCTAssert(originalValue != nil, "originalValue should not be nil for key \(name)")
+            XCTAssert(comparisonValue != nil, "value should not be nil for key \(name)")
             
             if let originalValue = originalValue as? String,
-                let value = value as? String {
-                    XCTAssertEqual(originalValue, value)
+                let comparisonValue = comparisonValue as? String {
+                    XCTAssertEqual(originalValue, comparisonValue)
             } else if let originalValue = originalValue as? Int,
-                let value = value as? Int {
-                    XCTAssertEqual(originalValue, value)
+                let comparisonValue = comparisonValue as? Int {
+                    XCTAssertEqual(originalValue, comparisonValue)
             } else {
-                XCTAssert(false, "Failed to downcast JSON values for originalValue: \(originalValue) and \(value)")
+                XCTAssert(false, "Failed to downcast JSON values for originalValue: \(originalValue) and \(comparisonValue)")
             }
         }
     }
@@ -123,6 +125,6 @@ class RequestTests: XCTestCase {
         XCTAssert(json != nil, "Serialized JSON should not be nil")
         
         // test original parameters against encoded
-        RequestTests.assertRequestParametersNotEqual(json!, parameters)
+        RequestTests.assertRequestParametersNotEqual(json!, toOriginalParameters: parameters)
     }
 }
