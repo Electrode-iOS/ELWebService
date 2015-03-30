@@ -81,9 +81,9 @@ public struct WebService {
         let request: Request
         
         if let options = options {
-            request = configureRequest(constructRequest(method, url: absoluteURLString), options: options)
+            request = configureRequest(constructRequest(method, url: absoluteURLString, parameters: parameters), options: options)
         } else {
-            request = constructRequest(method, url: absoluteURLString)
+            request = constructRequest(method, url: absoluteURLString, parameters: parameters)
         }
         
         return serviceTask(urlRequestEncoder: request)
@@ -114,8 +114,14 @@ public struct WebService {
     /**
      Override to customize how all web service request objects are constructed.
     */
-    public func constructRequest(method: Request.Method, url: String) -> Request {
-        return Request(method, url: url)
+    public func constructRequest(method: Request.Method, url: String, parameters: [String : AnyObject]? = nil) -> Request {
+        var request = Request(method, url: url)
+        
+        if let parameters = parameters {
+            request.parameters = parameters
+        }
+        
+        return request
     }
     
     /**
