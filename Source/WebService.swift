@@ -72,10 +72,16 @@ public struct WebService {
      value to `false`.
     */
     private func request(method: Request.Method, path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions?) -> ServiceTask {
-        // TODO: use endpoint options to configure HTTP request
         let requestPath = constructRequestPath(relativePath: path)
         let absoluteURLString = constructURLString(requestPath, relativeToURLString: baseURLString)
-        let request = constructRequest(method, url: absoluteURLString)
+        let request: Request
+        
+        if let options = options {
+            request = configureRequest(constructRequest(method, url: absoluteURLString), options: options)
+        } else {
+            request = constructRequest(method, url: absoluteURLString)
+        }
+        
         return serviceTask(urlRequestEncoder: request)
     }
     
@@ -106,6 +112,16 @@ public struct WebService {
     */
     public func constructRequest(method: Request.Method, url: String) -> Request {
         return Request(method, url: url)
+    }
+    
+    /**
+     Override to customize how all web service request objects are configured
+     according to an EndpointOptions value.
+    */
+    public func configureRequest(request: Request, options: EndpointOptions) -> Request {
+        var configuredRequest = request
+        configuredRequest.parameterEncoding = options.parameterEncoding
+        return configuredRequest
     }
 }
 
