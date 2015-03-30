@@ -13,7 +13,7 @@ import Foundation
 */
 public struct Request {
     
-    // MARK: HTTP Methods
+    // MARK: Supported HTTP Methods
 
     public enum Method: String {
         case GET = "GET"
@@ -54,7 +54,7 @@ public struct Request {
         }
     }
     
-    // MARK: HTTP Headers
+    // MARK: HTTP Header Constants
     
     public struct Headers {
         public static let userAgent = "User-Agent"
@@ -64,13 +64,26 @@ public struct Request {
         public static let cacheControl = "Cache-Control"
     }
     
+    // MARK: Content Type Constants
+    
+    public struct ContentType {
+        public static let formEncoded = "application/x-www-form-urlencoded"
+        public static let json = "application/json"
+    }
+    
     // MARK: Request Properties
     
     public let method: Method
     public let url: String
     public var parameters = [String : AnyObject]()
     public var headers = [String : String]()
-    public var parameterEncoding = ParameterEncoding.Percent
+    public var parameterEncoding = ParameterEncoding.Percent {
+        didSet {
+            if parameterEncoding == .JSON {
+                contentType = ContentType.json
+            }
+        }
+    }
     
     public var contentType: String? {
         set { headers[Headers.contentType] = newValue }
