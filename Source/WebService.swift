@@ -43,23 +43,23 @@ public struct WebService {
     /**
      Create a service task for a GET HTTP request.
     */
-    public func GET(path: String, parameters: Dictionary<String, String>? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func GET(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.GET, path: path, parameters: parameters, options: options)
     }
 
-    public func POST(path: String, parameters: Dictionary<String, String>? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func POST(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.POST, path: path, parameters: parameters, options: options)
     }
     
-    public func PUT(path: String, parameters: Dictionary<String, String>? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func PUT(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.PUT, path: path, parameters: parameters, options: options)
     }
     
-    public func DELETE(path: String, parameters: Dictionary<String, String>? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func DELETE(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.DELETE, path: path, parameters: parameters, options: options)
     }
     
-    public func HEAD(path: String, parameters: Dictionary<String, String>? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func HEAD(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.HEAD, path: path, parameters: parameters, options: options)
     }
     
@@ -71,7 +71,7 @@ public struct WebService {
      automatically resuming set the `startTasksImmediately` of the WebService
      value to `false`.
     */
-    private func request(method: Request.Method, path: String, parameters: Dictionary<String, String>? = nil, options: EndpointOptions?) -> ServiceTask {
+    private func request(method: Request.Method, path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions?) -> ServiceTask {
         // TODO: use endpoint options to configure HTTP request
         let requestPath = constructRequestPath(relativePath: path)
         let absoluteURLString = constructURLString(requestPath, relativeToURLString: baseURLString)
