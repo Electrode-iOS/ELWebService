@@ -23,9 +23,13 @@ public struct WebService {
     // MARK: Endpoint Configuration
     
     public struct EndpointOptions {
-        var parameterEncoding: Request.ParameterEncoding = .Percent
-        var shouldCache: Bool = false
-        var cacheTTL: Int? // some default?
+        public var parameterEncoding: Request.ParameterEncoding = .Percent
+        public var shouldCache: Bool = false
+        public var cacheTTL: Int? // some default?
+        
+        public init() {
+            
+        }
     }
     
     public let baseURLString: String
