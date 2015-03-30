@@ -167,7 +167,7 @@ class WebServiceTests: XCTestCase {
         }
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectationsWithTimeout(3, handler: nil)
 
     }
     
@@ -218,11 +218,41 @@ class WebServiceTests: XCTestCase {
             let deliveredParameters = castedJSON!["args"] as? [String : AnyObject]
             XCTAssert(deliveredParameters != nil)
             
-            RequestTests.assertRequestParametersNotEqual(deliveredParameters!, parameters)
+            RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
         }
         
         waitForExpectationsWithTimeout(2, handler: nil)
-
+    }
+    
+    func testPostJSONEncodedParameters() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let handler = responseHandler(expectation: successExpectation)
+        let service = WebService(baseURLString: baseURL)
+        let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded", "number" : 42]
+        var options = WebService.EndpointOptions()
+        options.parameterEncoding = .JSON
+        
+        let task = service
+            .POST("/post", parameters: parameters, options: options)
+            .response { data, response in
+                
+                let httpResponse = response as! NSHTTPURLResponse
+                
+                if httpResponse.statusCode == 200 {
+                    successExpectation.fulfill()
+                }
+            }
+            .responseJSON { json in
+                let castedJSON = json as? [String : AnyObject]
+                XCTAssert(castedJSON != nil)
+                
+                let deliveredParameters = castedJSON!["json"] as? [String : AnyObject]
+                XCTAssert(deliveredParameters != nil)
+                
+                RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
+        }
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
     }
 }
 
