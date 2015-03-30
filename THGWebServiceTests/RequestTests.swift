@@ -81,4 +81,32 @@ class RequestTests: XCTestCase {
         XCTAssertEqual(count(components.queryItems!), count(parameters.keys))
     }
     
+    func testJSONEncodedParameters() {
+        let encoding = Request.ParameterEncoding.JSON
+        let parameters: [String: AnyObject] = ["foo" : "bar", "paramName" : "paramValue", "number" : 42]
+        let data = encoding.encodeBody(parameters)
+        var error: NSError?
+        
+        XCTAssert(data != nil, "Encoded JSON data should not be nil")
+        
+        let json = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.allZeros, error: &error) as? [String : AnyObject]
+        
+        XCTAssert(json != nil, "Serialized JSON should not be nil")
+        
+        for (name, value) in json! {
+            let originalValue: AnyObject? = parameters[name]
+            
+            XCTAssert(originalValue != nil, "originalValue you should not be nil for key \(name)")
+            
+            if let originalValue = originalValue as? String,
+                let value = value as? String {
+                    XCTAssertEqual(originalValue, value)
+            } else if let originalValue = originalValue as? Int,
+                    let value = value as? Int {
+                    XCTAssertEqual(originalValue, value)
+            } else {
+                XCTAssert(false, "Failed to downcast JSON values for originalValue: \(originalValue) and \(value)")
+            }
+        }
+    }
 }
