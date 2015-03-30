@@ -59,6 +59,7 @@ public struct Request {
     public struct Headers {
         public static let userAgent = "User-Agent"
         public static let contentType = "Content-Type"
+        public static let contentLength = "Content-Length"
         public static let accept = "Accept"
         public static let cacheControl = "Cache-Control"
     }
@@ -107,6 +108,7 @@ extension Request: URLRequestEncodable {
         if method != .GET {
             if let data = parameterEncoding.encodeBody(parameters) {
                 urlRequest.HTTPBody = data
+                urlRequest.setValue(String(data.length), forHTTPHeaderField: Headers.contentLength)
             }
         } else {
             if let url = urlRequest.URL,
