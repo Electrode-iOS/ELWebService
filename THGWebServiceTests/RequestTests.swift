@@ -15,6 +15,32 @@ import XCTest
 */
 class RequestTests: XCTestCase {
     
+    // MARK: Utilities
+    
+    /**
+    Compares values of top-level keys for equality and asserts when unequal.
+    Supports Int and String value types only.
+    */
+    static func assertRequestParametersNotEqual(parameters: [String: AnyObject], _ originalParameters: [String: AnyObject]) {
+        for (name, value) in parameters {
+            let originalValue: AnyObject? = originalParameters[name]
+            
+            XCTAssert(originalValue != nil, "originalValue should not be nil for key \(name)")
+            
+            if let originalValue = originalValue as? String,
+                let value = value as? String {
+                    XCTAssertEqual(originalValue, value)
+            } else if let originalValue = originalValue as? Int,
+                let value = value as? Int {
+                    XCTAssertEqual(originalValue, value)
+            } else {
+                XCTAssert(false, "Failed to downcast JSON values for originalValue: \(originalValue) and \(value)")
+            }
+        }
+    }
+    
+    // MARK: Tests
+    
     /**
      Creates a Request value for testing.
     */
@@ -58,7 +84,10 @@ class RequestTests: XCTestCase {
         XCTAssertEqual(Request.Headers.accept, "Accept")
         XCTAssertEqual(Request.Headers.cacheControl, "Cache-Control")
     }
-    
+        
+    /**
+     Test HTTP header computed properties and constants.
+    */
     func testPercentEncodedParameters() {
         var request = RequestTests.CreateTestRequest()
         let parameters = ["foo" : "bar", "paramName" : "paramValue", "percentEncoded" : "this needs percent encoded"]
@@ -93,20 +122,7 @@ class RequestTests: XCTestCase {
         
         XCTAssert(json != nil, "Serialized JSON should not be nil")
         
-        for (name, value) in json! {
-            let originalValue: AnyObject? = parameters[name]
-            
-            XCTAssert(originalValue != nil, "originalValue you should not be nil for key \(name)")
-            
-            if let originalValue = originalValue as? String,
-                let value = value as? String {
-                    XCTAssertEqual(originalValue, value)
-            } else if let originalValue = originalValue as? Int,
-                    let value = value as? Int {
-                    XCTAssertEqual(originalValue, value)
-            } else {
-                XCTAssert(false, "Failed to downcast JSON values for originalValue: \(originalValue) and \(value)")
-            }
-        }
+        // test original parameters against encoded
+        RequestTests.assertRequestParametersNotEqual(json!, parameters)
     }
 }
