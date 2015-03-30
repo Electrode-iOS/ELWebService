@@ -122,6 +122,10 @@ extension Request: URLRequestEncodable {
             if let data = parameterEncoding.encodeBody(parameters) {
                 urlRequest.HTTPBody = data
                 urlRequest.setValue(String(data.length), forHTTPHeaderField: Headers.contentLength)
+                
+                if urlRequest.valueForHTTPHeaderField(Headers.contentType) == nil {
+                    urlRequest.setValue(ContentType.formEncoded, forHTTPHeaderField: Headers.contentType)
+                }
             }
         } else {
             if let url = urlRequest.URL,
