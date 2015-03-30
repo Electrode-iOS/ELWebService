@@ -13,7 +13,7 @@ import THGDispatch
 
 class WebServiceTests: XCTestCase {
     
-    // MARK: -
+    // MARK: Utilities
     
     var baseURL: String {
         get {
@@ -41,7 +41,7 @@ class WebServiceTests: XCTestCase {
         }
     }
 
-    // MARK: - Tests
+    // MARK: Tests
     
     func testGetEndpoint() {
         let successExpectation = expectationWithDescription("Received status 200")
@@ -195,5 +195,34 @@ class WebServiceTests: XCTestCase {
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
+    func testGetPercentEncodedParameters() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let handler = responseHandler(expectation: successExpectation)
+        let service = WebService(baseURLString: baseURL)
+        let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
+        
+        let task = service
+        .GET("/get", parameters: parameters)
+        .response { data, response in
+            
+            let httpResponse = response as! NSHTTPURLResponse
+            
+            if httpResponse.statusCode == 200 {
+                successExpectation.fulfill()
+            }
+        }
+        .responseJSON { json in
+            let castedJSON = json as? [String : AnyObject]
+            XCTAssert(castedJSON != nil)
+
+            let deliveredParameters = castedJSON!["args"] as? [String : AnyObject]
+            XCTAssert(deliveredParameters != nil)
+            
+            RequestTests.assertRequestParametersNotEqual(deliveredParameters!, parameters)
+        }
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+
+    }
 }
 
