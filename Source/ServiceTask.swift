@@ -49,14 +49,14 @@ public class ServiceTask {
      @param dataTaskCreator Value responsible for creating the
      NSURLSessionDataTask that sends the NSURLRequest
     */
-    init(urlRequestEncoder: URLRequestEncodable, dataTaskCreator: DataTaskConstructible) {
+    init(urlRequestEncoder: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
         self.handlerQueue = {
             let queue = DispatchQueue.createSerial("com.THGWebService.ServiceTask")
             Dispatch().suspend(queue)
             return queue
         }()
 
-        self.dataTask = dataTaskCreator.constructDataTask(urlRequestEncoder.encodeURLRequest(), completion: dataTaskCompletionHandler())
+        self.dataTask = dataTaskSource.dataTaskWithRequest(urlRequestEncoder.encodeURLRequest(), completion: dataTaskCompletionHandler())
     }
     
     // MARK: NSURLSesssionDataTask

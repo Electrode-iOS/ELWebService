@@ -129,7 +129,7 @@ class WebServiceTests: XCTestCase {
         let service = WebService(baseURLString: "http://httpbin.org/")
         let method = Request.Method.DELETE
         let servicePath = "/post"
-        let requestPath = service.constructRequestPath(relativePath: servicePath)
+        let requestPath = service.requestPath(relativePath: servicePath)
         
         XCTAssertEqual(requestPath, servicePath)
     }

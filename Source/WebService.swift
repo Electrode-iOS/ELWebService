@@ -12,8 +12,8 @@ public struct WebService {
     
     // MARK: NSURLSessionDataTask
     
-    private struct DataTaskCreatorDelegate: DataTaskConstructible {
-        func constructDataTask(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
+    private struct DataTaskDataSource: SessionDataTaskDataSource {
+        func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
             let session = NSURLSession.sharedSession()
             let task = session.dataTaskWithRequest(request, completionHandler: completion);
             return task
@@ -34,7 +34,7 @@ public struct WebService {
     
     public let baseURLString: String
     public var startTasksImmediately = true
-    public var dataTaskCreator: DataTaskConstructible = DataTaskCreatorDelegate()
+    public var dataTaskSource: SessionDataTaskDataSource = DataTaskDataSource()
     
     // MARK: Initialization
     
@@ -42,7 +42,7 @@ public struct WebService {
         self.baseURLString = baseURLString
     }
     
-    // MARK: Request API
+    // MARK: Web Service API
 
     /**
      Create a service task for a GET HTTP request.
@@ -75,22 +75,14 @@ public struct WebService {
      automatically resuming set the `startTasksImmediately` of the WebService
      value to `false`.
     */
-    private func request(method: Request.Method, path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions?) -> ServiceTask {
-        let requestPath = constructRequestPath(relativePath: path)
-        let absoluteURLString = constructURLString(requestPath, relativeToURLString: baseURLString)
-        let request: Request
-        
-        if let options = options {
-            request = configureRequest(constructRequest(method, url: absoluteURLString, parameters: parameters), options: options)
-        } else {
-            request = constructRequest(method, url: absoluteURLString, parameters: parameters)
-        }
-        
+    private func request(method: Request.Method, path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+        let urlString = absoluteURLString(requestPath(relativePath: path))
+        let request = constructRequest(method, url: urlString, parameters: parameters, options: options)
         return serviceTask(urlRequestEncoder: request)
     }
     
     private func serviceTask(#urlRequestEncoder: URLRequestEncodable) -> ServiceTask {
-        let task = ServiceTask(urlRequestEncoder: urlRequestEncoder, dataTaskCreator: dataTaskCreator)
+        let task = ServiceTask(urlRequestEncoder: urlRequestEncoder, dataTaskSource: dataTaskSource)
         
         if startTasksImmediately {
             task.resume()
@@ -99,14 +91,14 @@ public struct WebService {
         return task
     }
     
-    // MARK: Request Path Construction
+    // MARK: Request Path
     
     /**
      Override to customize how all web service request paths are constructed. 
      Useful for prefixing request endpoint paths.
     */
-    public func constructRequestPath(relativePath aRelativePath: String) -> String {
-        return aRelativePath
+    public func requestPath(#relativePath: String) -> String {
+        return relativePath
     }
     
     // MARK: Request
@@ -114,30 +106,28 @@ public struct WebService {
     /**
      Override to customize how all web service request objects are constructed.
     */
-    public func constructRequest(method: Request.Method, url: String, parameters: [String : AnyObject]? = nil) -> Request {
+    public func constructRequest(method: Request.Method, url: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> Request {
         var request = Request(method, url: url)
         
         if let parameters = parameters {
             request.parameters = parameters
         }
         
+        if let options = options {
+            request.parameterEncoding = options.parameterEncoding
+        }
+        
         return request
-    }
-    
-    /**
-     Override to customize how all web service request objects are configured
-     according to an EndpointOptions value.
-    */
-    public func configureRequest(request: Request, options: EndpointOptions) -> Request {
-        var configuredRequest = request
-        configuredRequest.parameterEncoding = options.parameterEncoding
-        return configuredRequest
     }
 }
 
 // MARK: - URL String Construction
 
 extension WebService: URLStringConstructible {
+    
+    public func absoluteURLString(string: String) -> String {
+        return constructURLString(string, relativeToURLString: baseURLString)
+    }
     
     public func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
         let relativeURL = NSURL(string: relativeURLString)
@@ -147,8 +137,8 @@ extension WebService: URLStringConstructible {
 
 // MARK: - Protocols
 
-public protocol DataTaskConstructible {
-    func constructDataTask(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
+public protocol SessionDataTaskDataSource {
+    func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
 }
 
 public protocol URLStringConstructible {
