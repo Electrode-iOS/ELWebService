@@ -224,11 +224,40 @@ class WebServiceTests: XCTestCase {
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
+    func testPostPercentEncodedParameters() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let handler = responseHandler(expectation: successExpectation)
+        let service = WebService(baseURLString: baseURL)
+        let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
+        
+        let task = service
+            .POST("/post", parameters: parameters)
+            .response { data, response in
+                
+                let httpResponse = response as! NSHTTPURLResponse
+                
+                if httpResponse.statusCode == 200 {
+                    successExpectation.fulfill()
+                }
+            }
+            .responseJSON { json in
+                let castedJSON = json as? [String : AnyObject]
+                XCTAssert(castedJSON != nil)
+                
+                let deliveredParameters = castedJSON!["form"] as? [String : AnyObject]
+                XCTAssert(deliveredParameters != nil)
+                
+                RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
+        }
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
     func testPostJSONEncodedParameters() {
         let successExpectation = expectationWithDescription("Received status 200")
         let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
-        let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded", "number" : 42]
+        let parameters = ["foo" : "bar", "number" : 42]
         var options = WebService.EndpointOptions()
         options.parameterEncoding = .JSON
         

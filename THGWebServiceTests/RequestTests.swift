@@ -23,7 +23,6 @@ class RequestTests: XCTestCase {
     */
     static func assertRequestParametersNotEqual(parameters: [String: AnyObject], toOriginalParameters originalParameters: [String: AnyObject]) {
         
-        
         for (name, originalValue) in originalParameters {
             let comparisonValue: AnyObject? = parameters[name]
             
@@ -41,8 +40,6 @@ class RequestTests: XCTestCase {
         }
     }
     
-    // MARK: Tests
-    
     /**
      Creates a Request value for testing.
     */
@@ -53,8 +50,10 @@ class RequestTests: XCTestCase {
         return request
     }
     
+    // MARK: Tests
+    
     /**
-     Test Request's conformance to URLRequestConstructible.
+     Test Request's conformance to URLRequestEncodable.
     */
     func testEncodeURLRequest() {
         let request = RequestTests.CreateTestRequest()
@@ -69,7 +68,8 @@ class RequestTests: XCTestCase {
     }
     
     /**
-     Test HTTP header computed properties and constants.
+     Verify that HTTP header computed properties and constants return the proper
+     values when set.
     */
     func testHeaderProperties() {
         let contentType = "application/json"
@@ -88,7 +88,7 @@ class RequestTests: XCTestCase {
     }
         
     /**
-     Test HTTP header computed properties and constants.
+     Verify that request parameters are properly percent encoded.
     */
     func testPercentEncodedParameters() {
         var request = RequestTests.CreateTestRequest()
@@ -112,6 +112,9 @@ class RequestTests: XCTestCase {
         XCTAssertEqual(count(components.queryItems!), count(parameters.keys))
     }
     
+    /**
+     Verify that request parameters are properly JSON encoded.
+    */
     func testJSONEncodedParameters() {
         let encoding = Request.ParameterEncoding.JSON
         let parameters: [String: AnyObject] = ["foo" : "bar", "paramName" : "paramValue", "number" : 42]
