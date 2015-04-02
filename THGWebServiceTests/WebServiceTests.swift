@@ -41,7 +41,7 @@ class WebServiceTests: XCTestCase {
         }
     }
 
-    // MARK: Tests
+    // MARK: Tests  
     
     func testGetEndpoint() {
         let successExpectation = expectationWithDescription("Received status 200")
@@ -134,7 +134,6 @@ class WebServiceTests: XCTestCase {
         XCTAssertEqual(requestPath, servicePath)
     }
     
-    
     func testConstructRequest() {
         let service = WebService(baseURLString: "http://httpbin.org/")
         let method = Request.Method.DELETE
@@ -168,7 +167,6 @@ class WebServiceTests: XCTestCase {
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(3, handler: nil)
-
     }
     
     func testGetJSON() {
@@ -279,6 +277,36 @@ class WebServiceTests: XCTestCase {
                 XCTAssert(deliveredParameters != nil)
                 
                 RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
+        }
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
+    func testHeadersDelivered() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let handler = responseHandler(expectation: successExpectation)
+        let service = WebService(baseURLString: baseURL)
+        var options = WebService.EndpointOptions()
+        options.headers = ["Some-Test-Header" :"testValue"]
+        
+        let task = service
+            .GET("/get", parameters: nil, options: options)
+            .response { data, response in
+                
+                let httpResponse = response as! NSHTTPURLResponse
+                
+                if httpResponse.statusCode == 200 {
+                    successExpectation.fulfill()
+                }
+            }
+            .responseJSON { json in
+                let castedJSON = json as? [String : AnyObject]
+                XCTAssert(castedJSON != nil)
+                
+                let deliveredHeaders = castedJSON!["headers"] as? [String : AnyObject]
+                XCTAssert(deliveredHeaders != nil)
+                
+                RequestTests.assertRequestParametersNotEqual(deliveredHeaders!, toOriginalParameters: options.headers!)
         }
         
         waitForExpectationsWithTimeout(2, handler: nil)

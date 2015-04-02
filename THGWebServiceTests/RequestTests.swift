@@ -46,7 +46,7 @@ class RequestTests: XCTestCase {
     static func CreateTestRequest() -> Request {
         let url = "http://httpbin.org/get"
         var request = Request(.GET, url: url)
-        request.headers["foo"] = "bar"
+        request.headers["Test-Header-Name"] = "testValue"
         return request
     }
     
