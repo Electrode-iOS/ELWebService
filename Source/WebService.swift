@@ -26,6 +26,7 @@ public struct WebService {
         public var parameterEncoding: Request.ParameterEncoding = .Percent
         public var shouldCache: Bool = false
         public var cacheTTL: Int? // some default?
+        public var headers: [String: String]?
         
         public init() {
             
@@ -115,6 +116,10 @@ public struct WebService {
         
         if let options = options {
             request.parameterEncoding = options.parameterEncoding
+            
+            if let headers = options.headers {
+                request.headers = headers
+            }            
         }
         
         return request
