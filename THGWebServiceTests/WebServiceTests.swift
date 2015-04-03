@@ -55,6 +55,21 @@ class WebServiceTests: XCTestCase {
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
+    /**
+     Verify that absolute paths work against a different base URL.
+    */
+    func testGetAbsolutePath() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let handler = responseHandler(expectation: successExpectation)
+        let service = WebService(baseURLString: "www.walmart.com")
+        let task = service
+            .GET("http://httpbin.org/get")
+            .response(handler)
+        
+        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
     func testPostEndpoint() {
         let successExpectation = expectationWithDescription("Received status 200")
         let handler = responseHandler(expectation: successExpectation)
