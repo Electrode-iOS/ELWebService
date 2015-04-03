@@ -51,7 +51,7 @@ public class ServiceTask {
     */
     init(urlRequestEncoder: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
         self.handlerQueue = {
-            let queue = DispatchQueue.createSerial("com.THGWebService.ServiceTask")
+            let queue = DispatchQueue.createSerial("ServiceTask")
             Dispatch().suspend(queue)
             return queue
         }()
