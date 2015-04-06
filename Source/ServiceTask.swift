@@ -22,8 +22,15 @@ public class ServiceTask {
         let response: NSURLResponse?
         let error: NSError?
         
-        public init(data theData: NSData?, response: NSURLResponse?, error: NSError?) {
-            self.data = theData
+        /**
+         Initialize a service task result.
+        
+         :param: data Optional response data.
+         :param: data Optional response object.
+         :param: data Optional error object.
+        */
+        public init(data: NSData?, response: NSURLResponse?, error: NSError?) {
+            self.data = data
             self.response = response
             self.error = error
         }
@@ -31,7 +38,16 @@ public class ServiceTask {
     
     private let handlerQueue: DispatchQueue
     private var dataTask: NSURLSessionDataTask?
+    
+    /**
+     Result of the service task. If error contains a non-nil value then the 
+     service task's error handler is called.
+    */
     public var result: Result?
+    
+    /**
+     State of the service task.
+    */
     public var state: NSURLSessionTaskState {
         if let state = dataTask?.state {
             return state
@@ -44,10 +60,11 @@ public class ServiceTask {
     
     /**
      Initialize a ServiceTask value to fulfill an HTTP request.
-     @param urlRequestEncoder Value responsible for encoding a NSURLRequest 
-     instance
-     @param dataTaskCreator Value responsible for creating the
-     NSURLSessionDataTask that sends the NSURLRequest
+    
+     :param: urlRequestEncoder Value responsible for encoding a NSURLRequest
+      instance to send.
+     :param: dataTaskSource Object responsible for creating a 
+      NSURLSessionDataTask used to send the NSURLRequset.
     */
     init(urlRequestEncoder: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
         self.handlerQueue = {
@@ -62,21 +79,21 @@ public class ServiceTask {
     // MARK: NSURLSesssionDataTask
     
     /**
-     Call to resume the underlying data task.
+     Resume the underlying data task.
     */
     public func resume() {
         dataTask?.resume()
     }
     
     /**
-    Call to suspend the underlying data task.
+     Suspend the underlying data task.
     */
     public func suspend() {
         dataTask?.suspend()
     }
     
     /**
-    Call to cancel the underlying data task.
+     Cancel the underlying data task.
     */
     public func cancel() {
         dataTask?.cancel()
@@ -94,7 +111,9 @@ public class ServiceTask {
     /**
      Add a response handler to be called on the main thread after a successful
      response has been received.
-     @param handler Response handler to execute upon receiving a response.
+     
+     :param: handler Response handler to execute upon receiving a response.
+     :returns: Self instance to support chaining.
     */
     public func response(handler: SuccessHandler) -> Self {
         return response(.Main, handler: handler)
@@ -103,7 +122,10 @@ public class ServiceTask {
     /**
     Add a response handler to be called once a successful response has been
     received.
-    @param queue The DispatchQueue used to dispatch the response handler.
+    
+    :param queue The DispatchQueue used to dispatch the response handler.
+    :param: handler Response handler to execute upon receiving a response.
+    :returns: Self instance to support chaining.
     */
     public func response(queue: DispatchQueue, handler: SuccessHandler) -> Self {
         Dispatch().async(handlerQueue) {
@@ -119,6 +141,9 @@ public class ServiceTask {
     
     /**
     Add a response handler to be called if a request results in an error.
+    
+    :param: handler Error handler to execute when an error occurs.
+    :returns: Self instance to support chaining.
     */
     public func responseError(handler: ErrorHandler) -> Self {
         Dispatch().async(handlerQueue) {
@@ -142,6 +167,9 @@ extension ServiceTask {
     /**
      Add a response handler to serialize the response body as a JSON object. The
      handler will be dispatched to the main thread.
+    
+     :param: handler Response handler to execute upon receiving a response.
+     :returns: Self instance to support chaining.
     */
     public func responseJSON(handler: JSONHandler) -> Self {
         return responseJSON(.Main, handler: handler)
@@ -149,7 +177,10 @@ extension ServiceTask {
     
     /**
     Add a response handler to serialize the response body as a JSON object.
-    @param queue The DispatchQueue used to dispatch the response handler.
+    
+    :param: queue The DispatchQueue used to dispatch the response handler.
+    :param: handler Response handler to execute upon receiving a response.
+    :returns: Self instance to support chaining.
     */
     public func responseJSON(queue: DispatchQueue, handler: JSONHandler) -> Self {
         return response(queue) { data, response in
