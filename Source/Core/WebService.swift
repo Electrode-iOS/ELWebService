@@ -8,9 +8,6 @@
 
 import Foundation
 
-/**
-
-*/
 public struct WebService {
     
     // MARK: NSURLSessionDataTask
@@ -42,13 +39,14 @@ public struct WebService {
     public let baseURLString: String
     
     /**
-     Set to `false` to prevent Service Tasks from resuming immediately.
+     Set to `false` to prevent `ServiceTask` instances from resuming 
+     immediately.
     */
     public var startTasksImmediately = true
     
     /**
-     Object responsible for creating a NSURLSessionDataTask based on a
-     NSURLRequest.
+     Object responsible for creating a `NSURLSessionDataTask` based on a
+     `NSURLRequest`.
     */
     public var dataTaskSource: SessionDataTaskDataSource = DataTaskDataSource()
     
@@ -66,7 +64,7 @@ public struct WebService {
     // MARK: Web Service API
     
     /**
-     Create a service task for a GET HTTP request.
+     Create a service task for a `GET` HTTP request.
     
      :param: path Request path. The value can be relative to the base URL string
       or absolute.
@@ -74,22 +72,24 @@ public struct WebService {
        a query string for `GET` requests.
      :param: options Endpoint options used to configure the HTTP request.
      :returns: A ServiceTask instance that refers to the lifetime of processing
-      a given request.
+      a given request. The newly created task is resumed immediately if the 
+      `startTasksImmediately` poperty is set to `true`.
     */
     public func GET(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.GET, path: path, parameters: parameters, options: options)
     }
     
     /**
-     Create a service task for a POST HTTP request.
-    
+     Create a service task for a `POST` HTTP request.
+     
      :param: path Request path. The value can be relative to the base URL string
       or absolute.
      :param: parameters Optional request parameters. The data is URL encoded and
       is set as the HTTP body for `POST` requests.
      :param: options Endpoint options used to configure the HTTP request.
      :returns: A ServiceTask instance that refers to the lifetime of processing
-      a given request.
+      a given request. The newly created task is resumed immediately if the
+      `startTasksImmediately` poperty is set to `true`.
     */
     public func POST(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.POST, path: path, parameters: parameters, options: options)
@@ -104,37 +104,40 @@ public struct WebService {
       is set as the HTTP body for `PUT` requests.
      :param: options Endpoint options used to configure the HTTP request.
      :returns: A ServiceTask instance that refers to the lifetime of processing
-      a given request.
+      a given request. The newly created task is resumed immediately if the 
+      `startTasksImmediately` poperty is set to `true`.
     */
     public func PUT(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.PUT, path: path, parameters: parameters, options: options)
     }
     
     /**
-    Create a service task for a DELETE HTTP request.
+     Create a service task for a DELETE HTTP request.
     
-    :param: path Request path. The value can be relative to the base URL string
-     or absolute.
-    :param: parameters Optional request parameters. The data is URL encoded and 
-     is set as the HTTP body for `DELETE` requests.
-    :param: options Endpoint options used to configure the HTTP request.
-    :returns: A ServiceTask instance that refers to the lifetime of processing
-     a given request.
+     :param: path Request path. The value can be relative to the base URL string
+      or absolute.
+     :param: parameters Optional request parameters. The data is URL encoded and
+      is set as the HTTP body for `DELETE` requests.
+     :param: options Endpoint options used to configure the HTTP request.
+     :returns: A ServiceTask instance that refers to the lifetime of processing
+      a given request. The newly created task is resumed immediately if the 
+      `startTasksImmediately` poperty is set to `true`.
     */
     public func DELETE(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.DELETE, path: path, parameters: parameters, options: options)
     }
     
     /**
-    Create a service task for a HEAD HTTP request.
+     Create a service task for a HEAD HTTP request.
     
-    :param: path Request path. The value can be relative to the base URL string
-     or absolute.
-    :param: parameters Optional request parameters. The data is URL encoded as 
-     a query string for `HEAD` requests.
-    :param: options Endpoint options used to configure the HTTP request.
-    :returns: A ServiceTask instance that refers to the lifetime of processing
-     a given request.
+     :param: path Request path. The value can be relative to the base URL string
+      or absolute.
+     :param: parameters Optional request parameters. The data is URL encoded as
+      a query string for `HEAD` requests.
+     :param: options Endpoint options used to configure the HTTP request.
+     :returns: A ServiceTask instance that refers to the lifetime of processing
+      a given request. The newly created task is resumed immediately if the 
+      `startTasksImmediately` poperty is set to `true`.
     */
     public func HEAD(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.HEAD, path: path, parameters: parameters, options: options)
@@ -154,7 +157,8 @@ public struct WebService {
      :param: parameters Optional request parameters.
      :param: options Optional endpoint options used to configure the HTTP request.
      :returns: A ServiceTask instance that refers to the lifetime of processing
-      a given request.
+      a given request. The newly created task is resumed immediately if the 
+      `startTasksImmediately` poperty is set to `true`.
     */
     private func request(method: Request.Method, path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         let urlString = absoluteURLString(requestPath(relativePath: path))
@@ -163,7 +167,12 @@ public struct WebService {
     }
     
     /**
-    
+     Create a `ServiceTask`
+     
+     :param: urlRequestEncoder Type that provides the encoded NSURLRequest value.
+     :returns: A ServiceTask instance that refers to the lifetime of processing
+      a given request. The newly created task is resumed immediately if the 
+      `startTasksImmediately` poperty is set to `true`.
     */
     private func serviceTask(#urlRequestEncoder: URLRequestEncodable) -> ServiceTask {
         let task = ServiceTask(urlRequestEncoder: urlRequestEncoder, dataTaskSource: dataTaskSource)

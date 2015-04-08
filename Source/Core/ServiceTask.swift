@@ -9,8 +9,10 @@
 import Foundation
 
 /**
- A cancelable object that refers to the lifetime of processing a given 
- NSURLSessionDataTask.
+ A lightweight wrapper around `NSURLSessionDataTask` that provides a chainable 
+ API for processing the result of a data task. A `ServiceTask` instance can be
+ cancelled and suspended like a data task as well as queried for current state
+ via the `state` property.
 */
 public class ServiceTask {
     
@@ -126,7 +128,8 @@ public class ServiceTask {
      Add a response handler to be called once a successful response has been
      received.
     
-     :param queue The DispatchQueue used to dispatch the response handler.
+     :param queue The target dispatch queue to which the response handler is 
+      submitted.
      :param: handler Response handler to execute upon receiving a response.
      :returns: Self instance to support chaining.
     */

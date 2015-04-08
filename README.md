@@ -1,51 +1,26 @@
-
-
 # Swallow
 
-A simple and concise API for interacting with HTTP web services in Swift.
-
-## Features
-
-- Simple and concise API for declaring HTTP web service interactions
-- Chainable response handlers allow for better readability
-- Constructs URLs using a base URL and relative path of service endpoint
-- Flexible to work with any NSURLSession-based API.
-  + Dependant on a single protocol method to dispatch and handle NSURLSessionDataTask objects
-  + Built-in HTTP networking support using a simple NSURLSession wrapper but is extendable to work with any NSURLSession-based API
-
-## Dependencies
-
-Swallow uses [KillerRabbit](https://github.com/TheHolyGrail/KillerRabbit)(`THGDispatch`) as a convenient wrapper around the Grand Central Dispatch API.
-
-THG projects are designed to live side-by-side in the file system, like so:
-
-- \MyProject
-- \MyProject\Swallow
-- \MyProject\KillerRabbit
-
-## Example
-
-An example project is included that demonstrates how Swallow can be used to interact with a web service. A stubbed endpoint is available at [https://somehapi.herokuapp.com/stores](https://somehapi.herokuapp.com/stores) for testing.
+Swallow simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, Swallow is not intended to be a fully-featured networking library. By default Swallow uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any NSURLSession instance using a [protocol](#sessiondatataskdatasource).
 
 ## Usage
 
-At the highest level a request to a service endpoint for a resource could look like the following:
+At the highest level a request for a resource could look like the following:
 
 ```
 // fetch list of stores based on zip code value
-let webService = WebService(baseURLString: "https://somehapi.herokuapp.com")
-webService.fetchStores(zipCode: "15217")
-          .responseStoreModels { models in
-            // models is an array of StoreModel values
-          }
-          .responseError { response, error in
-            // I am error
-          }
+WebService(baseURLString: "https://somehapi.herokuapp.com")
+    .fetchStores(zipCode: "15217")
+    .responseStores { (stores: [StoreModel]?) in
+      // update UI with model data
+    }
+    .responseError { response, error in
+      // I am error
+    }
 ```
 
 The `WebService` structure and `ServiceTask` class provide the basic building blocks to make this short and simple syntax possible.
 
-### Making HTTP Requests
+### Sending HTTP Requests
 
 At the lowest level `WebService` supports an API for making a HTTP request and processing the raw response data.
 
@@ -87,9 +62,6 @@ WebService(baseURLString: "https://somehapi.herokuapp.com")
   }
 ```
 
-> **NOTE:**
-> Currently all response handlers are run on the main thread. The goal is to support [KillerRabbit](https://github.com/TheHolyGrail/KillerRabbit) as a means for controlling how response handlers are dispatched.
-
 ### Extensions
 
 The chainable response handler API makes it easy to create custom response handlers using extensions.
@@ -101,7 +73,7 @@ extension ServiceTask {
     
     public typealias StoreServiceSuccess = ([StoreModel]?) -> Void
     
-    func responseStoreModels(handler: StoreServiceSuccess) -> Self {
+    func responseStores(handler: StoreServiceSuccess) -> Self {
         
         return responseJSON { json in
             if let models: [StoreModel]? = self.parseJSONAsStoreModels(json) {
@@ -117,7 +89,7 @@ This allows you to wrap the details of how the response is processed in a high-l
 ```
 WebService(baseURLString: "https://somehapi.herokuapp.com")
   .GET("/stores", parameters: ["zip" : "15217"])
-  .responseStoreModels { (models: [StoreModel]?) in
+  .responseStores { (stores: [StoreModel]?) in
     // process resonse as model objects and update UI
   }
   .responseError { error in
@@ -150,39 +122,112 @@ WebService(baseURLString: "https://somehapi.herokuapp.com")
     }
 ```
 
+### Request Parameters
+
+Request parameters are percent encoded and appended as a query string of the request URL for `GET` and `HEAD` requests. For all other request methods, parameters are sent as the request body and are encoded based on the `parameterEncoding` endpoint option.
+
+##### Parameter Encodings
+
+- `.Percent` - Encode parameters as a percent encoded query string.
+- `.JSON` - Encode parameters as a JSON object.
+
+##### Sending Parameters
+
+Send a `GET` request with query parameters.
+
+```
+let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
+        
+WebService(baseURLString: "http://httpbin.org")
+    .GET("/get", parameters: parameters)
+```
+
+HTTP
+
+
+```
+GET /stores?percentEncoded=this%20needs%20percent%20encoded&foo=bar HTTP/1.1
+
+```
+
+
+Send a `POST` request with body parameters.
+
+```
+let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
+        
+WebService(baseURLString: "http://httpbin.org")
+    .POST("/post", parameters: parameters)
+```
+
+HTTP
+
+```
+POST /stores HTTP/1.1
+Content-Length: 55
+
+percentEncoded=this%20needs%20percent%20encoded&foo=bar
+```
+
+Send a `POST` request with JSON encoded parameters.
+
+```
+let parameters = ["foo" : "bar", "number" : 42]
+var options = WebService.EndpointOptions()
+options.parameterEncoding = .JSON
+
+WebService(baseURLString: "http://httpbin.org")
+    .POST("/post", parameters: parameters, options: options)
+```
+
+HTTP
+
+```
+POST /post HTTP/1.1
+Content-Type: application/json
+Content-Length: 25
+
+{"number":42,"foo":"bar"}
+```
+
 ### Protocols
 
-**`DataTaskConstructible`**
+##### SessionDataTaskDataSource
 
-Swallow can be customized to work with any NSURLSession-based API by providing the `DataTaskConstructible` protocol. Objects conforming to the `DataTaskConstructible` protocol are responsible for creating `NSURLSessionDataTask` objects based on a `NSURLRequest` object and invoking a completion handler after the response of a data task has been received.
+The `SessionDataTaskDataSource` protocol is provided to allow Swallow to work with any NSURLSession-based API. Types conforming to the `SessionDataTaskDataSource` protocol are responsible for creating `NSURLSessionDataTask` objects based on a `NSURLRequest` value and invoking a completion handler after the response of a data task has been received.
 
-By default Swallow implements the `DataTaskConstructible` protocol as a private structure using the shared session returned from `NSURLSession.sharedSession()`. 
-
+By default Swallow implements the `SessionDataTaskDataSource` protocol as a private structure using the shared session returned from `NSURLSession.sharedSession()`. 
 
 ### Dispatch Queues
 
-The dispatch queue used to execute the response handler can be specified using a DispatchQueue value from [KillerRabbit](https://github.com/TheHolyGrail/KillerRabbit).
+The dispatch queue used to execute the response handler can be specified as the first parameter of a response handler. Unless specified all response handler are run on the main dispatch queue.
 
 ```
+let queue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
+
 WebService(baseURLString: "https://somehapi.herokuapp.com")
   .GET("/stores", parameters: ["zip" : "15217"])
-  .response(.Background) { (response: NSURLResponse?, data: NSData?) in
+  .response(queue) { (response: NSURLResponse?, data: NSData?) in
     // process response data
   }
 ```
 
-Calls can be chained together to run on different queues.
+### KillerRabbit
+
+Swallow includes an optional `ServiceTask` extension that makes it easy to use [KillerRabbit](https://github.com/TheHolyGrail/KillerRabbit) dispatch queue values to specify which queue response handlers run on. Add the file `Source/Extensions/Swallow+KillerRabbit.swift` to your project as well as the KillerRabbit module to use the extension.
 
 ```
 WebService(baseURLString: "https://somehapi.herokuapp.com")
   .GET("/stores", parameters: ["zip" : "15217"])
-  .response(.Background) { (response: NSURLResponse?, data: NSData?) in
-    // process raw response on background
-  }
-  .responseJSON(.Main) { json in
-    // use json on main thread
+  .responseOnDispatchQueue(.Background) { (response: NSURLResponse?, data: NSData?) in
+    // process response data
   }
 ```
+
+
+## Example
+
+An example project is included that demonstrates how Swallow can be used to interact with a web service. A stubbed endpoint is available at [https://somehapi.herokuapp.com/stores](https://somehapi.herokuapp.com/stores) for testing.
 
 ## Contributions
 
@@ -198,7 +243,6 @@ Sam Grover ([@samgrover](https://github.com/samgrover))<br>
 Angelo Di Paolo ([@angelodipaolo](https://github.com/angelodipaolo))<br>
 Cody Garvin ([@migs647](https://github.com/migs647))<br>
 Wes Ostler ([@wesostler](https://github.com/wesostler))<br>
-
 
 ## License
 
