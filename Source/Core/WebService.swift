@@ -8,6 +8,9 @@
 
 import Foundation
 
+/**
+
+*/
 public struct WebService {
     
     // MARK: NSURLSessionDataTask
@@ -44,7 +47,7 @@ public struct WebService {
     public var startTasksImmediately = true
     
     /**
-     Object responsible for providing a NSURLSessionDataTask based on a 
+     Object responsible for creating a NSURLSessionDataTask based on a
      NSURLRequest.
     */
     public var dataTaskSource: SessionDataTaskDataSource = DataTaskDataSource()
@@ -63,42 +66,45 @@ public struct WebService {
     // MARK: Web Service API
     
     /**
-    Create a service task for a GET HTTP request.
+     Create a service task for a GET HTTP request.
     
-    :param: path Request path. The value can be relative to the base URL string
-     or absolute.
-    :param: parameters Optional request parameters. The data is URL encoded as 
-     a query string for `GET` requests.
-    :param: options Endpoint options used to configure the HTTP request.
-    :returns: A  ServiceTask.
+     :param: path Request path. The value can be relative to the base URL string
+      or absolute.
+     :param: parameters Optional request parameters. The data is URL encoded as
+       a query string for `GET` requests.
+     :param: options Endpoint options used to configure the HTTP request.
+     :returns: A ServiceTask instance that refers to the lifetime of processing
+      a given request.
     */
     public func GET(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.GET, path: path, parameters: parameters, options: options)
     }
     
     /**
-    Create a service task for a POST HTTP request.
+     Create a service task for a POST HTTP request.
     
-    :param: path Request path. The value can be relative to the base URL string
-     or absolute.
-    :param: parameters Optional request parameters. The data is URL encoded and 
-     is set as the HTTP body for `POST` requests.
-    :param: options Endpoint options used to configure the HTTP request.
-    :returns: A  ServiceTask.
+     :param: path Request path. The value can be relative to the base URL string
+      or absolute.
+     :param: parameters Optional request parameters. The data is URL encoded and
+      is set as the HTTP body for `POST` requests.
+     :param: options Endpoint options used to configure the HTTP request.
+     :returns: A ServiceTask instance that refers to the lifetime of processing
+      a given request.
     */
     public func POST(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.POST, path: path, parameters: parameters, options: options)
     }
     
     /**
-    Create a service task for a PUT HTTP request.
+     Create a service task for a PUT HTTP request.
     
-    :param: path Request path. The value can be relative to the base URL string
-     or absolute.
-    :param: parameters Optional request parameters. The data is URL encoded and 
-     is set as the HTTP body for `PUT` requests.
-    :param: options Endpoint options used to configure the HTTP request.
-    :returns: A  ServiceTask.
+     :param: path Request path. The value can be relative to the base URL string
+      or absolute.
+     :param: parameters Optional request parameters. The data is URL encoded and
+      is set as the HTTP body for `PUT` requests.
+     :param: options Endpoint options used to configure the HTTP request.
+     :returns: A ServiceTask instance that refers to the lifetime of processing
+      a given request.
     */
     public func PUT(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.PUT, path: path, parameters: parameters, options: options)
@@ -112,7 +118,8 @@ public struct WebService {
     :param: parameters Optional request parameters. The data is URL encoded and 
      is set as the HTTP body for `DELETE` requests.
     :param: options Endpoint options used to configure the HTTP request.
-    :returns: A  ServiceTask.
+    :returns: A ServiceTask instance that refers to the lifetime of processing
+     a given request.
     */
     public func DELETE(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.DELETE, path: path, parameters: parameters, options: options)
@@ -126,7 +133,8 @@ public struct WebService {
     :param: parameters Optional request parameters. The data is URL encoded as 
      a query string for `HEAD` requests.
     :param: options Endpoint options used to configure the HTTP request.
-    :returns: A  ServiceTask.
+    :returns: A ServiceTask instance that refers to the lifetime of processing
+     a given request.
     */
     public func HEAD(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         return request(.HEAD, path: path, parameters: parameters, options: options)
@@ -145,7 +153,8 @@ public struct WebService {
       or absolute.
      :param: parameters Optional request parameters.
      :param: options Optional endpoint options used to configure the HTTP request.
-     :returns: A  ServiceTask.
+     :returns: A ServiceTask instance that refers to the lifetime of processing
+      a given request.
     */
     private func request(method: Request.Method, path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
         let urlString = absoluteURLString(requestPath(relativePath: path))
@@ -238,7 +247,6 @@ extension WebService: URLStringConstructible {
 }
 
 // MARK: - Protocols
-
 
 public protocol SessionDataTaskDataSource {
     func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask

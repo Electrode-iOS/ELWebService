@@ -36,7 +36,7 @@ extension ServiceTask {
     public typealias StoreServiceSuccess = ([StoreModel]?) -> Void
     public typealias StoreServiceError = (NSError?) -> Void
     
-    func responseStoreModels(handler: StoreServiceSuccess) -> Self {
+    func responseStores(handler: StoreServiceSuccess) -> Self {
         return responseJSON { json in
             
             if let models = self.parseJSONAsStoreModels(json) {

@@ -7,8 +7,11 @@
 //
 
 import Foundation
-import THGDispatch
 
+/**
+ A cancelable object that refers to the lifetime of processing a given 
+ NSURLSessionDataTask.
+*/
 public class ServiceTask {
     
     public typealias SuccessHandler = (NSData?, NSURLResponse?) -> Void
@@ -36,7 +39,7 @@ public class ServiceTask {
         }
     }
     
-    private let handlerQueue: DispatchQueue
+    private let handlerQueue: dispatch_queue_t
     private var dataTask: NSURLSessionDataTask?
     
     /**
@@ -68,8 +71,8 @@ public class ServiceTask {
     */
     init(urlRequestEncoder: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
         self.handlerQueue = {
-            let queue = DispatchQueue.createSerial("ServiceTask")
-            Dispatch().suspend(queue)
+            let queue = dispatch_queue_create(("com.THGWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
+            dispatch_suspend(queue)
             return queue
         }()
 
@@ -102,7 +105,7 @@ public class ServiceTask {
     private func dataTaskCompletionHandler() -> (NSData?, NSURLResponse?, NSError?) -> Void {
         return { data, response, error in
             self.result = Result(data: data, response: response, error: error)
-            Dispatch().resume(self.handlerQueue)
+            dispatch_resume(self.handlerQueue)
         }
     }
     
@@ -116,20 +119,20 @@ public class ServiceTask {
      :returns: Self instance to support chaining.
     */
     public func response(handler: SuccessHandler) -> Self {
-        return response(.Main, handler: handler)
+        return response(dispatch_get_main_queue(), handler: handler)
     }
     
     /**
-    Add a response handler to be called once a successful response has been
-    received.
+     Add a response handler to be called once a successful response has been
+     received.
     
-    :param queue The DispatchQueue used to dispatch the response handler.
-    :param: handler Response handler to execute upon receiving a response.
-    :returns: Self instance to support chaining.
+     :param queue The DispatchQueue used to dispatch the response handler.
+     :param: handler Response handler to execute upon receiving a response.
+     :returns: Self instance to support chaining.
     */
-    public func response(queue: DispatchQueue, handler: SuccessHandler) -> Self {
-        Dispatch().async(handlerQueue) {
-            Dispatch().async(queue) {
+    public func response(queue: dispatch_queue_t, handler: SuccessHandler) -> Self {
+        dispatch_async(handlerQueue) {
+            dispatch_async(queue) {
                 if let result = self.result where result.error == nil {
                     handler(result.data, result.response)
                 }
@@ -140,14 +143,14 @@ public class ServiceTask {
     }
     
     /**
-    Add a response handler to be called if a request results in an error.
+     Add a response handler to be called if a request results in an error.
     
-    :param: handler Error handler to execute when an error occurs.
-    :returns: Self instance to support chaining.
+     :param: handler Error handler to execute when an error occurs.
+     :returns: Self instance to support chaining.
     */
     public func responseError(handler: ErrorHandler) -> Self {
-        Dispatch().async(handlerQueue) {
-            Dispatch().async(.Main) {
+        dispatch_async(handlerQueue) {
+            dispatch_async(dispatch_get_main_queue()) {
                 if let error = self.result?.error {
                     handler(error)
                 }
@@ -172,17 +175,17 @@ extension ServiceTask {
      :returns: Self instance to support chaining.
     */
     public func responseJSON(handler: JSONHandler) -> Self {
-        return responseJSON(.Main, handler: handler)
+        return responseJSON(dispatch_get_main_queue(), handler: handler)
     }
     
     /**
-    Add a response handler to serialize the response body as a JSON object.
+     Add a response handler to serialize the response body as a JSON object.
     
-    :param: queue The DispatchQueue used to dispatch the response handler.
-    :param: handler Response handler to execute upon receiving a response.
-    :returns: Self instance to support chaining.
+     :param: queue The DispatchQueue used to dispatch the response handler.
+     :param: handler Response handler to execute upon receiving a response.
+     :returns: Self instance to support chaining.
     */
-    public func responseJSON(queue: DispatchQueue, handler: JSONHandler) -> Self {
+    public func responseJSON(queue: dispatch_queue_t, handler: JSONHandler) -> Self {
         return response(queue) { data, response in
             if let data = data {
                 var error: NSError?

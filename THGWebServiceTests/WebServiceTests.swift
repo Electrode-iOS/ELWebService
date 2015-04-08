@@ -9,7 +9,6 @@
 import UIKit
 import XCTest
 import THGWebService
-import THGDispatch
 
 class WebServiceTests: XCTestCase {
     
@@ -165,10 +164,11 @@ class WebServiceTests: XCTestCase {
         var backgroundRan = false
         let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
-        
+        let queue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
+
         let task = service
             .GET("/get")
-            .response(.Background) { data, response in
+            .response(queue) { data, response in
                 backgroundExpectation.fulfill()
                 backgroundRan = true
             }
@@ -200,9 +200,10 @@ class WebServiceTests: XCTestCase {
         let successExpectation = expectationWithDescription("Received status 200")
         let handler = jsonResponseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
+        let queue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
         let task = service
             .GET("/get")
-            .responseJSON(.Background, handler: handler)
+            .responseJSON(queue, handler: handler)
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)

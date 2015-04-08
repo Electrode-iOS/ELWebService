@@ -7,32 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1765E3581ABC6B8200F9E531 /* THGDispatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1768D7E81ABB854E0061AA7F /* THGDispatch.framework */; };
 		179C5C6A1AB079980047169F /* THGWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* THGWebService.framework */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
 		17C96AAD1AB0D0D700D49071 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C96AAC1AB0D0D700D49071 /* RequestTests.swift */; };
 		17C96AAF1AB0D84400D49071 /* WebServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C96AAE1AB0D84400D49071 /* WebServiceTests.swift */; };
-		17D1879C1AB0B173000742BF /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D187971AB0B173000742BF /* Request.swift */; };
-		17D1879D1AB0B173000742BF /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D187981AB0B173000742BF /* ServiceTask.swift */; };
 		17D1879E1AB0B173000742BF /* THGWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* THGWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D1879F1AB0B173000742BF /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1879A1AB0B173000742BF /* WebService.swift */; };
+		17D1E56E1AD5538000384D2D /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56B1AD5538000384D2D /* Request.swift */; };
+		17D1E56F1AD5538000384D2D /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56C1AD5538000384D2D /* ServiceTask.swift */; };
+		17D1E5701AD5538000384D2D /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56D1AD5538000384D2D /* WebService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1768D7E71ABB854E0061AA7F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CA0CEA691A8A877200DF93E9;
-			remoteInfo = THGDispatch;
-		};
-		1768D7E91ABB854E0061AA7F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CA0CEA741A8A877200DF93E9;
-			remoteInfo = THGDispatchTests;
-		};
 		179C5C6B1AB079980047169F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 179C5C551AB079980047169F /* Project object */;
@@ -43,7 +28,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = THGDispatch.xcodeproj; path = ../KillerRabbit/THGDispatch.xcodeproj; sourceTree = "<group>"; };
 		179C5C5E1AB079980047169F /* THGWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = THGWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		179C5C691AB079980047169F /* THGWebServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = THGWebServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		179C5C6F1AB079980047169F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,10 +35,10 @@
 		17C96AAC1AB0D0D700D49071 /* RequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTests.swift; sourceTree = "<group>"; };
 		17C96AAE1AB0D84400D49071 /* WebServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServiceTests.swift; sourceTree = "<group>"; };
 		17D187961AB0B173000742BF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		17D187971AB0B173000742BF /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
-		17D187981AB0B173000742BF /* ServiceTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTask.swift; sourceTree = "<group>"; };
 		17D187991AB0B173000742BF /* THGWebService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THGWebService.h; sourceTree = "<group>"; };
-		17D1879A1AB0B173000742BF /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
+		17D1E56B1AD5538000384D2D /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		17D1E56C1AD5538000384D2D /* ServiceTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTask.swift; sourceTree = "<group>"; };
+		17D1E56D1AD5538000384D2D /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +46,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1765E3581ABC6B8200F9E531 /* THGDispatch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,27 +60,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1768D7C81ABB68EC0061AA7F /* Modules */ = {
-			isa = PBXGroup;
-			children = (
-				1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */,
-			);
-			name = Modules;
-			sourceTree = "<group>";
-		};
-		1768D7E21ABB854E0061AA7F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1768D7E81ABB854E0061AA7F /* THGDispatch.framework */,
-				1768D7EA1ABB854E0061AA7F /* THGDispatchTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		179C5C541AB079980047169F = {
 			isa = PBXGroup;
 			children = (
-				1768D7C81ABB68EC0061AA7F /* Modules */,
 				17D187951AB0B173000742BF /* Source */,
 				17D187A01AB0B1F7000742BF /* Supporting Files */,
 				179C5C6D1AB079980047169F /* THGWebServiceTests */,
@@ -135,10 +100,8 @@
 		17D187951AB0B173000742BF /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				17D1E56A1AD5538000384D2D /* Core */,
 				17D187991AB0B173000742BF /* THGWebService.h */,
-				17D1879A1AB0B173000742BF /* WebService.swift */,
-				17D187981AB0B173000742BF /* ServiceTask.swift */,
-				17D187971AB0B173000742BF /* Request.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -151,6 +114,16 @@
 			);
 			name = "Supporting Files";
 			path = Source;
+			sourceTree = "<group>";
+		};
+		17D1E56A1AD5538000384D2D /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				17D1E56B1AD5538000384D2D /* Request.swift */,
+				17D1E56C1AD5538000384D2D /* ServiceTask.swift */,
+				17D1E56D1AD5538000384D2D /* WebService.swift */,
+			);
+			path = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -230,12 +203,6 @@
 			mainGroup = 179C5C541AB079980047169F;
 			productRefGroup = 179C5C5F1AB079980047169F /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 1768D7E21ABB854E0061AA7F /* Products */;
-					ProjectRef = 1768D7E11ABB854E0061AA7F /* THGDispatch.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				179C5C5D1AB079980047169F /* THGWebService */,
@@ -243,23 +210,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		1768D7E81ABB854E0061AA7F /* THGDispatch.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = THGDispatch.framework;
-			remoteRef = 1768D7E71ABB854E0061AA7F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1768D7EA1ABB854E0061AA7F /* THGDispatchTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = THGDispatchTests.xctest;
-			remoteRef = 1768D7E91ABB854E0061AA7F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		179C5C5C1AB079980047169F /* Resources */ = {
@@ -284,9 +234,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17D1879F1AB0B173000742BF /* WebService.swift in Sources */,
-				17D1879D1AB0B173000742BF /* ServiceTask.swift in Sources */,
-				17D1879C1AB0B173000742BF /* Request.swift in Sources */,
+				17D1E5701AD5538000384D2D /* WebService.swift in Sources */,
+				17D1E56F1AD5538000384D2D /* ServiceTask.swift in Sources */,
+				17D1E56E1AD5538000384D2D /* Request.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
