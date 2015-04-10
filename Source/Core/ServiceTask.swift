@@ -14,7 +14,7 @@ import Foundation
  cancelled and suspended like a data task as well as queried for current state
  via the `state` property.
 */
-public class ServiceTask {
+public final class ServiceTask {
     
     public typealias SuccessHandler = (NSData?, NSURLResponse?) -> Void
     public typealias ErrorHandler = (NSError?) -> Void
