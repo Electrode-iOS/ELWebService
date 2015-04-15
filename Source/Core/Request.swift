@@ -133,18 +133,19 @@ extension Request: URLRequestEncodable {
             urlRequest.addValue(value, forHTTPHeaderField: name)
         }
         
-        if method != .GET {
+        switch method {
+        case .GET, .DELETE:
+            if let url = urlRequest.URL,
+                encodedURL = parameterEncoding.encodeURL(url, parameters: parameters) {
+                    urlRequest.URL = encodedURL
+            }
+        default:
             if let data = parameterEncoding.encodeBody(parameters) {
                 urlRequest.HTTPBody = data
                 
                 if urlRequest.valueForHTTPHeaderField(Headers.contentType) == nil {
                     urlRequest.setValue(ContentType.formEncoded, forHTTPHeaderField: Headers.contentType)
                 }
-            }
-        } else {
-            if let url = urlRequest.URL,
-                encodedURL = parameterEncoding.encodeURL(url, parameters: parameters) {
-                urlRequest.URL = encodedURL
             }
         }
 
