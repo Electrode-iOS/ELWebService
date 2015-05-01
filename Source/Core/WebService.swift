@@ -24,8 +24,6 @@ public struct WebService {
     
     public struct EndpointOptions {
         public var parameterEncoding: Request.ParameterEncoding = .Percent
-        public var shouldCache: Bool = false
-        public var cacheTTL: Int? // some default?
         public var headers: [String: String]?
         
         public init() {
