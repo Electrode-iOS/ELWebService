@@ -27,6 +27,16 @@ extension WebService {
     public func fetchStores(zipCode aZipCode: String) -> ServiceTask {
         return GET("/stores", parameters: ["zip" : aZipCode])
     }
+    
+    public func setFavoriteStoreWithID(storeID: String) -> ServiceTask {
+        return POST("/stores",
+            parameters: ["storeID" : storeID],
+            options: [.ParameterEncoding(.JSON),
+                      .Header("custom-header", "12345"),
+                      .Header(Request.Headers.userAgent, "my app ua")]
+        )
+
+    }
 }
 
 // MARK - Response Processing
