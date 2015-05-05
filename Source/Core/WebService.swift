@@ -8,26 +8,17 @@
 
 import Foundation
 
+public protocol SessionDataTaskDataSource {
+    func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
+}
+
 public struct WebService {
     
     // MARK: NSURLSessionDataTask
     
     private struct DataTaskDataSource: SessionDataTaskDataSource {
         func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
-            let session = NSURLSession.sharedSession()
-            let task = session.dataTaskWithRequest(request, completionHandler: completion);
-            return task
-        }
-    }
-    
-    // MARK: Endpoint Configuration
-    
-    public struct EndpointOptions {
-        public var parameterEncoding: Request.ParameterEncoding = .Percent
-        public var headers: [String: String]?
-        
-        public init() {
-            
+            return NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: completion);
         }
     }
     
@@ -73,7 +64,7 @@ public struct WebService {
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
-    public func GET(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func GET(path: String, parameters: [String : AnyObject]? = nil, options: [Request.Option]? = nil) -> ServiceTask {
         return request(.GET, path: path, parameters: parameters, options: options)
     }
     
@@ -89,7 +80,7 @@ public struct WebService {
       a given request. The newly created task is resumed immediately if the
       `startTasksImmediately` poperty is set to `true`.
     */
-    public func POST(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func POST(path: String, parameters: [String : AnyObject]? = nil, options: [Request.Option]? = nil) -> ServiceTask {
         return request(.POST, path: path, parameters: parameters, options: options)
     }
     
@@ -105,7 +96,7 @@ public struct WebService {
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
-    public func PUT(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func PUT(path: String, parameters: [String : AnyObject]? = nil, options: [Request.Option]? = nil) -> ServiceTask {
         return request(.PUT, path: path, parameters: parameters, options: options)
     }
     
@@ -121,7 +112,7 @@ public struct WebService {
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
-    public func DELETE(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func DELETE(path: String, parameters: [String : AnyObject]? = nil, options: [Request.Option]? = nil) -> ServiceTask {
         return request(.DELETE, path: path, parameters: parameters, options: options)
     }
     
@@ -137,7 +128,7 @@ public struct WebService {
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
-    public func HEAD(path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    public func HEAD(path: String, parameters: [String : AnyObject]? = nil, options: [Request.Option]? = nil) -> ServiceTask {
         return request(.HEAD, path: path, parameters: parameters, options: options)
     }
     
@@ -158,7 +149,7 @@ public struct WebService {
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
-    private func request(method: Request.Method, path: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> ServiceTask {
+    private func request(method: Request.Method, path: String, parameters: [String : AnyObject]? = nil, options: [Request.Option]? = nil) -> ServiceTask {
         let urlString = absoluteURLString(requestPath(relativePath: path))
         let request = constructRequest(method, url: urlString, parameters: parameters, options: options)
         return serviceTask(urlRequestEncoder: request)
@@ -207,7 +198,7 @@ public struct WebService {
      :param: options Optional endpoint options used to configure the HTTP request.
      :returns: A request value.
     */
-    public func constructRequest(method: Request.Method, url: String, parameters: [String : AnyObject]? = nil, options: EndpointOptions? = nil) -> Request {
+    public func constructRequest(method: Request.Method, url: String, parameters: [String : AnyObject]? = nil, options: [Request.Option]? = nil) -> Request {
         var request = Request(method, url: url)
         
         if let parameters = parameters {
@@ -215,11 +206,7 @@ public struct WebService {
         }
         
         if let options = options {
-            request.parameterEncoding = options.parameterEncoding
-            
-            if let headers = options.headers {
-                request.headers = headers
-            }            
+            request = request.encodeOptions(options)
         }
         
         return request
@@ -228,7 +215,7 @@ public struct WebService {
 
 // MARK: - URL String Construction
 
-extension WebService: URLStringConstructible {
+extension WebService {
     
     /**
      Return an absolute URL string relative to the baseURLString value.
@@ -251,14 +238,4 @@ extension WebService: URLStringConstructible {
         let relativeURL = NSURL(string: relativeURLString)
         return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString!
     }
-}
-
-// MARK: - Protocols
-
-public protocol SessionDataTaskDataSource {
-    func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
-}
-
-public protocol URLStringConstructible {
-    func constructURLString(string: String, relativeToURLString: String) -> String
 }
