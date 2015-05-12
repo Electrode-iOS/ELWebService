@@ -272,11 +272,11 @@ class WebServiceTests: XCTestCase {
         let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
         let parameters = ["foo" : "bar", "number" : 42]
-        var options = WebService.EndpointOptions()
-        options.parameterEncoding = .JSON
         
         let task = service
-            .POST("/post", parameters: parameters, options: options)
+            .POST("/post",
+                parameters: parameters,
+                options: [.ParameterEncoding(.JSON)])
             .response { data, response in
                 
                 let httpResponse = response as! NSHTTPURLResponse
@@ -302,11 +302,12 @@ class WebServiceTests: XCTestCase {
         let successExpectation = expectationWithDescription("Received status 200")
         let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
-        var options = WebService.EndpointOptions()
-        options.headers = ["Some-Test-Header" :"testValue"]
+        var headers = ["Some-Test-Header" :"testValue"]
         
         let task = service
-            .GET("/get", parameters: nil, options: options)
+            .GET("/get",
+                parameters: nil,
+                options: [.Header("Some-Test-Header", "testValue")])
             .response { data, response in
                 
                 let httpResponse = response as! NSHTTPURLResponse
@@ -322,7 +323,7 @@ class WebServiceTests: XCTestCase {
                 let deliveredHeaders = castedJSON!["headers"] as? [String : AnyObject]
                 XCTAssert(deliveredHeaders != nil)
                 
-                RequestTests.assertRequestParametersNotEqual(deliveredHeaders!, toOriginalParameters: options.headers!)
+                RequestTests.assertRequestParametersNotEqual(deliveredHeaders!, toOriginalParameters: headers)
         }
         
         waitForExpectationsWithTimeout(2, handler: nil)
