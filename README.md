@@ -174,12 +174,10 @@ percentEncoded=this%20needs%20percent%20encoded&foo=bar
 Send a `POST` request with JSON encoded parameters.
 
 ```
-let parameters = ["foo" : "bar", "number" : 42]
-var options = WebService.EndpointOptions()
-options.parameterEncoding = .JSON
-
 WebService(baseURLString: "http://httpbin.org")
-    .POST("/post", parameters: parameters, options: options)
+    .POST("/post", 
+        parameters: ["foo" : "bar", "number" : 42], 
+        options: [.ParameterEncoding(.JSON)])
 ```
 
 HTTP
@@ -190,6 +188,19 @@ Content-Type: application/json
 Content-Length: 25
 
 {"number":42,"foo":"bar"}
+```
+
+### Options
+
+An array of Option enum values can be passed as additional information to encode in the request.
+
+```
+WebService(baseURLString: "http://httpbin.org")
+    .POST("/post", 
+        parameters: ["foo" : "bar", "number" : 42], 
+        options: [.ParameterEncoding(.JSON),
+                  .Header("custom-header", "12345"),
+                  .Header(Request.Headers.userAgent, "my app ua")])
 ```
 
 ### Protocols
