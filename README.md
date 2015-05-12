@@ -4,6 +4,15 @@
 
 Swallow simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, Swallow is not intended to be a fully-featured networking library. By default Swallow uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any NSURLSession instance using a [protocol](#sessiondatataskdatasource).
 
+## Installation
+
+Install Swallow by adding THGWebService.xcodeproj to your project and configuring your target to link THGWebService.framework.
+
+[THG](https://github.com/TheHolyGrail/) modules are designed to live side-by-side in the file system, like so:
+
+* \MyProject
+* \MyProject\Swallow
+
 ## Usage
 
 At the highest level a request for a resource could look like the following:
