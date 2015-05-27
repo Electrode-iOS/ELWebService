@@ -1,0 +1,4 @@
+language: objective-c
+osx_image: beta-xcode6.3
+script:
+   - xctool -project THGWebService.xcodeproj -scheme THGWebService -sdk iphonesimulator build test
