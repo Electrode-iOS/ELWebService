@@ -161,7 +161,6 @@ class WebServiceTests: XCTestCase {
     func testSpecifyingResponseHandlerQueue() {
         let successExpectation = expectationWithDescription("Received status 200")
         let backgroundExpectation = expectationWithDescription("Background handler ran")
-        var backgroundRan = false
         let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
         let queue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
@@ -170,14 +169,10 @@ class WebServiceTests: XCTestCase {
             .GET("/get")
             .response(queue) { data, response in
                 backgroundExpectation.fulfill()
-                backgroundRan = true
             }
             .response { data, response in
                 let httpResponse = response as! NSHTTPURLResponse
-                
-                if httpResponse.statusCode == 200 && backgroundRan {
-                    successExpectation.fulfill()
-                }
+                successExpectation.fulfill()
         }
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
