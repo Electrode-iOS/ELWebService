@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		178412251B1672E200EECF8B /* THGWebService.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* THGWebService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		179C5C6A1AB079980047169F /* THGWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* THGWebService.framework */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
 		17C96AAD1AB0D0D700D49071 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C96AAC1AB0D0D700D49071 /* RequestTests.swift */; };
@@ -26,6 +27,19 @@
 			remoteInfo = THGWebService;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		178412241B1672CE00EECF8B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				178412251B1672E200EECF8B /* THGWebService.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		179C5C5E1AB079980047169F /* THGWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = THGWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -165,6 +179,7 @@
 				179C5C651AB079980047169F /* Sources */,
 				179C5C661AB079980047169F /* Frameworks */,
 				179C5C671AB079980047169F /* Resources */,
+				178412241B1672CE00EECF8B /* CopyFiles */,
 			);
 			buildRules = (
 			);
