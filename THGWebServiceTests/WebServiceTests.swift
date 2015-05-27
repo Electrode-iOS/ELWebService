@@ -181,7 +181,7 @@ class WebServiceTests: XCTestCase {
         }
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(3, handler: nil)
+        waitForExpectationsWithTimeout(4, handler: nil)
     }
     
     func testGetJSON() {
