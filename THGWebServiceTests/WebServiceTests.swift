@@ -20,7 +20,7 @@ class WebServiceTests: XCTestCase {
         }
     }
     
-    func responseHandler(#expectation: XCTestExpectation) -> (NSData?, NSURLResponse?) -> Void {
+    func responseHandler(expectation expectation: XCTestExpectation) -> (NSData?, NSURLResponse?) -> Void {
         return { data, response in
             
             let httpResponse = response as! NSHTTPURLResponse
@@ -31,7 +31,7 @@ class WebServiceTests: XCTestCase {
         }
     }
     
-    func jsonResponseHandler(#expectation: XCTestExpectation) -> (AnyObject?) -> Void {
+    func jsonResponseHandler(expectation expectation: XCTestExpectation) -> (AnyObject?) -> Void {
         return { json in
             
             if json is NSDictionary {
@@ -127,7 +127,7 @@ class WebServiceTests: XCTestCase {
                 wasResponseCalled = true
             }
             .responseError { error in
-                println("error called")
+                print("error called")
 
                 if let error = error {
                     
