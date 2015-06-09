@@ -100,7 +100,7 @@ class RequestTests: XCTestCase {
         let components = NSURLComponents(URL: urlRequest.URL!, resolvingAgainstBaseURL: false)!
         
         if let queryItems = components.queryItems {
-            for item in queryItems as! [NSURLQueryItem] {
+            for item in queryItems {
                 let originalValue = parameters[item.name]!
                 XCTAssertEqual(item.value!, originalValue)
             }
