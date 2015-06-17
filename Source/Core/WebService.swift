@@ -8,10 +8,22 @@
 
 import Foundation
 
+
+/**
+  Types conforming to the `SessionDataTaskDataSource` protocol are responsible 
+  for creating `NSURLSessionDataTask` objects based on a `NSURLRequest` value 
+  and invoking a completion handler after the response of a data task has been 
+  received. Adopt this protocol in order to specify the `NSURLSession` instance 
+  used to send requests.
+*/
 public protocol SessionDataTaskDataSource {
     func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask?
 }
 
+/**
+ A `WebService` value provides a concise API for encoding a NSURLRequest object
+ and processing the resulting `NSURLResponse` object.
+*/
 public struct WebService {
     
     // MARK: NSURLSessionDataTask
@@ -22,9 +34,7 @@ public struct WebService {
         }
     }
     
-    /**
-     Base URL of the web service.
-    */
+    /// Base URL of the web service.
     public let baseURLString: String
     
     /**
@@ -34,7 +44,7 @@ public struct WebService {
     public var startTasksImmediately = true
     
     /**
-     Object responsible for creating a `NSURLSessionDataTask` based on a
+     Type responsible for creating a `NSURLSessionDataTask` based on a
      `NSURLRequest`.
     */
     public var dataTaskSource: SessionDataTaskDataSource = DataTaskDataSource()

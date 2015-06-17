@@ -8,11 +8,13 @@
 
 import Foundation
 
+/// Defines an interface for encoding parameters in a HTTP request.
 public protocol ParameterEncodable {
     func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL?
     func encodeBody(parameters: [String : AnyObject]) -> NSData?
 }
 
+/// Defines an interface for encoding a `NSURLRequest`.
 public protocol URLRequestEncodable {
     func encodeURLRequest() -> NSURLRequest
 }
@@ -22,6 +24,7 @@ public protocol URLRequestEncodable {
 */
 public struct Request {
     
+    /// The `Method` enum defines the supported HTTP methods.
     public enum Method: String {
         case GET = "GET"
         case HEAD = "HEAD"
@@ -32,8 +35,11 @@ public struct Request {
     
     // MARK: Parameter Encodings
     
+    /// A `ParameterEncoding` value defines how to encode request parameters
     public enum ParameterEncoding: ParameterEncodable {
+        /// Encode parameters with percent encoding
         case Percent
+        /// Encode parameters as JSON
         case JSON
         
         /**
@@ -72,8 +78,7 @@ public struct Request {
         }
     }
     
-    // MARK: HTTP Header Constants
-    
+    /// A group of static constants for referencing HTTP header field names.
     public struct Headers {
         public static let userAgent = "User-Agent"
         public static let contentType = "Content-Type"
@@ -84,18 +89,36 @@ public struct Request {
     
     // MARK: Content Type Constants
     
+    /// A group of static constants for referencing supported HTTP 
+    /// `Content-Type` header values.
     public struct ContentType {
         public static let formEncoded = "application/x-www-form-urlencoded"
         public static let json = "application/json"
     }
     
-    // MARK: Request Properties
-    
+    /// The HTTP method of the request.
     public let method: Method
+    
+    /// The URL string of the HTTP request.
     public let url: String
+    
+    /**
+     The parameters to encode in the HTTP request. Request parameters are percent
+     encoded and are appended as a query string or set as the request body 
+     depending on the HTTP request method.
+    */
     public var parameters = [String : AnyObject]()
+    
+    /**
+     The HTTP header fields of the request. Each key/value pair represents a 
+     HTTP header field value using the key as the field name.
+    */
     public var headers = [String : String]()
+    
+    /// The cache policy of the request. See NSURLRequestCachePolicy.
     public var cachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
+    
+    /// The type of parameter encoding to use when encoding request parameters.
     public var parameterEncoding = ParameterEncoding.Percent {
         didSet {
             if parameterEncoding == .JSON {
@@ -104,11 +127,13 @@ public struct Request {
         }
     }
     
+    /// The HTTP `Content-Type` header field value of the request.
     public var contentType: String? {
         set { headers[Headers.contentType] = newValue }
         get { return headers[Headers.contentType] }
     }
     
+     /// The HTTP `User-Agent` header field value of the request.
     public var userAgent: String? {
         set { headers[Headers.userAgent] = newValue }
         get { return headers[Headers.userAgent] }
@@ -119,8 +144,8 @@ public struct Request {
     /**
      Intialize a request value.
      
-     :params: method Request method.
-     :params: url URL string of the request.
+     - parameter method: The HTTP request method.
+     - parameter url: The URL string of the HTTP request.
     */
     public init(_ method: Method, url: String) {
         self.method = method
@@ -170,12 +195,17 @@ extension Request: URLRequestEncodable {
 
 extension Request {
     
+    /// An `Option` value defines a rule for encoding part of a `Request` value.
     public enum Option {
+        /// Defines the parameter encoding for the HTTP request.
         case ParameterEncoding(Request.ParameterEncoding)
+        /// Defines a HTTP header field name and value to set in the `Request`.
         case Header(String, String)
+        /// Defines the cache policy to set in the `Request` value.
         case CachePolicy(NSURLRequestCachePolicy)
     }
     
+    /// Uses an array of `Option` values as rules for mutating a `Request` value.
     public func encodeOptions(options: [Option]) -> Request {
         var request = self
         

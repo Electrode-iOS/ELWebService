@@ -16,13 +16,14 @@ import Foundation
 */
 public final class ServiceTask {
     
+    /// A closure type alias for a success handler.
     public typealias SuccessHandler = (NSData?, NSURLResponse?) -> Void
+    
+    /// A closure type alias for an error handler.
     public typealias ErrorHandler = (NSError?) -> Void
     
-    /**
-     Represents the result of a service task.
-    */
-    enum Result {
+    /// Represents the result of a service task.
+    private enum Result {
         case Success(NSData?, NSURLResponse?)
         case Failure(NSError)
 
@@ -78,23 +79,17 @@ public final class ServiceTask {
     
     // MARK: NSURLSesssionDataTask
     
-    /**
-     Resume the underlying data task.
-    */
+    /// Resume the underlying data task.
     public func resume() {
         dataTask?.resume()
     }
     
-    /**
-     Suspend the underlying data task.
-    */
+    /// Suspend the underlying data task.
     public func suspend() {
         dataTask?.suspend()
     }
     
-    /**
-     Cancel the underlying data task.
-    */
+    /// Cancel the underlying data task.
     public func cancel() {
         dataTask?.cancel()
     }
