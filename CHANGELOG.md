@@ -4,6 +4,8 @@
 - Enable testability for debug builds only
 - Add `percentEncodeURLQueryCharacters` to encode params now that `stringByAddingPercentEscapesUsingEncoding` is deprecated in iOS 9
 - Clean up unit tests to fix Xcode 7 warnings
+- Audit access control and update tests based on new `@testability` Xcode 7 support 
+- Use Swift 2's new `ErrorType` as the error parameter type for error handlers
 
 # [0.0.3](https://github.com/TheHolyGrail/Swallow/releases/tag/v0.0.3)
 

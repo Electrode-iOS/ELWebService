@@ -224,6 +224,50 @@ WebService(baseURLString: "http://httpbin.org")
                   .Header(Request.Headers.userAgent, "my app ua")])
 ```
 
+### Error Handling
+
+
+To handle the event of a failure call the `responseError` method with a closure. The closure will be called in the event of a failure.
+
+```
+WebService(baseURLString: "https://somehapi.herokuapp.com")
+    .GET("/foo")
+    .responseError { error in
+      // I am error
+    }
+```
+
+Sometimes your code may fail during processing a response and you will want to handle that failure in an error handler. For example, if you were parsing a JSON payload as an array of model types but the payload failed to be parsed as expected you can call `throwError()` to propogate an error to the error handler.
+
+
+```
+func responseAsFooModels(handler: ([FooModels]) -> Void) -> Self {
+    return responseJSON { json in
+        
+        if let models = self.parseJSONAsFooModels(json) {
+            handler(models)
+        } else {
+            self.throwError(self.modelParseError())
+        }
+    }
+}
+```
+
+Now an error handler can be used to seperate the case of handling request failures as well as model parsing failures.
+
+
+```
+WebService(baseURLString: "https://somehapi.herokuapp.com")
+    .GET("/foo")
+    .responseAsFooModels { models
+      // valid Foo models
+    }
+    .responseError { error in
+      // error handler will be called if JSON 
+      // payload fails to parse as Foo models
+    }
+```
+
 ### Protocols
 
 ##### SessionDataTaskDataSource
