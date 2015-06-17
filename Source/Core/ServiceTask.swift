@@ -22,22 +22,16 @@ public final class ServiceTask {
     /**
      Represents the result of a service task.
     */
-    public struct Result {
-        let data: NSData?
-        let response: NSURLResponse?
-        let error: NSError?
-        
-        /**
-         Initialize a service task result.
-        
-         :param: data Optional response data.
-         :param: data Optional response object.
-         :param: data Optional error object.
-        */
-        public init(data: NSData?, response: NSURLResponse?, error: NSError?) {
-            self.data = data
-            self.response = response
-            self.error = error
+    enum Result {
+        case Success(NSData?, NSURLResponse?)
+        case Failure(NSError)
+
+        init(data: NSData?, response: NSURLResponse?, error: NSError?) {
+            if let error = error {
+                self = .Failure(error)
+            } else {
+                self = .Success(data, response)
+            }
         }
     }
     
@@ -48,7 +42,7 @@ public final class ServiceTask {
      Result of the service task. If error contains a non-nil value then the 
      service task's error handler is called.
     */
-    public var result: Result?
+    private var result: Result?
     
     /**
      State of the service task.
@@ -128,7 +122,7 @@ public final class ServiceTask {
      Add a response handler to be called once a successful response has been
      received.
     
-     :param queue The target dispatch queue to which the response handler is 
+     :param queue The target dispatch queue to which the response handler is
       submitted.
      :param: handler Response handler to execute upon receiving a response.
      :returns: Self instance to support chaining.
@@ -136,8 +130,13 @@ public final class ServiceTask {
     public func response(queue: dispatch_queue_t, handler: SuccessHandler) -> Self {
         dispatch_async(handlerQueue) {
             dispatch_async(queue) {
-                if let result = self.result where result.error == nil {
-                    handler(result.data, result.response)
+                if let result = self.result {
+                    switch result {
+                    case .Success(let data, let response):
+                        handler(data, response)
+                    default:
+                        break
+                    }
                 }
             }
         }
@@ -145,23 +144,7 @@ public final class ServiceTask {
         return self
     }
     
-    /**
-     Add a response handler to be called if a request results in an error.
     
-     :param: handler Error handler to execute when an error occurs.
-     :returns: Self instance to support chaining.
-    */
-    public func responseError(handler: ErrorHandler) -> Self {
-        dispatch_async(handlerQueue) {
-            dispatch_async(dispatch_get_main_queue()) {
-                if let error = self.result?.error {
-                    handler(error)
-                }
-            }
-        }
-        
-        return self
-    }
 }
 
 // MARK: - JSON
@@ -195,11 +178,48 @@ extension ServiceTask {
                 let json: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: &error)
                 
                 if let error = error {
-                    self.result = Result(data: nil, response: nil, error: error)
+                    self.throwError(error)
                 } else {
                     handler(json)
                 }
             }
         }
+    }
+}
+
+// MARK: - Error Handling
+
+extension ServiceTask {
+    
+    /**
+    Add a response handler to be called if a request results in an error.
+    
+    :param: handler Error handler to execute when an error occurs.
+    :returns: Self instance to support chaining.
+    */
+    public func responseError(handler: ErrorHandler) -> Self {
+        dispatch_async(handlerQueue) {
+            dispatch_async(dispatch_get_main_queue()) {
+                if let result = self.result {
+                    switch result {
+                    case .Failure(let error):
+                        handler(error)
+                    default:
+                        break
+                    }
+                }
+                
+            }
+        }
+        
+        return self
+    }
+    
+    /**
+     Call to indicate that an error occured during the processing of a response.
+     Causes responseError handlers to be called.
+    */
+    public func throwError(error: NSError) {
+        self.result = Result(data: nil, response: nil, error: error)
     }
 }
