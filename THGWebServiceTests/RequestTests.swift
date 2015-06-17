@@ -100,7 +100,7 @@ class RequestTests: XCTestCase {
         let components = NSURLComponents(URL: urlRequest.URL!, resolvingAgainstBaseURL: false)!
         
         if let queryItems = components.queryItems {
-            for item in queryItems as! [NSURLQueryItem] {
+            for item in queryItems {
                 let originalValue = parameters[item.name]!
                 XCTAssertEqual(item.value!, originalValue)
             }
@@ -109,7 +109,7 @@ class RequestTests: XCTestCase {
             XCTAssert(false, "queryItems should not be nil")
         }
         
-        XCTAssertEqual(count(components.queryItems!), count(parameters.keys))
+        XCTAssertEqual((components.queryItems!).count, parameters.keys.count)
     }
     
     /**
@@ -119,15 +119,24 @@ class RequestTests: XCTestCase {
         let encoding = Request.ParameterEncoding.JSON
         let parameters: [String: AnyObject] = ["foo" : "bar", "paramName" : "paramValue", "number" : 42]
         let data = encoding.encodeBody(parameters)
-        var error: NSError?
+        let json: AnyObject
         
         XCTAssert(data != nil, "Encoded JSON data should not be nil")
         
-        let json = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.allZeros, error: &error) as? [String : AnyObject]
+        do {
+            json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions())
+        } catch {
+            fatalError("Serialized JSON should not be nil")
+        }
         
-        XCTAssert(json != nil, "Serialized JSON should not be nil")
+        
         
         // test original parameters against encoded
-        RequestTests.assertRequestParametersNotEqual(json!, toOriginalParameters: parameters)
+        
+        if let json = json as? [String : AnyObject] {
+            RequestTests.assertRequestParametersNotEqual(json, toOriginalParameters: parameters)
+        } else {
+            fatalError("Failed to cast JSON as [String : AnyObject]")
+        }
     }
 }

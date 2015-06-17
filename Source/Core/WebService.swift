@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol SessionDataTaskDataSource {
-    func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
+    func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask?
 }
 
 public struct WebService {
@@ -17,7 +17,7 @@ public struct WebService {
     // MARK: NSURLSessionDataTask
     
     private struct DataTaskDataSource: SessionDataTaskDataSource {
-        func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
+        func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask? {
             return NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: completion);
         }
     }
@@ -44,7 +44,7 @@ public struct WebService {
     /**
      Initialize a web service value.
     
-     :param: baseURLString URL string to use as the base URL of the web service.
+     - parameter baseURLString: URL string to use as the base URL of the web service.
     */
     public init(baseURLString: String) {
         self.baseURLString = baseURLString
@@ -55,12 +55,12 @@ public struct WebService {
     /**
      Create a service task for a `GET` HTTP request.
     
-     :param: path Request path. The value can be relative to the base URL string
+     - parameter path: Request path. The value can be relative to the base URL string
       or absolute.
-     :param: parameters Optional request parameters. The data is URL encoded as
+     - parameter parameters: Optional request parameters. The data is URL encoded as
        a query string for `GET` requests.
-     :param: options Endpoint options used to configure the HTTP request.
-     :returns: A ServiceTask instance that refers to the lifetime of processing
+     - parameter options: Endpoint options used to configure the HTTP request.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
@@ -71,12 +71,12 @@ public struct WebService {
     /**
      Create a service task for a `POST` HTTP request.
      
-     :param: path Request path. The value can be relative to the base URL string
+     - parameter path: Request path. The value can be relative to the base URL string
       or absolute.
-     :param: parameters Optional request parameters. The data is URL encoded and
+     - parameter parameters: Optional request parameters. The data is URL encoded and
       is set as the HTTP body for `POST` requests.
-     :param: options Endpoint options used to configure the HTTP request.
-     :returns: A ServiceTask instance that refers to the lifetime of processing
+     - parameter options: Endpoint options used to configure the HTTP request.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
       a given request. The newly created task is resumed immediately if the
       `startTasksImmediately` poperty is set to `true`.
     */
@@ -87,12 +87,12 @@ public struct WebService {
     /**
      Create a service task for a PUT HTTP request.
     
-     :param: path Request path. The value can be relative to the base URL string
+     - parameter path: Request path. The value can be relative to the base URL string
       or absolute.
-     :param: parameters Optional request parameters. The data is URL encoded and
+     - parameter parameters: Optional request parameters. The data is URL encoded and
       is set as the HTTP body for `PUT` requests.
-     :param: options Endpoint options used to configure the HTTP request.
-     :returns: A ServiceTask instance that refers to the lifetime of processing
+     - parameter options: Endpoint options used to configure the HTTP request.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
@@ -103,12 +103,12 @@ public struct WebService {
     /**
      Create a service task for a DELETE HTTP request.
     
-     :param: path Request path. The value can be relative to the base URL string
+     - parameter path: Request path. The value can be relative to the base URL string
       or absolute.
-     :param: parameters Optional request parameters. The data is URL encoded and
+     - parameter parameters: Optional request parameters. The data is URL encoded and
       is set as the HTTP body for `DELETE` requests.
-     :param: options Endpoint options used to configure the HTTP request.
-     :returns: A ServiceTask instance that refers to the lifetime of processing
+     - parameter options: Endpoint options used to configure the HTTP request.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
@@ -119,12 +119,12 @@ public struct WebService {
     /**
      Create a service task for a HEAD HTTP request.
     
-     :param: path Request path. The value can be relative to the base URL string
+     - parameter path: Request path. The value can be relative to the base URL string
       or absolute.
-     :param: parameters Optional request parameters. The data is URL encoded as
+     - parameter parameters: Optional request parameters. The data is URL encoded as
       a query string for `HEAD` requests.
-     :param: options Endpoint options used to configure the HTTP request.
-     :returns: A ServiceTask instance that refers to the lifetime of processing
+     - parameter options: Endpoint options used to configure the HTTP request.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
@@ -140,12 +140,12 @@ public struct WebService {
      automatically resuming set the `startTasksImmediately` of the WebService
      value to `false`.
     
-     :param: method HTTP request method.
-     :param: path Request path. The value can be relative to the base URL string
+     - parameter method: HTTP request method.
+     - parameter path: Request path. The value can be relative to the base URL string
       or absolute.
-     :param: parameters Optional request parameters.
-     :param: options Optional endpoint options used to configure the HTTP request.
-     :returns: A ServiceTask instance that refers to the lifetime of processing
+     - parameter parameters: Optional request parameters.
+     - parameter options: Optional endpoint options used to configure the HTTP request.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
@@ -158,12 +158,12 @@ public struct WebService {
     /**
      Create a `ServiceTask`
      
-     :param: urlRequestEncoder Type that provides the encoded NSURLRequest value.
-     :returns: A ServiceTask instance that refers to the lifetime of processing
+     - parameter urlRequestEncoder: Type that provides the encoded NSURLRequest value.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
       a given request. The newly created task is resumed immediately if the 
       `startTasksImmediately` poperty is set to `true`.
     */
-    private func serviceTask(#urlRequestEncoder: URLRequestEncodable) -> ServiceTask {
+    private func serviceTask(urlRequestEncoder urlRequestEncoder: URLRequestEncodable) -> ServiceTask {
         let task = ServiceTask(urlRequestEncoder: urlRequestEncoder, dataTaskSource: dataTaskSource)
         
         if startTasksImmediately {
@@ -179,10 +179,10 @@ public struct WebService {
      Override to customize how all web service request paths are constructed. 
      Useful for prefixing request endpoint paths.
      
-     :param: relativePath Relative request path.
-     :returns: A relative request path.
+     - parameter relativePath: Relative request path.
+     - returns: A relative request path.
     */
-    public func requestPath(#relativePath: String) -> String {
+    public func requestPath(relativePath relativePath: String) -> String {
         return relativePath
     }
     
@@ -191,12 +191,12 @@ public struct WebService {
     /**
      Override to customize how all web service request objects are constructed.
     
-     :param: method HTTP request method.
-     :param: url Request URL. The value can be relative to the base URL string
+     - parameter method: HTTP request method.
+     - parameter url: Request URL. The value can be relative to the base URL string
       or absolute.
-     :param: parameters Optional request parameters.
-     :param: options Optional endpoint options used to configure the HTTP request.
-     :returns: A request value.
+     - parameter parameters: Optional request parameters.
+     - parameter options: Optional endpoint options used to configure the HTTP request.
+     - returns: A request value.
     */
     public func constructRequest(method: Request.Method, url: String, parameters: [String : AnyObject]? = nil, options: [Request.Option]? = nil) -> Request {
         var request = Request(method, url: url)
@@ -220,8 +220,8 @@ extension WebService {
     /**
      Return an absolute URL string relative to the baseURLString value.
     
-     :param: string URL string.
-     :returns: An absoulte URL string relative to the value of `baseURLString`.
+     - parameter string: URL string.
+     - returns: An absoulte URL string relative to the value of `baseURLString`.
     */
     public func absoluteURLString(string: String) -> String {
         return constructURLString(string, relativeToURLString: baseURLString)
@@ -230,12 +230,12 @@ extension WebService {
     /**
      Return an absolute URL string relative to the baseURLString value.
     
-     :param: string URL string value.
-     :param: relativeURLString Value of relative URL string.
-     :returns: An absolute URL string.
+     - parameter string: URL string value.
+     - parameter relativeURLString: Value of relative URL string.
+     - returns: An absolute URL string.
     */
     public func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
         let relativeURL = NSURL(string: relativeURLString)
-        return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString!
+        return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString
     }
 }

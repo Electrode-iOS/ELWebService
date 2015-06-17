@@ -39,9 +39,9 @@ public struct Request {
         /**
          Encode query parameters in an existing URL.
         
-         :param: url Query string will be appended to this NSURL value.
-         :param: parameters Query parameters to be encoded as a query string.
-         :returns: A NSURL value with query string parameters encoded.
+         - parameter url: Query string will be appended to this NSURL value.
+         - parameter parameters: Query parameters to be encoded as a query string.
+         - returns: A NSURL value with query string parameters encoded.
         */
         public func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL? {
             if let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) {
@@ -55,15 +55,19 @@ public struct Request {
         /**
          Encode query parameters into a NSData value for request body.
         
-         :param: parameters Query parameters to be encoded as HTTP body.
-         :returns: NSData value with containing encoded parameters.
+         - parameter parameters: Query parameters to be encoded as HTTP body.
+         - returns: NSData value with containing encoded parameters.
         */
         public func encodeBody(parameters: [String : AnyObject]) -> NSData? {
             switch self {
             case .Percent:
                 return parameters.percentEncodedQueryString.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             case .JSON:
-                return NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions.allZeros, error: nil)
+                do {
+                    return try NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions())
+                } catch _ {
+                    return nil
+                }
             }
         }
     }
@@ -130,11 +134,11 @@ extension Request: URLRequestEncodable {
     /**
      Encode a NSURLRequest based on the value of Request.
      
-     :returns: A NSURLRequest encoded based on the Request data.
+     - returns: A NSURLRequest encoded based on the Request data.
     */
     public func encodeURLRequest() -> NSURLRequest {
 
-        var urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
+        let urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
         urlRequest.HTTPMethod = method.rawValue
         urlRequest.cachePolicy = cachePolicy
         
@@ -217,12 +221,24 @@ extension Dictionary {
     func percentEncode(element: Element) -> String? {
         let (name, value) = element
         
-        if let encodedName  = "\(name)".stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding),
-            let encodedValue = "\(value)".stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) {
+        if let encodedName  = "\(name)".percentEncodeURLQueryCharacters,
+            let encodedValue = "\(value)".percentEncodeURLQueryCharacters {
                 return "\(encodedName)=\(encodedValue)"
         }
         
         return nil
+    }
+}
+
+// MARK: - Percent Encoded String
+
+extension String {
+    /**
+     Returns a new string by replacing all characters allowed in an URL's query 
+     component with percent encoded characters.
+    */
+    var percentEncodeURLQueryCharacters: String? {
+        return self.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
     }
 }
 

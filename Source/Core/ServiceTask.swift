@@ -32,6 +32,7 @@ public final class ServiceTask {
             } else {
                 self = .Success(data, response)
             }
+
         }
     }
     
@@ -60,9 +61,9 @@ public final class ServiceTask {
     /**
      Initialize a ServiceTask value to fulfill an HTTP request.
     
-     :param: urlRequestEncoder Value responsible for encoding a NSURLRequest
+     - parameter urlRequestEncoder: Value responsible for encoding a NSURLRequest
       instance to send.
-     :param: dataTaskSource Object responsible for creating a 
+     - parameter dataTaskSource: Object responsible for creating a 
       NSURLSessionDataTask used to send the NSURLRequset.
     */
     init(urlRequestEncoder: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
@@ -111,8 +112,8 @@ public final class ServiceTask {
      Add a response handler to be called on the main thread after a successful
      response has been received.
      
-     :param: handler Response handler to execute upon receiving a response.
-     :returns: Self instance to support chaining.
+     - parameter handler: Response handler to execute upon receiving a response.
+     - returns: Self instance to support chaining.
     */
     public func response(handler: SuccessHandler) -> Self {
         return response(dispatch_get_main_queue(), handler: handler)
@@ -124,8 +125,8 @@ public final class ServiceTask {
     
      :param queue The target dispatch queue to which the response handler is
       submitted.
-     :param: handler Response handler to execute upon receiving a response.
-     :returns: Self instance to support chaining.
+     - parameter handler: Response handler to execute upon receiving a response.
+     - returns: Self instance to support chaining.
     */
     public func response(queue: dispatch_queue_t, handler: SuccessHandler) -> Self {
         dispatch_async(handlerQueue) {
@@ -143,8 +144,6 @@ public final class ServiceTask {
         
         return self
     }
-    
-    
 }
 
 // MARK: - JSON
@@ -157,8 +156,8 @@ extension ServiceTask {
      Add a response handler to serialize the response body as a JSON object. The
      handler will be dispatched to the main thread.
     
-     :param: handler Response handler to execute upon receiving a response.
-     :returns: Self instance to support chaining.
+     - parameter handler: Response handler to execute upon receiving a response.
+     - returns: Self instance to support chaining.
     */
     public func responseJSON(handler: JSONHandler) -> Self {
         return responseJSON(dispatch_get_main_queue(), handler: handler)
@@ -167,15 +166,23 @@ extension ServiceTask {
     /**
      Add a response handler to serialize the response body as a JSON object.
     
-     :param: queue The DispatchQueue used to dispatch the response handler.
-     :param: handler Response handler to execute upon receiving a response.
-     :returns: Self instance to support chaining.
+     - parameter queue: The DispatchQueue used to dispatch the response handler.
+     - parameter handler: Response handler to execute upon receiving a response.
+     - returns: Self instance to support chaining.
     */
     public func responseJSON(queue: dispatch_queue_t, handler: JSONHandler) -> Self {
         return response(queue) { data, response in
             if let data = data {
                 var error: NSError?
-                let json: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: &error)
+                let json: AnyObject?
+                do {
+                    json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+                } catch let jsonError as NSError {
+                    error = jsonError
+                    json = nil
+                } catch {
+                    fatalError()
+                }
                 
                 if let error = error {
                     self.throwError(error)

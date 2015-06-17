@@ -20,7 +20,7 @@ class WebServiceTests: XCTestCase {
         }
     }
     
-    func responseHandler(#expectation: XCTestExpectation) -> (NSData?, NSURLResponse?) -> Void {
+    func responseHandler(expectation expectation: XCTestExpectation) -> (NSData?, NSURLResponse?) -> Void {
         return { data, response in
             
             let httpResponse = response as! NSHTTPURLResponse
@@ -31,7 +31,7 @@ class WebServiceTests: XCTestCase {
         }
     }
     
-    func jsonResponseHandler(#expectation: XCTestExpectation) -> (AnyObject?) -> Void {
+    func jsonResponseHandler(expectation expectation: XCTestExpectation) -> (AnyObject?) -> Void {
         return { json in
             
             if json is NSDictionary {
@@ -127,13 +127,9 @@ class WebServiceTests: XCTestCase {
                 wasResponseCalled = true
             }
             .responseError { error in
-                println("error called")
-
-                if let error = error {
-                    
-                    XCTAssertFalse(wasResponseCalled, "Response should not be called for error cases")
-                    errorExpectation.fulfill()
-                }
+                XCTAssertNotNil(error)
+                XCTAssertFalse(wasResponseCalled, "Response should not be called for error cases")
+                errorExpectation.fulfill()
             }
         
         waitForExpectationsWithTimeout(2, handler: nil)
@@ -141,7 +137,6 @@ class WebServiceTests: XCTestCase {
     
     func testConstructRequestPath() {
         let service = WebService(baseURLString: "http://httpbin.org/")
-        let method = Request.Method.DELETE
         let servicePath = "/post"
         let requestPath = service.requestPath(relativePath: servicePath)
         
@@ -161,7 +156,6 @@ class WebServiceTests: XCTestCase {
     func testSpecifyingResponseHandlerQueue() {
         let successExpectation = expectationWithDescription("Received status 200")
         let backgroundExpectation = expectationWithDescription("Background handler ran")
-        let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
         let queue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
 
@@ -171,7 +165,6 @@ class WebServiceTests: XCTestCase {
                 backgroundExpectation.fulfill()
             }
             .response { data, response in
-                let httpResponse = response as! NSHTTPURLResponse
                 successExpectation.fulfill()
         }
         
@@ -206,40 +199,38 @@ class WebServiceTests: XCTestCase {
     
     func testGetPercentEncodedParameters() {
         let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
         let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
         
-        let task = service
-        .GET("/get", parameters: parameters)
-        .response { data, response in
-            
-            let httpResponse = response as! NSHTTPURLResponse
-            
-            if httpResponse.statusCode == 200 {
-                successExpectation.fulfill()
+        service
+            .GET("/get", parameters: parameters)
+            .response { data, response in
+                
+                let httpResponse = response as! NSHTTPURLResponse
+                
+                if httpResponse.statusCode == 200 {
+                    successExpectation.fulfill()
+                }
             }
-        }
-        .responseJSON { json in
-            let castedJSON = json as? [String : AnyObject]
-            XCTAssert(castedJSON != nil)
+            .responseJSON { json in
+                let castedJSON = json as? [String : AnyObject]
+                XCTAssert(castedJSON != nil)
 
-            let deliveredParameters = castedJSON!["args"] as? [String : AnyObject]
-            XCTAssert(deliveredParameters != nil)
-            
-            RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
-        }
+                let deliveredParameters = castedJSON!["args"] as? [String : AnyObject]
+                XCTAssert(deliveredParameters != nil)
+                
+                RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
+            }
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
     func testPostPercentEncodedParameters() {
         let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
         let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
         
-        let task = service
+        service
             .POST("/post", parameters: parameters)
             .response { data, response in
                 
@@ -264,11 +255,10 @@ class WebServiceTests: XCTestCase {
     
     func testPostJSONEncodedParameters() {
         let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
         let parameters = ["foo" : "bar", "number" : 42]
         
-        let task = service
+        service
             .POST("/post",
                 parameters: parameters,
                 options: [.ParameterEncoding(.JSON)])
@@ -295,11 +285,10 @@ class WebServiceTests: XCTestCase {
     
     func testHeadersDelivered() {
         let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
         let service = WebService(baseURLString: baseURL)
-        var headers = ["Some-Test-Header" :"testValue"]
+        let headers = ["Some-Test-Header" :"testValue"]
         
-        let task = service
+        service
             .GET("/get",
                 parameters: nil,
                 options: [.Header("Some-Test-Header", "testValue")])
