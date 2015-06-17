@@ -16,11 +16,11 @@ class ViewController: UIViewController {
         
         WebService.StoresService()
             .fetchStores(zipCode: "15217")
-            .responseStores { stores in
-                println("fetch success. the first store phone number is \(stores?.first?.phoneNumber)")
+            .responseAsStores { stores in
+                print("fetch success. the first store phone number is \(stores?.first?.phoneNumber)")
             }
             .responseError { error in
-                println("fetch error \(error)")
+                print("fetch error \(error)")
         }
     }
 }
