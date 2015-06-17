@@ -52,7 +52,7 @@ extension ServiceTask {
             if let models = self.parseJSONAsStoreModels(json) {
                 handler(models)
             } else {
-                self.result = Result(data: nil, response: nil, error: self.modelParseError())
+                self.throwError(self.modelParseError())
             }
         }
     }
