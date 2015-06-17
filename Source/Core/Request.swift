@@ -87,8 +87,6 @@ public struct Request {
         public static let cacheControl = "Cache-Control"
     }
     
-    // MARK: Content Type Constants
-    
     /// A group of static constants for referencing supported HTTP 
     /// `Content-Type` header values.
     public struct ContentType {
@@ -113,10 +111,10 @@ public struct Request {
      The HTTP header fields of the request. Each key/value pair represents a 
      HTTP header field value using the key as the field name.
     */
-    public var headers = [String : String]()
+    internal(set) var headers = [String : String]()
     
     /// The cache policy of the request. See NSURLRequestCachePolicy.
-    public var cachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
+    internal(set) var cachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
     
     /// The type of parameter encoding to use when encoding request parameters.
     public var parameterEncoding = ParameterEncoding.Percent {
@@ -128,13 +126,13 @@ public struct Request {
     }
     
     /// The HTTP `Content-Type` header field value of the request.
-    public var contentType: String? {
+    internal(set) var contentType: String? {
         set { headers[Headers.contentType] = newValue }
         get { return headers[Headers.contentType] }
     }
     
-     /// The HTTP `User-Agent` header field value of the request.
-    public var userAgent: String? {
+    /// The HTTP `User-Agent` header field value of the request.
+    internal(set) var userAgent: String? {
         set { headers[Headers.userAgent] = newValue }
         get { return headers[Headers.userAgent] }
     }
@@ -147,7 +145,7 @@ public struct Request {
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
     */
-    public init(_ method: Method, url: String) {
+    init(_ method: Method, url: String) {
         self.method = method
         self.url = url
     }
@@ -206,7 +204,7 @@ extension Request {
     }
     
     /// Uses an array of `Option` values as rules for mutating a `Request` value.
-    public func encodeOptions(options: [Option]) -> Request {
+    func encodeOptions(options: [Option]) -> Request {
         var request = self
         
         for option in options {
@@ -230,9 +228,8 @@ extension Request {
 // MARK: - Query String
 
 extension Dictionary {
-    /**
-     Return an encoded query string using the elements in the dictionary.
-    */
+    
+    /// Return an encoded query string using the elements in the dictionary.
     var percentEncodedQueryString: String {
         var components = [String]()
         
@@ -245,9 +242,7 @@ extension Dictionary {
         return "&".join(components)
     }
     
-    /**
-     Percent encode a Key/Value pair.
-    */
+    /// Percent encode a Key/Value pair.
     func percentEncode(element: Element) -> String? {
         let (name, value) = element
         
@@ -275,9 +270,8 @@ extension String {
 // MARK: - Percent Encoded Query
 
 extension NSURLComponents {
-    /**
-     Append an encoded query string to the existing percentEncodedQuery value.
-    */
+
+    /// Append an encoded query string to the existing percentEncodedQuery value.
     func appendPercentEncodedQuery(query: String) {
         if percentEncodedQuery == nil {
             percentEncodedQuery = query

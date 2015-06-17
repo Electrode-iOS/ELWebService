@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import THGWebService
+@testable import THGWebService
 import XCTest
 
 /**
