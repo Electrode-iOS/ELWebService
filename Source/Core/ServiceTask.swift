@@ -20,7 +20,7 @@ public final class ServiceTask {
     public typealias SuccessHandler = (NSData?, NSURLResponse?) -> Void
     
     /// A closure type alias for an error handler.
-    public typealias ErrorHandler = (NSError?) -> Void
+    public typealias ErrorHandler = (ErrorType) -> Void
     
     /// Represents the result of a service task.
     private enum Result {
