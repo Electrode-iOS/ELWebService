@@ -2,6 +2,10 @@
 
 Swallow simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, Swallow is not intended to be a fully-featured networking library. By default Swallow uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any NSURLSession instance using a [protocol](#sessiondatataskdatasource).
 
+## Requirements
+
+Swallow version 0.1.x requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 compatability use the latest [v0.0.x](https://github.com/TheHolyGrail/Swallow/releases/tag/v0.0.3) release.
+
 ## Installation
 
 ### Carthage
