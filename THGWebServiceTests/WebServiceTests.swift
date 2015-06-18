@@ -127,7 +127,6 @@ class WebServiceTests: XCTestCase {
                 wasResponseCalled = true
             }
             .responseError { error in
-                XCTAssertNotNil(error)
                 XCTAssertFalse(wasResponseCalled, "Response should not be called for error cases")
                 errorExpectation.fulfill()
             }
