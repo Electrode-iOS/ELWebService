@@ -30,14 +30,13 @@ Install manually by adding THGWebService.xcodeproj to your project and configuri
 At the highest level a request for a resource could look like the following:
 
 ```
-// fetch list of stores based on zip code value
-WebService(baseURLString: "https://storelocator/")
+WebService(baseURLString: "https://storeocator/")
     .searchStores(zipCode: "15217")
     .responseAsStoresModels { (stores: [StoreModel]) in
       // update UI with model data
     }
     .responseError { error in
-      // I am error
+      // handle error
     }
 ```
 
@@ -55,7 +54,7 @@ WebService(baseURLString: "https://storelocator/")
   }
 ```
 
-Add a `responseError()` handler to handle the possibility of a failed request.
+To handle the event of a failure provide a closure for error handling by calling the `responseError()` method.
 
 ```
 WebService(baseURLString: "https://storelocator/")
@@ -64,22 +63,19 @@ WebService(baseURLString: "https://storelocator/")
     // process response data
   }
   .responseError { (error: ErrorType) in
-    // I am error
+    // handle error
   }
 ```
 
-The `responseError()` handler will only be called when a request results in an error. If an error occurs all other response handlers will not be called. This pattern allows you to cleanly separate the logic for handling success and failure cases.
+The error handler will only be called after a request results in an error. If an error occurs all other response handlers will not be called. This pattern allows you to cleanly separate the logic for handling success and failure cases.
 
-### Response Handlers
+### JSON
 
-Response handlers can be chained to process the response of the request. After the response is received handlers are invoked in the order of which they are declared.
+Use the `responseJSON()` method to serialize a successful response as a JSON value of type `AnyObject`.
 
 ```
 WebService(baseURLString: "https://storelocator/")
   .GET("/stores", parameters: ["zip" : "15217"])
-  .response { (response: NSURLResponse?, data: NSData?) in
-    // process raw response
-  }
   .responseJSON { json in
     // process response as JSON
   }
@@ -87,42 +83,7 @@ WebService(baseURLString: "https://storelocator/")
 
 ### Extensions
 
-The chainable response handler API makes it easy to create custom response handlers using extensions.
-
-```
-// MARK: - Store Locator Services
-
-extension ServiceTask {
-    
-    public typealias StoreServiceSuccess = ([StoreModel]) -> Void
-    
-    func responseAsStoresModels(handler: StoreServiceSuccess) -> Self {
-        
-        return responseJSON { json in
-            if let models: [StoreModel] = self.parseJSONAsStoreModels(json) {
-                handler(models)
-            } else {
-              self.throwError(.ModelSerializationFailure)
-            }
-        }
-    }
-}
-```
-
-This allows you to wrap the details of how the response is processed in a high-level convenience method enabling you to simplify how consumers interact with your web service API.
-
-```
-WebService(baseURLString: "https://storelocator/")
-  .GET("/stores", parameters: ["zip" : "15217"])
-  .responseAsStoresModels { (stores: [StoreModel]) in
-    // process resonse as model objects and update UI
-  }
-  .responseError { error in
-    // I am error
-  }
-```
-
-Extensions are also useful for wrapping the details of the web service requests. This is an ideal approach because all of the details of the HTTP request are declared inline with the service call method.
+Add custom request methods by extending `WebService`.
 
 ```
 public extension WebService {
@@ -133,17 +94,35 @@ public extension WebService {
 }
 ```
 
-Extension methods are powerful constructs for wrapping the HTTP details of a web service call and provide a mechanism for your code to be declaritive about how to interact with web services.
+The chainable service task API makes it easy to create custom response handlers by extending `ServiceTask`.
 
 ```
-WebService(baseURLString: "https://somehapi.herokuapp.com")
-    .fetchStores(zipCode: "15217")
-    .responseStoreModels { models in
-      // update UI
+extension ServiceTask {
+    
+    public typealias StoreServiceSuccess = ([StoreModel]) -> Void
+    
+    func responseAsStoresModels(handler: StoreServiceSuccess) -> Self {
+        return responseJSON { json in
+            if let models: [StoreModel] = self.parseJSONAsStoreModels(json) {
+                handler(models)
+            } else {
+              self.throwError(.ModelSerializationFailure)
+            }
+        }
     }
-    .responseError { response, error in
-      // I am error
-    }
+}
+```
+Custom request methods and response handlers make interactions with the web service more expressive.
+
+```
+WebService(baseURLString: "https://storelocator/")
+  .searchStores(zipCode: "15217")
+  .responseAsStoresModels { (stores: [StoreModel]) in
+    // process resonse as model objects and update UI
+  }
+  .responseError { error in
+    // handle error
+  }
 ```
 
 ### Request Parameters
