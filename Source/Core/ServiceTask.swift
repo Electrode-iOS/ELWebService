@@ -18,7 +18,7 @@ public final class ServiceTask {
     /// Represents the result of a service task.
     private enum Result {
         case Success(NSData?, NSURLResponse?)
-        case Failure(NSError)
+        case Failure(ErrorType)
         
         init(data: NSData?, response: NSURLResponse?, error: NSError?) {
             if let error = error {
@@ -214,7 +214,7 @@ extension ServiceTask {
      Call to indicate that an error occured during the processing of a response.
      Causes responseError handlers to be called.
     */
-    public func throwError(error: NSError) {
-        self.result = Result(data: nil, response: nil, error: error)
+    public func throwError(error: ErrorType) {
+        self.result = .Failure(error)
     }
 }
