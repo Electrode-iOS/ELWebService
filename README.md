@@ -31,12 +31,12 @@ At the highest level a request for a resource could look like the following:
 
 ```
 // fetch list of stores based on zip code value
-WebService(baseURLString: "https://somehapi.herokuapp.com")
-    .fetchStores(zipCode: "15217")
-    .responseStores { (stores: [StoreModel]?) in
+WebService(baseURLString: "https://storelocator/")
+    .searchStores(zipCode: "15217")
+    .responseAsStoresModels { (stores: [StoreModel]) in
       // update UI with model data
     }
-    .responseError { response, error in
+    .responseError { error in
       // I am error
     }
 ```
@@ -48,7 +48,7 @@ The `WebService` structure and `ServiceTask` class provide the basic building bl
 At the lowest level `WebService` supports an API for making a HTTP request and processing the raw response data.
 
 ```
-WebService(baseURLString: "https://somehapi.herokuapp.com")
+WebService(baseURLString: "https://storelocator/")
   .GET("/stores", parameters: ["zip" : "15217"])
   .response { (response: NSURLResponse?, data: NSData?) in
     // process response data
@@ -58,12 +58,12 @@ WebService(baseURLString: "https://somehapi.herokuapp.com")
 Add a `responseError()` handler to handle the possibility of a failed request.
 
 ```
-WebService(baseURLString: "https://somehapi.herokuapp.com")
+WebService(baseURLString: "https://storelocator/")
   .GET("/stores", parameters: ["zip" : "15217"])
   .response { (response: NSURLResponse?, data: NSData?) in
     // process response data
   }
-  .responseError { (error: NSError?) in
+  .responseError { (error: ErrorType) in
     // I am error
   }
 ```
@@ -75,7 +75,7 @@ The `responseError()` handler will only be called when a request results in an e
 Response handlers can be chained to process the response of the request. After the response is received handlers are invoked in the order of which they are declared.
 
 ```
-WebService(baseURLString: "https://somehapi.herokuapp.com")
+WebService(baseURLString: "https://storelocator/")
   .GET("/stores", parameters: ["zip" : "15217"])
   .response { (response: NSURLResponse?, data: NSData?) in
     // process raw response
@@ -94,12 +94,12 @@ The chainable response handler API makes it easy to create custom response handl
 
 extension ServiceTask {
     
-    public typealias StoreServiceSuccess = ([StoreModel]?) -> Void
+    public typealias StoreServiceSuccess = ([StoreModel]) -> Void
     
-    func responseStores(handler: StoreServiceSuccess) -> Self {
+    func responseAsStoresModels(handler: StoreServiceSuccess) -> Self {
         
         return responseJSON { json in
-            if let models: [StoreModel]? = self.parseJSONAsStoreModels(json) {
+            if let models: [StoreModel] = self.parseJSONAsStoreModels(json) {
                 handler(models)
             } else {
               self.throwError(.ModelSerializationFailure)
@@ -114,7 +114,7 @@ This allows you to wrap the details of how the response is processed in a high-l
 ```
 WebService(baseURLString: "https://storelocator/")
   .GET("/stores", parameters: ["zip" : "15217"])
-  .responseStores { (stores: [StoreModel]) in
+  .responseAsStoresModels { (stores: [StoreModel]) in
     // process resonse as model objects and update UI
   }
   .responseError { error in
@@ -127,7 +127,7 @@ Extensions are also useful for wrapping the details of the web service requests.
 ```
 public extension WebService {
     
-    public func fetchStores(zipCode zipCode: String) -> ServiceTask {
+    public func searchStores(zipCode zipCode: String) -> ServiceTask {
         return GET("/stores", parameters: ["zip" : zipCode])
     }
 }
@@ -231,7 +231,7 @@ WebService(baseURLString: "http://httpbin.org")
 To handle the event of a failure call the `responseError` method with a closure. The closure will be called in the event of a failure.
 
 ```
-WebService(baseURLString: "https://somehapi.herokuapp.com")
+WebService(baseURLString: "https://storelocator/")
     .GET("/foo")
     .responseError { error in
       // I am error
