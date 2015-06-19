@@ -101,6 +101,8 @@ extension ServiceTask {
         return responseJSON { json in
             if let models: [StoreModel]? = self.parseJSONAsStoreModels(json) {
                 handler(models)
+            } else {
+              self.throwError(.ModelSerializationFailure)
             }
         }
     }
@@ -110,9 +112,9 @@ extension ServiceTask {
 This allows you to wrap the details of how the response is processed in a high-level convenience method enabling you to simplify how consumers interact with your web service API.
 
 ```
-WebService(baseURLString: "https://somehapi.herokuapp.com")
+WebService(baseURLString: "https://storelocator/")
   .GET("/stores", parameters: ["zip" : "15217"])
-  .responseStores { (stores: [StoreModel]?) in
+  .responseStores { (stores: [StoreModel]) in
     // process resonse as model objects and update UI
   }
   .responseError { error in
@@ -125,14 +127,13 @@ Extensions are also useful for wrapping the details of the web service requests.
 ```
 public extension WebService {
     
-    public func fetchStores(zipCode aZipCode: String) -> ServiceTask {
-        
-        return GET("/stores", parameters: ["zip" : aZipCode])
+    public func fetchStores(zipCode zipCode: String) -> ServiceTask {
+        return GET("/stores", parameters: ["zip" : zipCode])
     }
 }
 ```
 
-Extensions are powerful constructs for wrapping the HTTP details of a web service call and provide a mechanism for your code to be declaritive about how to interact with web services.
+Extension methods are powerful constructs for wrapping the HTTP details of a web service call and provide a mechanism for your code to be declaritive about how to interact with web services.
 
 ```
 WebService(baseURLString: "https://somehapi.herokuapp.com")
@@ -241,10 +242,9 @@ Sometimes your code may fail during processing a response and you will want to h
 
 
 ```
-func responseAsFooModels(handler: ([FooModels]) -> Void) -> Self {
-    return responseJSON { json in
-        
-        if let models = self.parseJSONAsFooModels(json) {
+func responseAsStoreModels(handler: ([StoreModel]) -> Void) -> Self {
+    return responseJSON { json in    
+        if let models = self.parseJSONAsStoreModels(json) {
             handler(models)
         } else {
             self.throwError(self.modelParseError())
@@ -257,14 +257,14 @@ Now an error handler can be used to seperate the case of handling request failur
 
 
 ```
-WebService(baseURLString: "https://somehapi.herokuapp.com")
-    .GET("/foo")
-    .responseAsFooModels { models
+WebService(baseURLString: "https://storelocator/")
+    .GET("/stores")
+    .responseAsStoreModels { models
       // valid Foo models
     }
     .responseError { error in
       // error handler will be called if JSON 
-      // payload fails to parse as Foo models
+      // payload fails to parse as model values
     }
 ```
 

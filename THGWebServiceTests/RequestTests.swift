@@ -57,7 +57,7 @@ class RequestTests: XCTestCase {
     */
     func testEncodeURLRequest() {
         let request = RequestTests.CreateTestRequest()
-        let urlRequest = request.encodeURLRequest()
+        let urlRequest = request.urlRequestValue
         
         XCTAssertEqual(urlRequest.HTTPMethod!, request.method.rawValue)
         
@@ -96,7 +96,7 @@ class RequestTests: XCTestCase {
         request.parameters = parameters
         request.parameterEncoding = .Percent
         
-        let urlRequest = request.encodeURLRequest()
+        let urlRequest = request.urlRequestValue
         let components = NSURLComponents(URL: urlRequest.URL!, resolvingAgainstBaseURL: false)!
         
         if let queryItems = components.queryItems {
@@ -128,8 +128,6 @@ class RequestTests: XCTestCase {
         } catch {
             fatalError("Serialized JSON should not be nil")
         }
-        
-        
         
         // test original parameters against encoded
         

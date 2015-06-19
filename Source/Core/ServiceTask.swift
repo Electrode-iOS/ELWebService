@@ -15,6 +15,20 @@ import Foundation
  via the `state` property.
 */
 public final class ServiceTask {
+    /// Represents the result of a service task.
+    private enum Result {
+        case Success(NSData?, NSURLResponse?)
+        case Failure(NSError)
+        
+        init(data: NSData?, response: NSURLResponse?, error: NSError?) {
+            if let error = error {
+                self = .Failure(error)
+            } else {
+                self = .Success(data, response)
+            }
+            
+        }
+    }
     
     /// A closure type alias for a success handler.
     public typealias SuccessHandler = (NSData?, NSURLResponse?) -> Void
@@ -22,33 +36,7 @@ public final class ServiceTask {
     /// A closure type alias for an error handler.
     public typealias ErrorHandler = (ErrorType) -> Void
     
-    /// Represents the result of a service task.
-    private enum Result {
-        case Success(NSData?, NSURLResponse?)
-        case Failure(NSError)
-
-        init(data: NSData?, response: NSURLResponse?, error: NSError?) {
-            if let error = error {
-                self = .Failure(error)
-            } else {
-                self = .Success(data, response)
-            }
-
-        }
-    }
-    
-    private let handlerQueue: dispatch_queue_t
-    private var dataTask: NSURLSessionDataTask?
-    
-    /**
-     Result of the service task. If error contains a non-nil value then the 
-     service task's error handler is called.
-    */
-    private var result: Result?
-    
-    /**
-     State of the service task.
-    */
+    /// State of the service task.
     public var state: NSURLSessionTaskState {
         if let state = dataTask?.state {
             return state
@@ -56,6 +44,15 @@ public final class ServiceTask {
             return .Suspended
         }
     }
+    
+    /// Dispatch queue that queues up and dispatches handler blocks
+    private let handlerQueue: dispatch_queue_t
+    
+    /// Session data task that refers the lifetime of the request.
+    private var dataTask: NSURLSessionDataTask?
+    
+    /// Result of the service task
+    private var result: Result?
     
     // MARK: Intialization
     
@@ -67,17 +64,20 @@ public final class ServiceTask {
      - parameter dataTaskSource: Object responsible for creating a 
       NSURLSessionDataTask used to send the NSURLRequset.
     */
-    init(urlRequestEncoder: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
+    init(urlRequestEncodable: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
         self.handlerQueue = {
             let queue = dispatch_queue_create(("com.THGWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
             dispatch_suspend(queue)
             return queue
         }()
 
-        self.dataTask = dataTaskSource.dataTaskWithRequest(urlRequestEncoder.encodeURLRequest(), completion: dataTaskCompletionHandler())
+        self.dataTask = dataTaskSource.dataTaskWithRequest(urlRequestEncodable.urlRequestValue, completion: dataTaskCompletionHandler())
     }
-    
-    // MARK: NSURLSesssionDataTask
+}
+
+// MARK: NSURLSesssionDataTask
+
+extension ServiceTask {
     
     /// Resume the underlying data task.
     public func resume() {
@@ -100,28 +100,30 @@ public final class ServiceTask {
             dispatch_resume(self.handlerQueue)
         }
     }
-    
-    // MARK: Response Handler API
-    
+}
+
+// MARK: - Response API
+
+extension ServiceTask {
     /**
-     Add a response handler to be called on the main thread after a successful
-     response has been received.
-     
-     - parameter handler: Response handler to execute upon receiving a response.
-     - returns: Self instance to support chaining.
+    Add a response handler to be called on the main thread after a successful
+    response has been received.
+    
+    - parameter handler: Response handler to execute upon receiving a response.
+    - returns: Self instance to support chaining.
     */
     public func response(handler: SuccessHandler) -> Self {
         return response(dispatch_get_main_queue(), handler: handler)
     }
     
     /**
-     Add a response handler to be called once a successful response has been
-     received.
+    Add a response handler to be called once a successful response has been
+    received.
     
-     :param queue The target dispatch queue to which the response handler is
-      submitted.
-     - parameter handler: Response handler to execute upon receiving a response.
-     - returns: Self instance to support chaining.
+    - parameter queue: The target dispatch queue to which the response handler
+    is submitted.
+    - parameter handler: Response handler to execute upon receiving a response.
+    - returns: Self instance to support chaining.
     */
     public func response(queue: dispatch_queue_t, handler: SuccessHandler) -> Self {
         dispatch_async(handlerQueue) {
@@ -144,8 +146,8 @@ public final class ServiceTask {
 // MARK: - JSON
 
 extension ServiceTask {
-    
-    public typealias JSONHandler = (AnyObject?) -> Void
+    /// A closure type alias for handling the response as JSON.
+    public typealias JSONHandler = (AnyObject) -> Void
     
     /**
      Add a response handler to serialize the response body as a JSON object. The
@@ -168,21 +170,13 @@ extension ServiceTask {
     public func responseJSON(queue: dispatch_queue_t, handler: JSONHandler) -> Self {
         return response(queue) { data, response in
             if let data = data {
-                var error: NSError?
-                let json: AnyObject?
                 do {
-                    json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+                    let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+                    handler(json)
                 } catch let jsonError as NSError {
-                    error = jsonError
-                    json = nil
+                    self.throwError(jsonError)
                 } catch {
                     fatalError()
-                }
-                
-                if let error = error {
-                    self.throwError(error)
-                } else {
-                    handler(json)
                 }
             }
         }
@@ -192,7 +186,6 @@ extension ServiceTask {
 // MARK: - Error Handling
 
 extension ServiceTask {
-    
     /**
     Add a response handler to be called if a request results in an error.
     

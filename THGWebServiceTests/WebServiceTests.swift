@@ -54,9 +54,13 @@ class WebServiceTests: XCTestCase {
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
-    /**
-     Verify that absolute paths work against a different base URL.
-    */
+    func testAbsoluteURLString() {
+        let service = WebService(baseURLString: "http://www.walmart.com/")
+        let url = service.absoluteURLString("/foo")
+        XCTAssertEqual(url, "http://www.walmart.com/foo")
+    }
+    
+    /// Verify that absolute paths work against a different base URL.
     func testGetAbsolutePath() {
         let successExpectation = expectationWithDescription("Received status 200")
         let handler = responseHandler(expectation: successExpectation)
@@ -132,24 +136,6 @@ class WebServiceTests: XCTestCase {
             }
         
         waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testConstructRequestPath() {
-        let service = WebService(baseURLString: "http://httpbin.org/")
-        let servicePath = "/post"
-        let requestPath = service.requestPath(relativePath: servicePath)
-        
-        XCTAssertEqual(requestPath, servicePath)
-    }
-    
-    func testConstructRequest() {
-        let service = WebService(baseURLString: "http://httpbin.org/")
-        let method = Request.Method.DELETE
-        let url = "/delete"
-        let request = service.constructRequest(method, url: url)
-        
-        XCTAssertEqual(request.method, method)
-        XCTAssertEqual(request.url, url)
     }
     
     func testSpecifyingResponseHandlerQueue() {

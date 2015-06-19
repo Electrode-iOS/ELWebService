@@ -9,14 +9,18 @@
 import Foundation
 
 /// Defines an interface for encoding parameters in a HTTP request.
-public protocol ParameterEncodable {
+protocol ParameterEncoder {
     func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL?
     func encodeBody(parameters: [String : AnyObject]) -> NSData?
 }
 
 /// Defines an interface for encoding a `NSURLRequest`.
-public protocol URLRequestEncodable {
-    func encodeURLRequest() -> NSURLRequest
+protocol URLRequestEncodable {
+    var urlRequestValue: NSURLRequest {get}
+}
+
+protocol RequestEncoder {
+    func encodeRequest(method: Request.Method, url: String, parameters: [String : AnyObject]?, options: [Request.Option]?) -> Request
 }
 
 /**
@@ -36,7 +40,7 @@ public struct Request {
     // MARK: Parameter Encodings
     
     /// A `ParameterEncoding` value defines how to encode request parameters
-    public enum ParameterEncoding: ParameterEncodable {
+    public enum ParameterEncoding: ParameterEncoder {
         /// Encode parameters with percent encoding
         case Percent
         /// Encode parameters as JSON
@@ -159,7 +163,7 @@ extension Request: URLRequestEncodable {
      
      - returns: A NSURLRequest encoded based on the Request data.
     */
-    public func encodeURLRequest() -> NSURLRequest {
+    public var urlRequestValue: NSURLRequest {
 
         let urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
         urlRequest.HTTPMethod = method.rawValue
