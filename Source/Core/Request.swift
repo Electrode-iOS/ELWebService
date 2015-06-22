@@ -156,7 +156,7 @@ extension Request: URLRequestEncodable {
      
      :returns: A NSURLRequest encoded based on the Request data.
     */
-    var urlRequestValue: NSURLRequest {
+    public var urlRequestValue: NSURLRequest {
         var urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
         urlRequest.HTTPMethod = method.rawValue
         urlRequest.cachePolicy = cachePolicy

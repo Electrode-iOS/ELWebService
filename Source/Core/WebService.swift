@@ -185,7 +185,7 @@ extension WebService {
 extension WebService: RequestEncoder {
     
     /// Encode a Request value
-    func encodeRequest(method: Request.Method, url: String, parameters: [String : AnyObject]?, options: [Request.Option]?) -> Request {
+    public func encodeRequest(method: Request.Method, url: String, parameters: [String : AnyObject]?, options: [Request.Option]?) -> Request {
         var request = Request(method, url: url)
         
         if let parameters = parameters {
