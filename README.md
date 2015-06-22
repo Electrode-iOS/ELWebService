@@ -9,7 +9,7 @@ Swallow simplifies interaction with HTTP web services by providing a concise API
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "TheHolyGrail/Swallow" ~> 0.0.1
+github "TheHolyGrail/Swallow" ~> 0.0.3
 ```
 
 ### Manual
