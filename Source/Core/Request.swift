@@ -8,13 +8,18 @@
 
 import Foundation
 
-public protocol ParameterEncodable {
+/// Defines an interface for encoding parameters in a HTTP request.
+protocol ParameterEncoder {
     func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL?
     func encodeBody(parameters: [String : AnyObject]) -> NSData?
 }
 
-public protocol URLRequestEncodable {
-    func encodeURLRequest() -> NSURLRequest
+protocol URLRequestEncodable {
+    var urlRequestValue: NSURLRequest {get}
+}
+
+protocol RequestEncoder {
+    func encodeRequest(method: Request.Method, url: String, parameters: [String : AnyObject]?, options: [Request.Option]?) -> Request
 }
 
 /**
@@ -22,6 +27,7 @@ public protocol URLRequestEncodable {
 */
 public struct Request {
     
+    /// The `Method` enum defines the supported HTTP methods.
     public enum Method: String {
         case GET = "GET"
         case HEAD = "HEAD"
@@ -30,10 +36,11 @@ public struct Request {
         case DELETE = "DELETE"
     }
     
-    // MARK: Parameter Encodings
-    
-    public enum ParameterEncoding: ParameterEncodable {
+    /// A `ParameterEncoding` value defines how to encode request parameters
+    public enum ParameterEncoding: ParameterEncoder {
+        /// Encode parameters with percent encoding
         case Percent
+        /// Encode parameters as JSON
         case JSON
         
         /**
@@ -68,8 +75,7 @@ public struct Request {
         }
     }
     
-    // MARK: HTTP Header Constants
-    
+    /// A group of static constants for referencing HTTP header field names.
     public struct Headers {
         public static let userAgent = "User-Agent"
         public static let contentType = "Content-Type"
@@ -78,20 +84,36 @@ public struct Request {
         public static let cacheControl = "Cache-Control"
     }
     
-    // MARK: Content Type Constants
-    
+    /// A group of static constants for referencing supported HTTP
+    /// `Content-Type` header values.
     public struct ContentType {
         public static let formEncoded = "application/x-www-form-urlencoded"
         public static let json = "application/json"
     }
     
-    // MARK: Request Properties
-    
+    /// The HTTP method of the request.
     public let method: Method
+    
+    /// The URL string of the HTTP request.
     public let url: String
+    
+    /**
+     The parameters to encode in the HTTP request. Request parameters are percent
+     encoded and are appended as a query string or set as the request body
+     depending on the HTTP request method.
+    */
     public var parameters = [String : AnyObject]()
+    
+    /**
+     The HTTP header fields of the request. Each key/value pair represents a
+     HTTP header field value using the key as the field name.
+    */
     public var headers = [String : String]()
+    
+    /// The cache policy of the request. See NSURLRequestCachePolicy.
     public var cachePolicy = NSURLRequestCachePolicy.UseProtocolCachePolicy
+    
+    /// The type of parameter encoding to use when encoding request parameters.
     public var parameterEncoding = ParameterEncoding.Percent {
         didSet {
             if parameterEncoding == .JSON {
@@ -100,11 +122,13 @@ public struct Request {
         }
     }
     
+    /// The HTTP `Content-Type` header field value of the request.
     public var contentType: String? {
         set { headers[Headers.contentType] = newValue }
         get { return headers[Headers.contentType] }
     }
     
+    /// The HTTP `User-Agent` header field value of the request.
     public var userAgent: String? {
         set { headers[Headers.userAgent] = newValue }
         get { return headers[Headers.userAgent] }
@@ -132,8 +156,7 @@ extension Request: URLRequestEncodable {
      
      :returns: A NSURLRequest encoded based on the Request data.
     */
-    public func encodeURLRequest() -> NSURLRequest {
-
+    var urlRequestValue: NSURLRequest {
         var urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
         urlRequest.HTTPMethod = method.rawValue
         urlRequest.cachePolicy = cachePolicy
