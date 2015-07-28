@@ -6,8 +6,11 @@
 //  Copyright (c) 2015 TheHolyGrail. All rights reserved.
 //
 
+#if NOFRAMEWORKS
+#else
 import THGWebService
 import THGDispatch
+#endif
 
 extension ServiceTask {
     
