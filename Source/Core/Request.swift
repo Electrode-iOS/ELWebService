@@ -243,7 +243,7 @@ extension Dictionary {
             }
         }
         
-        return "&".join(components)
+        return components.joinWithSeparator("&")
     }
     
     /// Percent encode a Key/Value pair.
