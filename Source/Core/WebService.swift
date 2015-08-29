@@ -23,7 +23,7 @@ public protocol SessionDataTaskDataSource {
  A `WebService` value provides a concise API for encoding a NSURLRequest object
  and processing the resulting `NSURLResponse` object.
 */
-public struct WebService {
+public final class WebService {
     /// Base URL of the web service.
     public let baseURLString: String
     
