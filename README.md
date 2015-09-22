@@ -27,6 +27,11 @@ Install manually by adding THGWebService.xcodeproj to your project and configuri
 
 ## Usage
 
+See the [Swallow Programming Guide](/TheHolyGrail/Swallow/blob/master/docs/Swallow-Programming-Guide.md) for detailed usage information.
+
+### Getting Started
+
+
 At the highest level a request for a resource could look like the following:
 
 ```
@@ -280,7 +285,6 @@ WebService(baseURLString: "https://somehapi.herokuapp.com")
     // process response data
   }
 ```
-
 
 ## Example
 
