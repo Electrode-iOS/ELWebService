@@ -27,7 +27,7 @@ Install manually by adding THGWebService.xcodeproj to your project and configuri
 
 ## Usage
 
-See the [Swallow Programming Guide](/TheHolyGrail/Swallow/blob/master/docs/Swallow-Programming-Guide.md) for detailed usage information.
+See the [Swallow Programming Guide](/docs/Swallow-Programming-Guide.md) for detailed usage information.
 
 ### Getting Started
 
