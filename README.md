@@ -1,10 +1,10 @@
-# Swallow [![Build Status](https://travis-ci.org/TheHolyGrail/Swallow.svg?branch=master)](https://travis-ci.org/TheHolyGrail/Swallow)
+# Swallow [![Build Status](https://travis-ci.org/TheHolyGrail/Swallow.svg?branch=master)](https://travis-ci.org/TheHolyGrail/Swallow) [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 Swallow simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, Swallow is not intended to be a fully-featured networking library. By default Swallow uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any NSURLSession instance using a [protocol](#sessiondatataskdatasource).
 
 ## Requirements
 
-Swallow version 0.1.x requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 compatability use the latest [v0.0.x](https://github.com/TheHolyGrail/Swallow/releases/tag/v0.0.3) release.
+Swallow requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 compatability use the latest [v0.0.x](https://github.com/TheHolyGrail/Swallow/releases/tag/v0.0.3) release.
 
 ## Installation
 
@@ -13,17 +13,12 @@ Swallow version 0.1.x requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 co
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "TheHolyGrail/Swallow" ~> 0.0.1
+github "TheHolyGrail/Swallow" ~> 1.0.0
 ```
 
 ### Manual
 
-Install manually by adding THGWebService.xcodeproj to your project and configuring your target to link THGWebService.framework.
-
-[THG](https://github.com/TheHolyGrail/) modules are designed to live side-by-side in the file system, like so:
-
-* \MyProject
-* \MyProject\Swallow
+Install manually by adding `THGWebService.xcodeproj` to your project and configuring your target to link `THGWebService.framework`.
 
 ## Usage
 
@@ -295,15 +290,6 @@ An example project is included that demonstrates how Swallow can be used to inte
 We appreciate your contributions to all of our projects and look forward to interacting with you via Pull Requests, the issue tracker, via Twitter, etc.  We're happy to help you, and to have you help us.  We'll strive to answer every PR and issue and be very transparent in what we do.
 
 When contributing code, please refer to our style guide [Dennis](https://github.com/TheHolyGrail/Dennis).
-
-###### THG's Primary Contributors
-
-Dr. Sneed ([@bsneed](https://github.com/bsneed))<br>
-Steve Riggins ([@steveriggins](https://github.com/steveriggins))<br>
-Sam Grover ([@samgrover](https://github.com/samgrover))<br>
-Angelo Di Paolo ([@angelodipaolo](https://github.com/angelodipaolo))<br>
-Cody Garvin ([@migs647](https://github.com/migs647))<br>
-Wes Ostler ([@wesostler](https://github.com/wesostler))<br>
 
 ## License
 
