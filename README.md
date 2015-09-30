@@ -285,7 +285,7 @@ WebService(baseURLString: "https://somehapi.herokuapp.com")
 
 ## Example
 
-An example project is included that demonstrates how Swallow can be used to interact with a web service. A stubbed endpoint is available at [https://somehapi.herokuapp.com/stores](https://somehapi.herokuapp.com/stores) for testing.
+An [example project](/SwallowExample) is included that demonstrates how Swallow can be used to interact with a web service. The project uses [brewhapi](https://github.com/angelodipaolo/brewhapi) as a mock API for fetching and inserting data. brewhapi is freely hosted at [https://brewhapi.herokuapp.com/brews](https://brewhapi.herokuapp.com/brews) for testing.
 
 ## Contributions
 
