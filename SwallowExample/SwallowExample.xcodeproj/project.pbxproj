@@ -7,14 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		170A613E1BBC132500768A12 /* BrewClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A613A1BBC132500768A12 /* BrewClient.swift */; settings = {ASSET_TAGS = (); }; };
+		170A613F1BBC132500768A12 /* BrewClientAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A613B1BBC132500768A12 /* BrewClientAPI.swift */; settings = {ASSET_TAGS = (); }; };
+		170A61401BBC132500768A12 /* Brew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A613D1BBC132500768A12 /* Brew.swift */; settings = {ASSET_TAGS = (); }; };
+		170A61431BBC135F00768A12 /* Brewery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A61421BBC135F00768A12 /* Brewery.swift */; settings = {ASSET_TAGS = (); }; };
+		170A61481BBC13B100768A12 /* BrewIndexViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A61461BBC13B100768A12 /* BrewIndexViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		170A61491BBC13B100768A12 /* BrewIndexViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 170A61471BBC13B100768A12 /* BrewIndexViewController.xib */; settings = {ASSET_TAGS = (); }; };
 		1765E3551ABC66C200F9E531 /* THGWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1765E3501ABC652C00F9E531 /* THGWebService.framework */; };
+		178DAE021BBC1665003556B9 /* ServiceTask+Brew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DAE011BBC1665003556B9 /* ServiceTask+Brew.swift */; settings = {ASSET_TAGS = (); }; };
+		178DAE081BBC169F003556B9 /* ServiceTask+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DAE071BBC169F003556B9 /* ServiceTask+JSON.swift */; settings = {ASSET_TAGS = (); }; };
+		178DAE0A1BBC16D4003556B9 /* ModelDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DAE091BBC16D4003556B9 /* ModelDecoder.swift */; settings = {ASSET_TAGS = (); }; };
 		17B21DC71AB8A10D007E5370 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DC61AB8A10D007E5370 /* AppDelegate.swift */; };
-		17B21DC91AB8A10D007E5370 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DC81AB8A10D007E5370 /* ViewController.swift */; };
-		17B21DCC1AB8A10D007E5370 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17B21DCA1AB8A10D007E5370 /* Main.storyboard */; };
 		17B21DCE1AB8A10D007E5370 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17B21DCD1AB8A10D007E5370 /* Images.xcassets */; };
 		17B21DD11AB8A10D007E5370 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17B21DCF1AB8A10D007E5370 /* LaunchScreen.xib */; };
 		17B21DDD1AB8A10D007E5370 /* SwallowExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DDC1AB8A10D007E5370 /* SwallowExampleTests.swift */; };
-		17B21DF71AB8AB50007E5370 /* StoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DF61AB8AB50007E5370 /* StoreService.swift */; };
+		17BBC3DF1BBC1AAC00D7DE44 /* BrewDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BBC3DD1BBC1AAC00D7DE44 /* BrewDetailViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		17BBC3E01BBC1AAC00D7DE44 /* BrewDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17BBC3DE1BBC1AAC00D7DE44 /* BrewDetailViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		17BBC3E51BBC224A00D7DE44 /* BrewAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BBC3E31BBC224A00D7DE44 /* BrewAddViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		17BBC3E61BBC224A00D7DE44 /* BrewAddViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17BBC3E41BBC224A00D7DE44 /* BrewAddViewController.xib */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,18 +52,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		170A613A1BBC132500768A12 /* BrewClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewClient.swift; sourceTree = "<group>"; };
+		170A613B1BBC132500768A12 /* BrewClientAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewClientAPI.swift; sourceTree = "<group>"; };
+		170A613D1BBC132500768A12 /* Brew.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brew.swift; sourceTree = "<group>"; };
+		170A61421BBC135F00768A12 /* Brewery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brewery.swift; sourceTree = "<group>"; };
+		170A61461BBC13B100768A12 /* BrewIndexViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewIndexViewController.swift; sourceTree = "<group>"; };
+		170A61471BBC13B100768A12 /* BrewIndexViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrewIndexViewController.xib; sourceTree = "<group>"; };
 		1765E3481ABC652C00F9E531 /* THGWebService.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = THGWebService.xcodeproj; path = ../THGWebService.xcodeproj; sourceTree = "<group>"; };
+		178DAE011BBC1665003556B9 /* ServiceTask+Brew.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+Brew.swift"; sourceTree = "<group>"; };
+		178DAE071BBC169F003556B9 /* ServiceTask+JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+JSON.swift"; sourceTree = "<group>"; };
+		178DAE091BBC16D4003556B9 /* ModelDecoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelDecoder.swift; sourceTree = "<group>"; };
 		17B21DC11AB8A10D007E5370 /* SwallowExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwallowExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17B21DC51AB8A10D007E5370 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17B21DC61AB8A10D007E5370 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		17B21DC81AB8A10D007E5370 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		17B21DCB1AB8A10D007E5370 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		17B21DCD1AB8A10D007E5370 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		17B21DD01AB8A10D007E5370 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		17B21DD61AB8A10D007E5370 /* SwallowExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwallowExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17B21DDB1AB8A10D007E5370 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17B21DDC1AB8A10D007E5370 /* SwallowExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwallowExampleTests.swift; sourceTree = "<group>"; };
-		17B21DF61AB8AB50007E5370 /* StoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreService.swift; sourceTree = "<group>"; };
+		17BBC3DD1BBC1AAC00D7DE44 /* BrewDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewDetailViewController.swift; sourceTree = "<group>"; };
+		17BBC3DE1BBC1AAC00D7DE44 /* BrewDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrewDetailViewController.xib; sourceTree = "<group>"; };
+		17BBC3E31BBC224A00D7DE44 /* BrewAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewAddViewController.swift; sourceTree = "<group>"; };
+		17BBC3E41BBC224A00D7DE44 /* BrewAddViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrewAddViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +95,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		170A61391BBC132500768A12 /* HTTP */ = {
+			isa = PBXGroup;
+			children = (
+				170A613A1BBC132500768A12 /* BrewClient.swift */,
+				170A613B1BBC132500768A12 /* BrewClientAPI.swift */,
+				178DAE011BBC1665003556B9 /* ServiceTask+Brew.swift */,
+				178DAE071BBC169F003556B9 /* ServiceTask+JSON.swift */,
+				178DAE091BBC16D4003556B9 /* ModelDecoder.swift */,
+			);
+			path = HTTP;
+			sourceTree = "<group>";
+		};
+		170A613C1BBC132500768A12 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				170A613D1BBC132500768A12 /* Brew.swift */,
+				170A61421BBC135F00768A12 /* Brewery.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		170A61411BBC133800768A12 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				170A61461BBC13B100768A12 /* BrewIndexViewController.swift */,
+				170A61471BBC13B100768A12 /* BrewIndexViewController.xib */,
+				17BBC3DD1BBC1AAC00D7DE44 /* BrewDetailViewController.swift */,
+				17BBC3DE1BBC1AAC00D7DE44 /* BrewDetailViewController.xib */,
+				17BBC3E31BBC224A00D7DE44 /* BrewAddViewController.swift */,
+				17BBC3E41BBC224A00D7DE44 /* BrewAddViewController.xib */,
+			);
+			path = "View Controllers";
+			sourceTree = "<group>";
+		};
 		1765E3471ABC652400F9E531 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
@@ -115,9 +169,9 @@
 			isa = PBXGroup;
 			children = (
 				17B21DC61AB8A10D007E5370 /* AppDelegate.swift */,
-				17B21DC81AB8A10D007E5370 /* ViewController.swift */,
-				17B21DF61AB8AB50007E5370 /* StoreService.swift */,
-				17B21DCA1AB8A10D007E5370 /* Main.storyboard */,
+				170A61411BBC133800768A12 /* View Controllers */,
+				170A613C1BBC132500768A12 /* Model */,
+				170A61391BBC132500768A12 /* HTTP */,
 				17B21DCD1AB8A10D007E5370 /* Images.xcassets */,
 				17B21DCF1AB8A10D007E5370 /* LaunchScreen.xib */,
 				17B21DC41AB8A10D007E5370 /* Supporting Files */,
@@ -254,9 +308,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17B21DCC1AB8A10D007E5370 /* Main.storyboard in Resources */,
 				17B21DD11AB8A10D007E5370 /* LaunchScreen.xib in Resources */,
+				17BBC3E01BBC1AAC00D7DE44 /* BrewDetailViewController.xib in Resources */,
+				17BBC3E61BBC224A00D7DE44 /* BrewAddViewController.xib in Resources */,
 				17B21DCE1AB8A10D007E5370 /* Images.xcassets in Resources */,
+				170A61491BBC13B100768A12 /* BrewIndexViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,9 +330,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17B21DC91AB8A10D007E5370 /* ViewController.swift in Sources */,
 				17B21DC71AB8A10D007E5370 /* AppDelegate.swift in Sources */,
-				17B21DF71AB8AB50007E5370 /* StoreService.swift in Sources */,
+				178DAE081BBC169F003556B9 /* ServiceTask+JSON.swift in Sources */,
+				17BBC3DF1BBC1AAC00D7DE44 /* BrewDetailViewController.swift in Sources */,
+				170A613E1BBC132500768A12 /* BrewClient.swift in Sources */,
+				170A61431BBC135F00768A12 /* Brewery.swift in Sources */,
+				178DAE0A1BBC16D4003556B9 /* ModelDecoder.swift in Sources */,
+				170A613F1BBC132500768A12 /* BrewClientAPI.swift in Sources */,
+				170A61401BBC132500768A12 /* Brew.swift in Sources */,
+				170A61481BBC13B100768A12 /* BrewIndexViewController.swift in Sources */,
+				17BBC3E51BBC224A00D7DE44 /* BrewAddViewController.swift in Sources */,
+				178DAE021BBC1665003556B9 /* ServiceTask+Brew.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,14 +363,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		17B21DCA1AB8A10D007E5370 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				17B21DCB1AB8A10D007E5370 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		17B21DCF1AB8A10D007E5370 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
