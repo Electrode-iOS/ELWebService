@@ -273,6 +273,48 @@ extension WebServiceTests {
     }
 }
 
+// MARK: - HTTP Body Tests
+
+extension WebServiceTests {
+    
+    func testPostJSONEncodedArray() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let service = WebService(baseURLString: baseURL)
+        
+        let jsonObject = ["foo" : "bar", "number" : 42]
+        let jsonArray = [jsonObject, jsonObject]
+        
+        service
+            .POST("/post",
+                parameters: nil,
+                options: [
+                    .ParameterEncoding(.JSON),
+                    .BodyJSON(jsonArray)
+                ])
+            .response { data, response in
+                
+                let httpResponse = response as! NSHTTPURLResponse
+                
+                if httpResponse.statusCode == 200 {
+                    successExpectation.fulfill()
+                }
+            }
+            .responseJSON { json in
+                let castedJSON = json as? [String : AnyObject]
+                XCTAssert(castedJSON != nil)
+                
+                let deliveredArray = castedJSON!["json"] as? [[String : AnyObject]]
+                XCTAssert(deliveredArray != nil)
+                
+                for deliveredJSONObject in deliveredArray! {
+                    RequestTests.assertRequestParametersNotEqual(deliveredJSONObject, toOriginalParameters: jsonObject)
+                }
+        }
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+}
+
 // MARK: - Error Handling Tests
 
 extension WebServiceTests {
