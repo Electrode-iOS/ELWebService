@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/TheHolyGrail/Swallow/releases/tag/v1.1.0)
+
+- Added `body` parameter to `Request` for storing HTTP body data
+- Added `.Body` and `.BodyJSON` request options to allow raw HTTP body contents to be defined
+- Updated example project to provide a better example of Swallow usage
+
 # [1.0.0](https://github.com/TheHolyGrail/Swallow/releases/tag/v1.0.0)
 
 - Change `WebService` to a final class
