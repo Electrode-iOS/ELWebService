@@ -104,6 +104,9 @@ public struct Request {
     /// The URL string of the HTTP request.
     public let url: String
     
+    /// The body of the HTTP request.
+    public var body: NSData?
+    
     /**
      The parameters to encode in the HTTP request. Request parameters are percent
      encoded and are appended as a query string or set as the request body 
@@ -187,6 +190,11 @@ extension Request: URLRequestEncodable {
                     urlRequest.setValue(ContentType.formEncoded, forHTTPHeaderField: Headers.contentType)
                 }
             }
+        }
+        
+        // body property value overwrites any previously encoded body value
+        if let body = body {
+            urlRequest.HTTPBody = body
         }
 
         return urlRequest.copy() as! NSURLRequest
