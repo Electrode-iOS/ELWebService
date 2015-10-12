@@ -104,6 +104,9 @@ public struct Request {
     /// The URL string of the HTTP request.
     public let url: String
     
+    /// The body of the HTTP request.
+    public var body: NSData?
+    
     /**
      The parameters to encode in the HTTP request. Request parameters are percent
      encoded and are appended as a query string or set as the request body 
@@ -188,6 +191,11 @@ extension Request: URLRequestEncodable {
                 }
             }
         }
+        
+        // body property value overwrites any previously encoded body value
+        if let body = body {
+            urlRequest.HTTPBody = body
+        }
 
         return urlRequest.copy() as! NSURLRequest
     }
@@ -205,6 +213,10 @@ extension Request {
         case Header(String, String)
         /// Defines the cache policy to set in the `Request` value.
         case CachePolicy(NSURLRequestCachePolicy)
+        /// Defines the HTTP body contents of the HTTP request.
+        case Body(NSData)
+        /// Defines the JSON object that will be serialized as the body of the HTTP request.
+        case BodyJSON(AnyObject)
     }
     
     /// Uses an array of `Option` values as rules for mutating a `Request` value.
@@ -222,6 +234,12 @@ extension Request {
                 
             case .CachePolicy(let cachePolicy):
                 request.cachePolicy = cachePolicy
+                
+            case .Body(let data):
+                request.body = data
+                
+            case .BodyJSON(let json):
+                request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
             }
         }
         
