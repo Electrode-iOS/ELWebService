@@ -213,6 +213,10 @@ extension Request {
         case Header(String, String)
         /// Defines the cache policy to set in the `Request` value.
         case CachePolicy(NSURLRequestCachePolicy)
+        /// Defines the HTTP body contents of the HTTP request.
+        case Body(NSData)
+        /// Defines the JSON object that will be serialized as the body of the HTTP request.
+        case BodyJSON(AnyObject)
     }
     
     /// Uses an array of `Option` values as rules for mutating a `Request` value.
@@ -230,6 +234,12 @@ extension Request {
                 
             case .CachePolicy(let cachePolicy):
                 request.cachePolicy = cachePolicy
+                
+            case .Body(let data):
+                request.body = data
+                
+            case .BodyJSON(let json):
+                request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
             }
         }
         
