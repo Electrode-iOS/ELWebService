@@ -43,15 +43,24 @@ class RequestTests: XCTestCase {
     /**
      Creates a Request value for testing.
     */
-    static func CreateTestRequest() -> Request {
-        let url = "http://httpbin.org/get"
-        var request = Request(.GET, url: url)
-        request.headers["Test-Header-Name"] = "testValue"
-        return request
+    static func CreateTestRequestBuilder() -> RequestBuilder {
+        return RequestBuilder(url: "http://httpbin.org").GET("/get", parameters: nil, options: [.Header("Test-Header-Name", "testValue")])
     }
     
+    static func CreateTestRequest() -> Request {
+        let builder = CreateTestRequestBuilder()
+        return builder.request
+    }
+    
+
     // MARK: Tests
     
+    func testAbsoluteURLString() {
+        let builder = RequestBuilder(url: "http://www.walmart.com/").GET("/foo")
+        let url = builder.url
+        XCTAssertEqual(url, "http://www.walmart.com/foo")
+    }
+
     /**
      Test Request's conformance to URLRequestEncodable.
     */
@@ -75,9 +84,11 @@ class RequestTests: XCTestCase {
         let contentType = "application/json"
         let userAgent = "user agent value"
         
-        var request = RequestTests.CreateTestRequest()
-        request.contentType = contentType
-        request.userAgent = userAgent
+        var requestBuilder = RequestTests.CreateTestRequestBuilder()
+        requestBuilder.contentType = contentType
+        requestBuilder.userAgent = userAgent
+        
+        let request = requestBuilder.request
         
         XCTAssertEqual(request.headers["Content-Type"]!, contentType)
         XCTAssertEqual(request.headers["User-Agent"]!, userAgent)
@@ -91,11 +102,12 @@ class RequestTests: XCTestCase {
      Verify that request parameters are properly percent encoded.
     */
     func testPercentEncodedParameters() {
-        var request = RequestTests.CreateTestRequest()
+        var requestBuilder = RequestTests.CreateTestRequestBuilder()
         let parameters = ["foo" : "bar", "paramName" : "paramValue", "percentEncoded" : "this needs percent encoded"]
-        request.parameters = parameters
-        request.parameterEncoding = .Percent
+        requestBuilder.parameters = parameters
+        requestBuilder.parameterEncoding = .Percent
         
+        let request = requestBuilder.request
         let urlRequest = request.urlRequestValue
         let components = NSURLComponents(URL: urlRequest.URL!, resolvingAgainstBaseURL: false)!
         

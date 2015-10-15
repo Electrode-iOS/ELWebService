@@ -11,11 +11,12 @@
 		179C5C6A1AB079980047169F /* THGWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* THGWebService.framework */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
 		17C96AAD1AB0D0D700D49071 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C96AAC1AB0D0D700D49071 /* RequestTests.swift */; };
-		17C96AAF1AB0D84400D49071 /* WebServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C96AAE1AB0D84400D49071 /* WebServiceTests.swift */; };
+		17C96AAF1AB0D84400D49071 /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C96AAE1AB0D84400D49071 /* SessionTests.swift */; };
 		17D1879E1AB0B173000742BF /* THGWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* THGWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D1E56E1AD5538000384D2D /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56B1AD5538000384D2D /* Request.swift */; };
 		17D1E56F1AD5538000384D2D /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56C1AD5538000384D2D /* ServiceTask.swift */; };
-		17D1E5701AD5538000384D2D /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56D1AD5538000384D2D /* WebService.swift */; };
+		A199D5E11BD02A4400E62410 /* RequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A199D5E01BD02A4400E62410 /* RequestBuilder.swift */; settings = {ASSET_TAGS = (); }; };
+		A199D5E31BD040C600E62410 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = A199D5E21BD040C600E62410 /* Session.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,12 +48,13 @@
 		179C5C6F1AB079980047169F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17C96AAA1AB0CBB800D49071 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		17C96AAC1AB0D0D700D49071 /* RequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTests.swift; sourceTree = "<group>"; };
-		17C96AAE1AB0D84400D49071 /* WebServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServiceTests.swift; sourceTree = "<group>"; };
+		17C96AAE1AB0D84400D49071 /* SessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
 		17D187961AB0B173000742BF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17D187991AB0B173000742BF /* THGWebService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THGWebService.h; sourceTree = "<group>"; };
 		17D1E56B1AD5538000384D2D /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		17D1E56C1AD5538000384D2D /* ServiceTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTask.swift; sourceTree = "<group>"; };
-		17D1E56D1AD5538000384D2D /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
+		A199D5E01BD02A4400E62410 /* RequestBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestBuilder.swift; sourceTree = "<group>"; };
+		A199D5E21BD040C600E62410 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +98,7 @@
 		179C5C6D1AB079980047169F /* THGWebServiceTests */ = {
 			isa = PBXGroup;
 			children = (
-				17C96AAE1AB0D84400D49071 /* WebServiceTests.swift */,
+				17C96AAE1AB0D84400D49071 /* SessionTests.swift */,
 				17C96AAC1AB0D0D700D49071 /* RequestTests.swift */,
 				179C5C6E1AB079980047169F /* Supporting Files */,
 			);
@@ -134,8 +136,9 @@
 			isa = PBXGroup;
 			children = (
 				17D1E56B1AD5538000384D2D /* Request.swift */,
+				A199D5E01BD02A4400E62410 /* RequestBuilder.swift */,
+				A199D5E21BD040C600E62410 /* Session.swift */,
 				17D1E56C1AD5538000384D2D /* ServiceTask.swift */,
-				17D1E56D1AD5538000384D2D /* WebService.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -250,9 +253,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17D1E5701AD5538000384D2D /* WebService.swift in Sources */,
+				A199D5E31BD040C600E62410 /* Session.swift in Sources */,
 				17D1E56F1AD5538000384D2D /* ServiceTask.swift in Sources */,
 				17D1E56E1AD5538000384D2D /* Request.swift in Sources */,
+				A199D5E11BD02A4400E62410 /* RequestBuilder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,7 +264,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17C96AAF1AB0D84400D49071 /* WebServiceTests.swift in Sources */,
+				17C96AAF1AB0D84400D49071 /* SessionTests.swift in Sources */,
 				17C96AAD1AB0D0D700D49071 /* RequestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
