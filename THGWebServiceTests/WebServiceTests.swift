@@ -334,34 +334,5 @@ class WebServiceTests: XCTestCase {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-    
-    func testFoo() {
-        let service = WebService(baseURLString: baseURL)
-        let successExpectation = expectationWithDescription("Received status 200")
-
-        service
-            .POST("/post")
-                .setHeaderValue("Custom-Header", forName: "bar")
-                .setParameters(["foo" : "this needs percent encoded"])
-            .response { data, res in
-                let httpResponse = res as! NSHTTPURLResponse
-                
-                if httpResponse.statusCode == 200 {
-                    successExpectation.fulfill()
-                }
-            }
-            .resume()
-        
-        waitForExpectationsWithTimeout(5.0, handler: nil)
-        
-        /**
-        
-        POST /stores HTTP/1.1
-        Custom-Header: bar
-        Content-Length: 55
-        
-        foo=this%20needs%20percent%20encoded
-        */
-    }
 }
 
