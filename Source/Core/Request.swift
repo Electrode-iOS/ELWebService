@@ -19,10 +19,6 @@ protocol URLRequestEncodable {
     var urlRequestValue: NSURLRequest {get}
 }
 
-protocol RequestEncoder {
-    func encodeRequest(method: Request.Method, url: String, parameters: [String : AnyObject]?, options: [Request.Option]?) -> Request
-}
-
 /**
  Encapsulates the data required to send an HTTP request.
 */
@@ -97,7 +93,7 @@ public struct Request {
         public static let formEncoded = "application/x-www-form-urlencoded"
         public static let json = "application/json"
     }
-    
+        
     /// The HTTP method of the request.
     public let method: Method
     
@@ -198,52 +194,6 @@ extension Request: URLRequestEncodable {
         }
 
         return urlRequest.copy() as! NSURLRequest
-    }
-}
-
-// MARK: - Request Options
-
-extension Request {
-    
-    /// An `Option` value defines a rule for encoding part of a `Request` value.
-    public enum Option {
-        /// Defines the parameter encoding for the HTTP request.
-        case ParameterEncoding(Request.ParameterEncoding)
-        /// Defines a HTTP header field name and value to set in the `Request`.
-        case Header(String, String)
-        /// Defines the cache policy to set in the `Request` value.
-        case CachePolicy(NSURLRequestCachePolicy)
-        /// Defines the HTTP body contents of the HTTP request.
-        case Body(NSData)
-        /// Defines the JSON object that will be serialized as the body of the HTTP request.
-        case BodyJSON(AnyObject)
-    }
-    
-    /// Uses an array of `Option` values as rules for mutating a `Request` value.
-    func encodeOptions(options: [Option]) -> Request {
-        var request = self
-        
-        for option in options {
-            switch option {
-                
-            case .ParameterEncoding(let encoding):
-                request.parameterEncoding = encoding
-                
-            case .Header(let name, let value):
-                request.headers[name] = value
-                
-            case .CachePolicy(let cachePolicy):
-                request.cachePolicy = cachePolicy
-                
-            case .Body(let data):
-                request.body = data
-                
-            case .BodyJSON(let json):
-                request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
-            }
-        }
-        
-        return request
     }
 }
 
