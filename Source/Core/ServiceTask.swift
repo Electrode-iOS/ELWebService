@@ -127,7 +127,7 @@ extension ServiceTask {
     /// Resume the underlying data task.
     public func resume() -> Self {
         if dataTask == nil {
-            dataTask = dataTaskSource?.dataTaskWithRequest(request.urlRequestValue, completion: dataTaskCompletionHandler())
+            dataTask = dataTaskSource?.dataTaskWithRequest(request.urlRequestValue, completionHandler: dataTaskCompletionHandler())
         }
         
         dataTask?.resume()

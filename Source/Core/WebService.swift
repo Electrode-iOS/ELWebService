@@ -9,17 +9,6 @@
 import Foundation
 
 /**
-  Types conforming to the `SessionDataTaskDataSource` protocol are responsible 
-  for creating `NSURLSessionDataTask` objects based on a `NSURLRequest` value 
-  and invoking a completion handler after the response of a data task has been 
-  received. Adopt this protocol in order to specify the `NSURLSession` instance 
-  used to send requests.
-*/
-public protocol SessionDataTaskDataSource: class {
-    func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask?
-}
-
-/**
  A `WebService` value provides a concise API for encoding a NSURLRequest object
  and processing the resulting `NSURLResponse` object.
 */
@@ -32,6 +21,14 @@ public final class WebService {
      `NSURLRequest`.
     */
     public var dataTaskSource: SessionDataTaskDataSource?
+    
+    private var serviceDataTaskSource: SessionDataTaskDataSource {
+        if let dataTaskSource = dataTaskSource {
+            return dataTaskSource
+        } else {
+            return NSURLSession.sharedSession()
+        }
+    }
     
     // MARK: Initialization
     
@@ -165,25 +162,5 @@ extension WebService {
     func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
         let relativeURL = NSURL(string: relativeURLString)
         return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString
-    }
-}
-
-// MARK: - SessionDataTaskDataSource
-
-extension WebService: SessionDataTaskDataSource {
-    var serviceDataTaskSource: SessionDataTaskDataSource {
-        if let dataTaskSource = dataTaskSource {
-            return dataTaskSource
-        } else {
-            return self
-        }
-    }
-    
-    public func dataTaskWithRequest(request: NSURLRequest, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask? {
-        if let task = dataTaskSource?.dataTaskWithRequest(request, completion: completion) {
-            return task
-        } else {
-            return NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: completion);
-        }
     }
 }
