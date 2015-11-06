@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1705EE861BEC4CB700FB375E /* ServiceTaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1705EE851BEC4CB700FB375E /* ServiceTaskResult.swift */; };
 		178412251B1672E200EECF8B /* THGWebService.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* THGWebService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		179C5C6A1AB079980047169F /* THGWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* THGWebService.framework */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
@@ -43,6 +44,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1705EE851BEC4CB700FB375E /* ServiceTaskResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTaskResult.swift; sourceTree = "<group>"; };
 		179C5C5E1AB079980047169F /* THGWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = THGWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		179C5C691AB079980047169F /* THGWebServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = THGWebServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		179C5C6F1AB079980047169F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				17D1E56C1AD5538000384D2D /* ServiceTask.swift */,
 				17D1E56D1AD5538000384D2D /* WebService.swift */,
 				17E34E011BE994FB0068866A /* SessionDataTaskDataSource.swift */,
+				1705EE851BEC4CB700FB375E /* ServiceTaskResult.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1705EE861BEC4CB700FB375E /* ServiceTaskResult.swift in Sources */,
 				17D1E5701AD5538000384D2D /* WebService.swift in Sources */,
 				17D1E56F1AD5538000384D2D /* ServiceTask.swift in Sources */,
 				17E34E021BE994FB0068866A /* SessionDataTaskDataSource.swift in Sources */,
