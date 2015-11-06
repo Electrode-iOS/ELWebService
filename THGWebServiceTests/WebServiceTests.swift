@@ -46,7 +46,40 @@ class WebServiceTests: XCTestCase {
         }
     }
 
-    // MARK: Tests  
+    // MARK: Tests
+    
+    func testUpdateUI() {
+        let successExpectation = expectationWithDescription("Received status 200")
+        let uiExpectation = expectationWithDescription("Received status 200")
+        let service = WebService(baseURLString: baseURL)
+        
+        let task = service
+            .GET("/get")
+            .response { data, response in
+                XCTAssertTrue(!NSThread.isMainThread())
+                
+                let httpResponse = response as! NSHTTPURLResponse
+                
+                if httpResponse.statusCode == 200 {
+                    successExpectation.fulfill()
+                }
+                
+                return ServiceTaskResult.Value(true)
+            }
+            .updateUI { value in
+                XCTAssertTrue(NSThread.isMainThread())
+
+                if let value = value as? Bool where value == true {
+                    uiExpectation.fulfill()
+                } else {
+                    fatalError()
+                }
+            }
+            .resume()
+        
+        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
     
     func testGetEndpoint() {
         let successExpectation = expectationWithDescription("Received status 200")
