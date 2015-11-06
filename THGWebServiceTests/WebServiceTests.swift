@@ -22,6 +22,8 @@ class WebServiceTests: XCTestCase {
     
     func responseHandler(expectation expectation: XCTestExpectation) -> (NSData?, NSURLResponse?) -> ServiceTaskResult {
         return { data, response in
+            XCTAssertTrue(!NSThread.isMainThread())
+
             let httpResponse = response as! NSHTTPURLResponse
             
             if httpResponse.statusCode == 200 {
@@ -34,6 +36,8 @@ class WebServiceTests: XCTestCase {
     
     func jsonResponseHandler(expectation expectation: XCTestExpectation) -> (AnyObject) -> ServiceTaskResult {
         return { json in
+            XCTAssertTrue(!NSThread.isMainThread())
+
             if json is NSDictionary {
                 expectation.fulfill()
             }
@@ -128,6 +132,7 @@ class WebServiceTests: XCTestCase {
                 return ServiceTaskResult.Empty
             }
             .responseError { error in
+                XCTAssertTrue(!NSThread.isMainThread())
                 XCTAssertFalse(wasResponseCalled, "Response should not be called for error cases")
                 errorExpectation.fulfill()
             }
