@@ -135,27 +135,30 @@ class WebServiceTests: XCTestCase {
 
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-//    
-//    func testSpecifyingResponseHandlerQueue() {
-//        let successExpectation = expectationWithDescription("Received status 200")
-//        let backgroundExpectation = expectationWithDescription("Background handler ran")
-//        let service = WebService(baseURLString: baseURL)
-//        let queue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
-//
-//        let task = service
-//            .GET("/get")
-//            .response(queue) { data, response in
-//                backgroundExpectation.fulfill()
-//            }
-//            .response { data, response in
-//                successExpectation.fulfill()
-//            }
-//            .resume()
-//        
-//        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-//        waitForExpectationsWithTimeout(4, handler: nil)
-//    }
-//    
+    
+    func testUpdateErrorUIHandler() {
+        let baseURL = "httpppppp://httpbin.org/"
+        let errorExpectation = expectationWithDescription("Error handler called for bad URL")
+        var wasResponseCalled = false
+        
+        WebService(baseURLString: baseURL)
+            .GET("/")
+            .response { data, response in
+                wasResponseCalled = true
+                return ServiceTaskResult.Empty
+            }
+            .updateErrorUI { error in
+                XCTAssertTrue(NSThread.isMainThread())
+                XCTAssertFalse(wasResponseCalled, "Response should not be called for error cases")
+                errorExpectation.fulfill()
+            }
+            .resume()
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
+    
+    
     func testGetJSON() {
         let successExpectation = expectationWithDescription("Received status 200")
         let handler = jsonResponseHandler(expectation: successExpectation)
@@ -168,20 +171,6 @@ class WebServiceTests: XCTestCase {
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-    
-//    func testGetJSONWithSpecificQueue() {
-//        let successExpectation = expectationWithDescription("Received status 200")
-//        let handler = jsonResponseHandler(expectation: successExpectation)
-//        let service = WebService(baseURLString: baseURL)
-//        let queue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
-//        let task = service
-//            .GET("/get")
-//            .responseJSON(queue, handler: handler)
-//            .resume()
-//
-//        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-//        waitForExpectationsWithTimeout(2, handler: nil)
-//    }
     
     func testGetPercentEncodedParameters() {
         let successExpectation = expectationWithDescription("Received status 200")

@@ -241,7 +241,27 @@ extension ServiceTask {
     */
     public func responseError(handler: ErrorHandler) -> Self {
         dispatch_async(handlerQueue) {
-            
+            if let taskResult = self.taskResult {
+                switch taskResult {
+                case .Failure(let error): handler(error)
+                case .Value(_): break
+                case .Empty: break
+                }
+            }
+        }
+        
+        return self
+    }
+    
+    /**
+     Add a response handler to be called if a request results in an error. Handler
+     will be called on the main queue.
+     
+     :param: handler Error handler to execute when an error occurs.
+     :returns: Self instance to support chaining.
+     */
+    public func updateErrorUI(handler: ErrorHandler) -> Self {
+        dispatch_async(handlerQueue) {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(let error):
