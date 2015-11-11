@@ -15,6 +15,8 @@ import Foundation
  via the `state` property.
 */
 public final class ServiceTask {
+    private var request: Request
+    
     /// Represents the result of a service task.
     private enum Result {
         case Success(NSData?, NSURLResponse?)
@@ -54,6 +56,8 @@ public final class ServiceTask {
     /// Result of the service task
     private var result: Result?
     
+    private weak var dataTaskSource: SessionDataTaskDataSource?
+    
     // MARK: Intialization
     
     /**
@@ -64,24 +68,70 @@ public final class ServiceTask {
      - parameter dataTaskSource: Object responsible for creating a 
       NSURLSessionDataTask used to send the NSURLRequset.
     */
-    init(urlRequestEncodable: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
+    
+    init(request: Request, dataTaskSource: SessionDataTaskDataSource) {
+        self.request = request
+        self.dataTaskSource = dataTaskSource
         self.handlerQueue = {
             let queue = dispatch_queue_create(("com.THGWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
             dispatch_suspend(queue)
             return queue
         }()
-
-        self.dataTask = dataTaskSource.dataTaskWithRequest(urlRequestEncodable.urlRequestValue, completion: dataTaskCompletionHandler())
     }
 }
+
+// MARK: - Request API
+
+extension ServiceTask {
+    public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
+        request.parameters = parameters
+        request.parameterEncoding = encoding ?? .Percent
+        return self
+    }
+        
+    public func setBody(data: NSData) -> Self {
+        request.body = data
+        return self
+    }
+    
+    public func setJSON(json: AnyObject) -> Self {
+        request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
+        return self
+    }
+    
+    public func setHeaders(headers: [String: String]) -> Self {
+        request.headers = headers
+        return self
+    }
+    
+    public func setHeaderValue(value: String, forName name: String) -> Self {
+        request.headers[name] = value
+        return self
+    }
+    
+    public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
+        request.cachePolicy = cachePolicy
+        return self
+    }
+    
+    public func setParameterEncoding(encoding: Request.ParameterEncoding) -> Self {
+        request.parameterEncoding = encoding
+        return self
+    }
+}
+
 
 // MARK: NSURLSesssionDataTask
 
 extension ServiceTask {
-    
     /// Resume the underlying data task.
-    public func resume() {
+    public func resume() -> Self {
+        if dataTask == nil {
+            dataTask = dataTaskSource?.dataTaskWithRequest(request.urlRequestValue, completionHandler: dataTaskCompletionHandler())
+        }
+        
         dataTask?.resume()
+        return self
     }
     
     /// Suspend the underlying data task.

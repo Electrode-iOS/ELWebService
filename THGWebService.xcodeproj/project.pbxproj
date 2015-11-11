@@ -16,6 +16,7 @@
 		17D1E56E1AD5538000384D2D /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56B1AD5538000384D2D /* Request.swift */; };
 		17D1E56F1AD5538000384D2D /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56C1AD5538000384D2D /* ServiceTask.swift */; };
 		17D1E5701AD5538000384D2D /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D1E56D1AD5538000384D2D /* WebService.swift */; };
+		17E34E021BE994FB0068866A /* SessionDataTaskDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E34E011BE994FB0068866A /* SessionDataTaskDataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		17D1E56B1AD5538000384D2D /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		17D1E56C1AD5538000384D2D /* ServiceTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTask.swift; sourceTree = "<group>"; };
 		17D1E56D1AD5538000384D2D /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
+		17E34E011BE994FB0068866A /* SessionDataTaskDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionDataTaskDataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 				17D1E56B1AD5538000384D2D /* Request.swift */,
 				17D1E56C1AD5538000384D2D /* ServiceTask.swift */,
 				17D1E56D1AD5538000384D2D /* WebService.swift */,
+				17E34E011BE994FB0068866A /* SessionDataTaskDataSource.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -252,6 +255,7 @@
 			files = (
 				17D1E5701AD5538000384D2D /* WebService.swift in Sources */,
 				17D1E56F1AD5538000384D2D /* ServiceTask.swift in Sources */,
+				17E34E021BE994FB0068866A /* SessionDataTaskDataSource.swift in Sources */,
 				17D1E56E1AD5538000384D2D /* Request.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

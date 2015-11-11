@@ -49,7 +49,8 @@ class WebServiceTests: XCTestCase {
         let task = service
                     .GET("/get")
                     .response(handler)
-        
+                    .resume()
+
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
     }
@@ -68,7 +69,8 @@ class WebServiceTests: XCTestCase {
         let task = service
             .GET("http://httpbin.org/get")
             .response(handler)
-        
+            .resume()
+
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
     }
@@ -80,6 +82,7 @@ class WebServiceTests: XCTestCase {
         let task = service
             .POST("/post")
             .response(handler)
+            .resume()
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
@@ -92,7 +95,8 @@ class WebServiceTests: XCTestCase {
         let task = service
             .PUT("/put")
             .response(handler)
-        
+            .resume()
+
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
     }
@@ -104,20 +108,10 @@ class WebServiceTests: XCTestCase {
         let task = service
             .DELETE("/delete")
             .response(handler)
+            .resume()
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testDisableStartTasksImmediately() {
-        let baseURL = "http://httpbin.org/"
-        
-        var service = WebService(baseURLString: baseURL)
-        service.startTasksImmediately = false
-        
-        let task = service.GET("/get")
-
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Suspended, "Task should be suspended when startTasksImmediately is disabled")
     }
 
     func testErrorHandler() {
@@ -134,7 +128,8 @@ class WebServiceTests: XCTestCase {
                 XCTAssertFalse(wasResponseCalled, "Response should not be called for error cases")
                 errorExpectation.fulfill()
             }
-        
+            .resume()
+
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
@@ -151,7 +146,8 @@ class WebServiceTests: XCTestCase {
             }
             .response { data, response in
                 successExpectation.fulfill()
-        }
+            }
+            .resume()
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(4, handler: nil)
@@ -164,7 +160,8 @@ class WebServiceTests: XCTestCase {
         let task = service
             .GET("/get")
             .responseJSON(handler)
-        
+            .resume()
+
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
     }
@@ -177,7 +174,8 @@ class WebServiceTests: XCTestCase {
         let task = service
             .GET("/get")
             .responseJSON(queue, handler: handler)
-        
+            .resume()
+
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
         waitForExpectationsWithTimeout(2, handler: nil)
     }
@@ -188,7 +186,8 @@ class WebServiceTests: XCTestCase {
         let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
         
         service
-            .GET("/get", parameters: parameters)
+            .GET("/get")
+                .setParameters(parameters)
             .response { data, response in
                 
                 let httpResponse = response as! NSHTTPURLResponse
@@ -206,7 +205,8 @@ class WebServiceTests: XCTestCase {
                 
                 RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
             }
-        
+            .resume()
+
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
@@ -216,7 +216,8 @@ class WebServiceTests: XCTestCase {
         let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
         
         service
-            .POST("/post", parameters: parameters)
+            .POST("/post")
+                .setParameters(parameters)
             .response { data, response in
                 
                 let httpResponse = response as! NSHTTPURLResponse
@@ -233,8 +234,9 @@ class WebServiceTests: XCTestCase {
                 XCTAssert(deliveredParameters != nil)
                 
                 RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
-        }
-        
+            }
+            .resume()
+
         waitForExpectationsWithTimeout(2, handler: nil)
     }
     
@@ -244,9 +246,8 @@ class WebServiceTests: XCTestCase {
         let parameters = ["foo" : "bar", "number" : 42]
         
         service
-            .POST("/post",
-                parameters: parameters,
-                options: [.ParameterEncoding(.JSON)])
+            .POST("/post")
+                .setParameters(parameters, encoding: .JSON)
             .response { data, response in
                 
                 let httpResponse = response as! NSHTTPURLResponse
@@ -263,7 +264,8 @@ class WebServiceTests: XCTestCase {
                 XCTAssert(deliveredParameters != nil)
                 
                 RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
-        }
+            }
+            .resume()
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
@@ -276,12 +278,9 @@ class WebServiceTests: XCTestCase {
         let jsonArray = [jsonObject, jsonObject]
         
         service
-            .POST("/post",
-                parameters: nil,
-                options: [
-                    .ParameterEncoding(.JSON),
-                    .BodyJSON(jsonArray)
-                ])
+            .POST("/post")
+                .setParameterEncoding(.JSON)
+                .setJSON(jsonArray)
             .response { data, response in
                 
                 let httpResponse = response as! NSHTTPURLResponse
@@ -300,7 +299,8 @@ class WebServiceTests: XCTestCase {
                 for deliveredJSONObject in deliveredArray! {
                     RequestTests.assertRequestParametersNotEqual(deliveredJSONObject, toOriginalParameters: jsonObject)
                 }
-        }
+            }
+            .resume()
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
@@ -308,12 +308,11 @@ class WebServiceTests: XCTestCase {
     func testHeadersDelivered() {
         let successExpectation = expectationWithDescription("Received status 200")
         let service = WebService(baseURLString: baseURL)
-        let headers = ["Some-Test-Header" :"testValue"]
+        let headers =  ["Some-Test-Header" :"testValue"]
         
         service
-            .GET("/get",
-                parameters: nil,
-                options: [.Header("Some-Test-Header", "testValue")])
+            .GET("/get")
+                .setHeaders(headers)
             .response { data, response in
                 
                 let httpResponse = response as! NSHTTPURLResponse
@@ -330,7 +329,8 @@ class WebServiceTests: XCTestCase {
                 XCTAssert(deliveredHeaders != nil)
                 
                 RequestTests.assertRequestParametersNotEqual(deliveredHeaders!, toOriginalParameters: headers)
-        }
+            }
+            .resume()
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
