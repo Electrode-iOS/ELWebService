@@ -88,6 +88,7 @@ extension ServiceTask {
     }
     
     public func setJSON(json: AnyObject) -> Self {
+        request.contentType = Request.ContentType.json
         request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
         return self
     }
