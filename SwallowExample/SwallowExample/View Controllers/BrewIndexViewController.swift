@@ -46,6 +46,7 @@ extension BrewIndexViewController {
             .responseError {error in
                 print("I AM ERROR = \(error)")
             }
+            .resume()
     }
 }
 

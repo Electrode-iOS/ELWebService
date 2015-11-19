@@ -50,12 +50,13 @@ extension BrewAddViewController {
         
         brewClient
             .insertBrew(brew)
-            .response { [weak self] data, response in
+            .updateUI { [weak self] value in
                 self?.dismissViewControllerAnimated(true, completion: nil)
             }
-            .responseError { error in
+            .updateErrorUI { error in
                 print("I AM ERROR = \(error)")
             }
+            .resume()
     }
 }
 

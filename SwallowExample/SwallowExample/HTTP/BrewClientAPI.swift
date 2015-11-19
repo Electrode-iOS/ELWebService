@@ -29,6 +29,6 @@ extension BrewClientAPI {
     }
     
     func insertBrew(brew: Brew) -> ServiceTask {
-        return webService.POST("/brews", parameters: brew.webServiceParameters)
+        return webService.POST("/brews").setParameters(brew.webServiceParameters)
     }
 }
