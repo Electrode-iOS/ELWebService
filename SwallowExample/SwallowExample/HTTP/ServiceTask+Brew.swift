@@ -12,15 +12,20 @@ import THGWebService
 extension ServiceTask {
     
     func responseAsBrews(handler: ([Brew]) -> Void) -> Self {
-        return responseJSON { json in
-            if let json = self.jsonObject(json, forKey: "brews"),
-                let jsonArray = json as? [AnyObject],
-                let decodedArray = ModelDecoder<Brew>.decodeArray(jsonArray) {
-                    handler(decodedArray)
-            } else {
-                self.throwError(ServiceTaskDecodeError.FailedToDecodeJSONArray)
-                return
+        return
+            responseJSON { json in
+                if let json = self.jsonObject(json, forKey: "brews"),
+                    let jsonArray = json as? [AnyObject],
+                    let decodedArray = ModelDecoder<Brew>.decodeArray(jsonArray) {
+                        return .Value(decodedArray)
+                } else {
+                    return .Failure(ServiceTaskDecodeError.FailedToDecodeJSONArray)
+                }
             }
-        }
+            .updateUI { value in
+                if let brews = value as? [Brew] {
+                    handler(brews)
+                }
+            }
     }
 }

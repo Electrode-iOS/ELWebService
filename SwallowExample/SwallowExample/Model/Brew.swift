@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Brew {
+final class Brew {
     var name: String
     var style: String
     var brewery: Brewery?
@@ -25,7 +25,7 @@ extension Brew: ModelDecodable {
         guard let name = json["name"] as? String else { return nil }
         guard let style = json["style"] as? String else { return nil }
 
-        var brew = Brew(name: name, style: style)
+        let brew = Brew(name: name, style: style)
         
         if let breweryJSON = json["brewery"],
             let wtf = breweryJSON {
