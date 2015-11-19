@@ -79,6 +79,11 @@ extension ServiceTask {
     public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
         request.parameterEncoding = encoding ?? .Percent
+        
+        if encoding == .JSON {
+            request.contentType = Request.ContentType.json
+        }
+        
         return self
     }
         
