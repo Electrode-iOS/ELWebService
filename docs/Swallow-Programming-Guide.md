@@ -44,11 +44,10 @@ Now that we have a client we can send a request by calling the `GET` method and 
 ```
 brewClient
     .GET("/brewers")
+    .resume()
 ```
 
 The code above sends a GET request with the URL "http://brewhapi.herokuapp.com/brewers". Along with GET, `WebService` also offers methods for POST, DELETE, and other common HTTP verbs.
-
-Our code is already more expressive than it would be with `NSURLRequest` because we're calling a rigid method to specify that we want to make a `GET` request instead of simply setting a string value. An enum could have solved the stringly-typed problem but I would argue that the use of a method here is cleaner code.
 
 ## Handling Responses
 
@@ -60,6 +59,7 @@ brewClient
     .response { data, response in
         // process response
     }
+    .resume()
 ```
 
 The response closure will only be called if the request does not result in an error. To handle the event of a failure provide a closure for error handling by calling the `responseError()` method.
@@ -73,11 +73,12 @@ brewClient
     .responseError { error in
         print("I AM ERROR \(error)")
     }
+    .resume()
 ```
 
 Request methods like `GET()` return a `ServiceTask` object that represents the lifetime of a given `NSURLSessionDataTask`. The handler methods return their `self` instance which enables you to chain handlers resulting in concise and expressive code.
 
-After the response is received handlers are invoked in the order of which they are declared. By default all handlers are run on the main thread but you can also specify a dispatch queue for running elsewhere.
+After the response is received handlers are invoked in the order of which they are declared. By default all handlers are run on a background queue.
 
 ## Handling JSON
 
@@ -92,125 +93,181 @@ brewClient
     .responseError { error in
         print("I AM ERROR \(error)")
     }
+    .resume()
 ```
+
+## Updating UI
+
+All response and error handlers that are registered with the `response()`, `responseJSON()`, and `responseError()` methods will run on a background queue. If you're updating UI with a response or error you'll need to make sure your updates happen on the main thread. Swallow provides `updateUI()` and `updateErrorUI()` methods to enable you to register handlers that will be dispatched to the main queue.
+
+```
+service
+    .GET("/brewers")
+    .responseJSON { json in
+      if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+          return .Value(models)
+      } else {
+        // any value conforming to ErrorType
+        return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+      }
+    }
+    .updateUI { value in
+        // this closure will be dispatched to the main queue via `updateUI()`
+
+        if let brewers = value as? [Brewer] {
+            // update some UI with brewer models
+        }
+    }
+    .resume()
+```
+
 
 ## Request Parameters
 
-`GET` and the various other request methods have an optional parameter named `parameters` for sending parameterized data along with the request. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
+Parameterized data that is structured as a dictinoary type of `[String: AnyObject]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
 
 ```
 brewClient
-    .GET("/brewers", parameters: ["state" : "new york"])
+    .GET("/brewers")
+    .setParameters(["state" : "new york"])
 ```
 
-For all other HTTP methods, parameters are sent as the request body and are encoded based on the `ParameterEncoding(Request.ParameterEncoding)` option. The default encoding is ParameterEncoding.Percent.
-
-```
-brewClient
-    .POST("/brewers", parameters: ["name" : "Trashboat Brewing"])
-```
-
-The code     above produces a request with the body contents set to `"name=Trashboat%20Brewing"`. To send JSON instead simply pass `ParameterEncoding(.JSON)` as a request option.
+For all other HTTP methods, parameters are sent as the request body with the default parameter encoding of `.Percent`.
 
 ```
 brewClient
-    .POST("/brewers",
-        parameters: ["name" : "Trashboat Brewing"],
-        options: [.ParameterEncoding(.JSON)])
+    .POST("/brewers")
+    .setParameters(["name": "Trashboat Brewing"])
+```
+
+The code above produces a request with the body contents set to `"name=Trashboat%20Brewing"`. 
+
+JSON can be sent by specifying the parameter encoding to be `.JSON`.
+
+```
+brewClient
+    .POST("/brewers")
+    .setParameters(["name": "Trashboat Brewing"], encoding: .JSON)
 ```
 
 Now the parameters are JSON encoded in the body of the request.
 
+### Parameter Encodings
 
-## Request Options
-
-Options give you further control over encoding a request. Options can be thought of as a collection of rules that describe how to encode a request value. Below, options are used to set a custom header value as well as to specify that the request parameters are to be JSON encoded.
-
-```
-brewClient
-    .GET("/brewers",
-        parameters: nil,
-        options: [.ParameterEncoding(.JSON),
-                  .Header("beer-client", "iOS")])
-    .response { data, response in
-        // process response
-    }
-    .responseError { error in
-        print("I AM ERROR \(error)")
-    }
-```
-
-Rather than providing a request-encoding API as an object that is directly mutated and passed arround, Swallow offers a fixed set of rules to centralize and encapsulate the intended mutations that are made to the request value. 
-
-Requests values are no longer being mutated externally, they are encoded by definition of a set of rules.
-
-#### `.ParameterEncoding`
-
-The `.ParameterEncoding` option is used to specify how the request parameters will be encoded in the HTTP request. A value of `.JSON` will serialize the `parameters` data as JSON in the HTTP body and set the Content-Type HTTP header to "application/json". 
+The `setParameters()` method accepts an optional second parameter named `encoding` that allows you to specify how the request parameters will be encoded in the HTTP request. A value of `.JSON` will serialize the `parameters` data as JSON in the HTTP body and set the Content-Type HTTP header to "application/json".
 
 A `.Percent` option specifies that the parameters will be encoded as a percent-encoded string. `.Percent` is the default configuration for encoding request parameters.
 
-#### `.Header`
+## Request Encoding
 
-The `.Header` option declares an HTTP header to set in the request.
+`ServiceTask` provides several methods that allow you to have further control over encoding a request. Below a custom HTTP header is set and a cache policy is specified.
+
+```
+brewClient
+    .GET("/brewers")
+    .setHeaderValue("2", forName: "beer-client-version")
+    .setCachePolicy(.ReloadIgnoringLocalCacheData)
+```
+
+Rather than providing a request-encoding API as an object that is directly mutated and passed around (ex: `NSURLRequest`), Swallow offers a fixed set of methods to centralize and encapsulate the intended mutations that are made to the request value. 
+
+
+#### `setHeaderValue`
+
+The `setHeaderValue()` method adds an HTTP header value and name to the HTTP request.
 
 ```
 brewClient
     .GET("/brews",
-        parameters: nil,
-        options: [
-            // declare an HTTP header of "Custom-Header: foo"
-            .Header("Custom-Header", "foo")
-        ])
+    .setHeaderValue("foo", forName: "custom-header-name")
 ```
 
-#### `.CachePolicy`
+#### `setCachePolicy`
 
-The `.CachePolicy` option declares the`NSURLRequestCachePolicy` value to use in the resulting `NSURLRequest`. See the [`NSURLRequestCachePolicy`](https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSURLRequest_Class/index.html#//apple_ref/c/tdef/NSURLRequestCachePolicy) section of the `NSURLRequest` documentation for more information.
+The `setCachePolicy()` method sets the`NSURLRequestCachePolicy` value to use in the resulting `NSURLRequest`. See the [`NSURLRequestCachePolicy`](https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSURLRequest_Class/index.html#//apple_ref/c/tdef/NSURLRequestCachePolicy) section of the `NSURLRequest` documentation for more information.
 
 ```
 brewClient
-    .GET("/brews",
-        parameters: nil,
-        options: [
-            .CachePolicy(.ReloadIgnoringLocalCacheData)
-        ])
+    .GET("/brews")
+    .setCachePolicy(.ReloadIgnoringLocalCacheData)
 ```
 
-#### `.Body`
+#### `setBody`
 
-The `.Body` option declares the `NSData` value to use as the raw body of the HTTP request.
+The `setBody(data: NSData)` method sets the `NSData` value to use as the raw body of the HTTP request.
 
 ```
 let bodyData: NSData = modelData()
 
 brewClient
-    .PUT("/brewers",
-        parameters: nil,
-        options: [
-            // use bodyData as the HTTP request body
-            .Body(bodyData)
-        ])
+    .PUT("/brewers")
+    .setBody(bodyData)
 ```
 
 
-### `.BodyJSON`
+#### `setJSON`
 
-The `.BodyJSON` option declares the JSON object that will be serialized as the body of the HTTP request.
+The `setJSON(json: AnyObject)` method sets the JSON object that will be serialized as the body of the HTTP request.
 
 ```
 client
-    .POST("/numbers",
-        parameters: nil,
-        options: [
-            // declare an HTTP header of "Content-Type: application/json"
-            .Header(Request.Headers.contentType, Request.ContentType.json),
-
-            // serialize an array of strings as JSON and set as the HTTP body
-            .BodyJSON(["one", "two", "three"])
-        ])
+    .POST("/numbers")
+    .setJSON(["one", "two", "three"])
 ```
 
+
+## ServiceTaskResult
+
+`ServiceTaskResult` values can be used to control how values flow through the handler chain. This allows response handlers to run on a background thread and pass processed data to the next response handler in the chain.
+
+Response handlers must return one of the following `ServiceTaskResult` values:
+
+- Return `.Empty` to provide no processed value to the next handler. All subsequent handlers in the chain will continue to run.
+- Return `.Value(AnyObject)` with an associated value of `AnyObject` type to provide a resulting value to the next handler in the chain. All subsequent handlers in the chain will continue to run.
+- Return `.Failure(ErrorType)` with an associated value of `ErrorType` to prevent any subsequent response handlers from running. All registered error handlers will run instead.
+
+The example below uses `ServiceTaskResult` to first filter out any responses that do not have the status code of 200. The first handler simply checks for the 200 status code and returns a `.Failure` result if the status is anything but 200. If the status check passes a result of `.Empty` is returned to allow the subsequent response handlers in the chain to continue running.
+
+The second response handler in the example serializes the response a JSON and attempts to decode the JSON as an array of model values. If the decoding succeeds the handler uses the `.Value` result to pass the model values to handler registered by `updateUI()`. In the case of a failure a `.Failure` result is returned with a decoding error.
+
+Finally the `updateUI()` handler will be run if all previous response handlers did not return a `.Failure` result. The update UI handler is passed the value that was returned from the last response handler in the chain via a `.Value` result. 
+
+```
+service
+    .GET("/foo")
+    .response { data, response in
+        // filter reseponses that do not respond with status 200
+
+        if let httpResponse = response as? NSHTTPURLResponse 
+            where httpResponse.statusCode != 200 {
+            return .Failure(ResponseError.ExpectedStatus200)
+        }
+
+        return .Empty
+    }
+    .responseJSON { json in
+        // decode JSON as an array of models
+
+        if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+            // return valid model data to updateUI handler
+            return .Value(models)
+        } else {
+            // any value conforming to ErrorType
+            return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+        }
+    }
+    .updateUI { (value: AnyObject) in
+        // configure the UI with the model on the main thread
+
+        if let models = value as? [Brewer] {
+          view.configureWithBrewerModels(models)
+        }
+    }
+    .updateErrorUI { error in
+        // handle errors and update UI accordingly
+    }
+    .resume()
+```
 
 ## Building an API Client
 
@@ -222,13 +279,12 @@ Ideally we should abstract the details of a request for a given web service endp
 extension WebService {
 
     public func searchWithName(name: String, state: String) -> ServiceTask {
-        return GET("/brewers", parameters: ["name": name, state": state])
+        return GET("/brewers").setParameters(["name": name, state": state])
     }
 }
 ```
 
 Consumers of the API client can now ignore the request details and use the friendly high-level method to query for search results.
-
 
 ```
 brewClient
@@ -236,9 +292,10 @@ brewClient
     .response { data, response in
         // process response
     }
-    .responseError { error in
-        print("I AM ERROR \(error)")
+    .updateErrorUI { error in
+        print("I AM ERROR: \(error)")
     }
+    .resume()
 ```
 
 This pattern is great for maintainability because the underlying search method implementation is so clean that it practically serves as documentation for the HTTP endpoint.
@@ -247,20 +304,27 @@ Along with request methods it would be nice to have response handler methods tha
 
 ```
 extension ServiceTask {
-    
-    func responseAsBrewers(handler: ([Brewers]) -> Void) -> Self {
-        return responseJSON { json in
-            if let brewers = Model<Brewer>.modelsFromJSON(json) {
-                handler(brewers)
-            } else {
-                // throw any value that conforms to Swift's ErrorType
-                self.throwError(.ModelSerializationFailure)
+
+    func responseAsBrewers(handler: ([Brewer]) -> Void) -> Self {
+        return 
+            responseJSON { json in
+              if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+                  return .Value(models)
+              } else {
+                // any value conforming to ErrorType
+                return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+              }
             }
-        }
+            .updateUI { value in
+                if let brewers = value as? [Brewer] {
+                  handler(value)
+                }
+            }
     }
 }
 ```
-The code above adds a new method to `ServiceTask` that accepts a closure for calling back with a valid model object. A call to `responseJSON()` is returned in order to access the response data as a JSON payload. A model layer attempts to serialize the JSON as an array of model objects and if the parsing succeeds the callback is called with the valid model data. In the event the model fails to serialize as expected an `ErrorType` value can be "thrown" to short circuit response handlers and can be handled in the `responseError()` callback. (Note: This is different than Swift's native `throw` because the handlers execute asynchronously).
+
+The code above adds a new method to `ServiceTask` that accepts a closure for calling back with a valid model object. A call to `responseJSON()` is returned in order to access the response data as a JSON object. A model layer attempts to serialize the JSON as an array of model objects and if the parsing succeeds the model data is returned as a `.Value` result to be passed to the update UI handler. Finally, the update UI handler calls the callback handler with the requested model data.
 
 With the custom request and response methods in place the code for querying search results using our API client can be boiled down to:
 
@@ -270,12 +334,11 @@ brewClient
     .responseAsBrewers { brewers in
         // update UI with the valid model data
     }
-    .responseError { error in
+    .updateErrorUI { error in
         print("I AM ERROR: \(error)")
     }
+    .resume()
 ```
-
-
 
 ## More Information
 
