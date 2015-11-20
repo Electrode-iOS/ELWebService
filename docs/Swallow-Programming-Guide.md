@@ -223,7 +223,7 @@ client
 Response handlers must return one of the following `ServiceTaskResult` values:
 
 - Return `.Empty` to provide no processed value to the next handler. All subsequent handlers in the chain will continue to run.
-- Return `.Value(AnyObject)` with an associated value of `AnyObject` type to provide a resulting value to the next handler in the chain. All subsequent handlers in the chain will continue to run.
+- Return `.Value(Any)` with an associated value of `Any` type to provide a resulting value to the next handler in the chain. All subsequent handlers in the chain will continue to run.
 - Return `.Failure(ErrorType)` with an associated value of `ErrorType` to prevent any subsequent response handlers from running. All registered error handlers will run instead.
 
 The example below uses `ServiceTaskResult` to first filter out any responses that do not have the status code of 200. The first handler simply checks for the 200 status code and returns a `.Failure` result if the status is anything but 200. If the status check passes a result of `.Empty` is returned to allow the subsequent response handlers in the chain to continue running.
@@ -256,7 +256,7 @@ service
             return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
         }
     }
-    .updateUI { (value: AnyObject) in
+    .updateUI { (value: Any) in
         // configure the UI with the model on the main thread
 
         if let models = value as? [Brewer] {
