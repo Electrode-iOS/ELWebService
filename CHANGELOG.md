@@ -1,3 +1,7 @@
+# [2.1.0](https://github.com/TheHolyGrail/Swallow/releases/tag/v2.1.0)
+
+- Changed `ServiceTaskResult.Value` to use `Any` instead of `AnyObject` in order to support value types. fixes [#15](https://github.com/TheHolyGrail/Swallow/issues/15).
+
 # [2.0.0](https://github.com/TheHolyGrail/Swallow/releases/tag/v2.0.0)
 
 - Changed response handlers that are set with `response()`, `responseJSON`, and `responseError()` to run on a background queue. fixes #7.
