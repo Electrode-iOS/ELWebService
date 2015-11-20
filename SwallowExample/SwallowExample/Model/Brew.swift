@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import THGWebService
 
-final class Brew {
+struct Brew {
     var name: String
     var style: String
     var brewery: Brewery?
@@ -25,7 +26,7 @@ extension Brew: ModelDecodable {
         guard let name = json["name"] as? String else { return nil }
         guard let style = json["style"] as? String else { return nil }
 
-        let brew = Brew(name: name, style: style)
+        var brew = Brew(name: name, style: style)
         
         if let breweryJSON = json["brewery"],
             let wtf = breweryJSON {

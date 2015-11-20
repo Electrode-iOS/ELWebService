@@ -13,7 +13,7 @@ public enum ServiceTaskResult {
     /// Defines an empty task result
     case Empty
     /// Defines a task result as a value
-    case Value(AnyObject)
+    case Value(Any)
     /// Defines a task resulting in an error
     case Failure(ErrorType)
 }

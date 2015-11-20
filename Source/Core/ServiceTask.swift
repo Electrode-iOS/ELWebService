@@ -20,7 +20,7 @@ public final class ServiceTask {
     public typealias ResponseProcessingHandler = (NSData?, NSURLResponse?) -> ServiceTaskResult
     
     /// A closure type alias for a success handler.
-    public typealias UpdateUIHandler = (AnyObject?) -> Void
+    public typealias UpdateUIHandler = (Any?) -> Void
 
     /// A closure type alias for an error handler.
     public typealias ErrorHandler = (ErrorType) -> Void
