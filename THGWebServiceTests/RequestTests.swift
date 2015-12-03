@@ -137,4 +137,13 @@ class RequestTests: XCTestCase {
             fatalError("Failed to cast JSON as [String : AnyObject]")
         }
     }
+    
+    func test_urlRequestValue_validURLWithEmptyParameters() {
+        let request = Request(.GET, url: "http://httpbin.org/")
+        let urlRequest = request.urlRequestValue
+        let urlString = urlRequest.URL?.absoluteString
+
+        XCTAssertNotNil(urlString)
+        XCTAssertFalse(urlString!.containsString("?"))
+    }
 }
