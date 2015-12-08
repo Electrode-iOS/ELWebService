@@ -1,3 +1,7 @@
+# [2.1.1](https://github.com/TheHolyGrail/Swallow/releases/tag/v2.1.1)
+
+- Encode request parameters only when parameters are non empty. Fixes an issue where request URLs would end with a `?` character when sending GET requests with empty parameters.
+
 # [2.1.0](https://github.com/TheHolyGrail/Swallow/releases/tag/v2.1.0)
 
 - Changed `ServiceTaskResult.Value` to use `Any` instead of `AnyObject` in order to support value types. fixes [#15](https://github.com/TheHolyGrail/Swallow/issues/15).
