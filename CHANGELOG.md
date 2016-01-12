@@ -1,3 +1,7 @@
+# [2.1.2](https://github.com/TheHolyGrail/Swallow/releases/tag/v2.1.1)
+
+- Enabled testability for release builds. Fixes [#19](https://github.com/TheHolyGrail/Swallow/issues/19).
+
 # [2.1.1](https://github.com/TheHolyGrail/Swallow/releases/tag/v2.1.1)
 
 - Encode request parameters only when parameters are non empty. Fixes an issue where request URLs would end with a `?` character when sending GET requests with empty parameters.

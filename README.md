@@ -15,7 +15,7 @@ Swallow requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 compatability us
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "TheHolyGrail/Swallow" ~> 2.1.0
+github "TheHolyGrail/Swallow" ~> 2.1.2
 ```
 
 ### Manual
