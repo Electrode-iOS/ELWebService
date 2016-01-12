@@ -1,4 +1,4 @@
-# [2.1.2](https://github.com/TheHolyGrail/Swallow/releases/tag/v2.1.1)
+# [2.1.2](https://github.com/TheHolyGrail/Swallow/releases/tag/v2.1.2)
 
 - Enabled testability for release builds. Fixes [#19](https://github.com/TheHolyGrail/Swallow/issues/19).
 
