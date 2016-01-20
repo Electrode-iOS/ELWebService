@@ -34,13 +34,13 @@ service
     .resume()
 ```
 
-See the [Request Encoding](https://github.com/TheHolyGrail/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#request-encoding) section of programming guide for more information.
+See the [Request Encoding](https://github.com/Electrode-iOS/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#request-encoding) section of programming guide for more information.
 
 ### Response Handlers Now Run on a Background Queue
 
 Previously handlers set with `response()`, `responseJSON`, and `responseError()` were run on the main queue. This means you need to move any of your logic that updates UI into a handler set with `updateUI()`.
 
-For more information about how the new `updateUI` and `updateErrorUI` methods work, see the [Updating UI](https://github.com/TheHolyGrail/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#updating-ui) section of the programming guide.
+For more information about how the new `updateUI` and `updateErrorUI` methods work, see the [Updating UI](https://github.com/Electrode-iOS/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#updating-ui) section of the programming guide.
 
 ### `ServiceTask` instances no longer resume immediately
 
@@ -65,4 +65,4 @@ ELWebService v2 introduces the `ServiceTaskResult` enum to control how values fl
 
 Response handlers written for pre-v2 ELWebService can be easily upgraded by having the handlers return `.Empty`.
 
-For more information about using `ServiceTaskResult` values in response handlers see the [ServiceTaskResult](https://github.com/TheHolyGrail/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#servicetaskresult) section of the programming guide.
+For more information about using `ServiceTaskResult` values in response handlers see the [ServiceTaskResult](https://github.com/Electrode-iOS/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#servicetaskresult) section of the programming guide.

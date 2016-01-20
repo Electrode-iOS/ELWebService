@@ -343,4 +343,3 @@ brewClient
 ## More Information
 
 For more information check out ELWebService's [Readme](https://github.com/TheHolyGrail/ELWebService#ELWebService) as well as the documentation in the [source files](https://github.com/TheHolyGrail/ELWebService/tree/master/Source). Feel free to open [issues](https://github.com/TheHolyGrail/ELWebService/issues) and of course [pull requests](https://github.com/TheHolyGrail/ELWebService/pulls) are always welcomed!
-
