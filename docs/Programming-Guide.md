@@ -1,20 +1,20 @@
-# Swallow Programming Guide
+# ELWebService Programming Guide
 
-## About Swallow
+## About ELWebService
 
-[Swallow](https://github.com/TheHolyGrail/Swallow) is a lightweight HTTP networking framework written in Swift. Swallow simplifies interaction with HTTP web services by providing a concise API for encoding a `NSURLRequest` object and processing the resulting `NSURLResponse`. 
+[ELWebService](https://github.com/TheHolyGrail/ELWebService) is a lightweight HTTP networking framework written in Swift. ELWebService simplifies interaction with HTTP web services by providing a concise API for encoding a `NSURLRequest` object and processing the resulting `NSURLResponse`. 
 
-Unlike many other iOS networking libraries, Swallow is not a wrapper around `NSURLSession` or `NSURLConnection`. Instead Swallow is designed to be unobtrusive by acting as a convenience for working with request and response objects while leaving the crucial implementation details of the various session delegate methods up to the developer.
+Unlike many other iOS networking libraries, ELWebService is not a wrapper around `NSURLSession` or `NSURLConnection`. Instead ELWebService is designed to be unobtrusive by acting as a convenience for working with request and response objects while leaving the crucial implementation details of the various session delegate methods up to the developer.
 
 Apple has done a great job of providing the fundamentals that you would expect from a networking API via `NSURLSession`. It is a modern and flexible API that leaves little need for bulky abstractions. Although `NSURLRequest` and `NSURLResponse` are simple to use they offer little in terms of utilizing the expressiveness and safety you get with Swift's syntax.
 
-Swallow was built to offer simple but powerful constructs for enabling your code to easily take advantage of some of the modern features in Swift.
+ELWebService was built to offer simple but powerful constructs for enabling your code to easily take advantage of some of the modern features in Swift.
 
-## How Swallow Works with NSURLSession
+## How ELWebService Works with NSURLSession
 
-By default Swallow uses the shared session returned from `NSURLSession.sharedSession()` to create data tasks but can be customized to work with any session instance with a single protocol method. This gives you the freedom to provide your own `NSURLSession` implementation while giving you a lightweight API for dispatching and handling `NSURLSessionDataTask` objects.
+By default ELWebService uses the shared session returned from `NSURLSession.sharedSession()` to create data tasks but can be customized to work with any session instance with a single protocol method. This gives you the freedom to provide your own `NSURLSession` implementation while giving you a lightweight API for dispatching and handling `NSURLSessionDataTask` objects.
 
-By conforming to `SessionDataTaskDataSource`, your code has complete control over the `NSURLSession` configuration and simply provides a `NSURLSessionDataTask` for Swallow to work with.
+By conforming to `SessionDataTaskDataSource`, your code has complete control over the `NSURLSession` configuration and simply provides a `NSURLSessionDataTask` for ELWebService to work with.
 
 ```
 struct MyDataTaskDataSource: SessionDataTaskDataSource {
@@ -24,7 +24,7 @@ struct MyDataTaskDataSource: SessionDataTaskDataSource {
     }
 }
 ```
-Configure Swallow to use your data task source with a single line of code.
+Configure ELWebService to use your data task source with a single line of code.
 
 ```
 var client = WebService(baseURLString: "http://myapi")
@@ -98,7 +98,7 @@ brewClient
 
 ## Updating UI
 
-All response and error handlers that are registered with the `response()`, `responseJSON()`, and `responseError()` methods will run on a background queue. If you're updating UI with a response or error you'll need to make sure your updates happen on the main thread. Swallow provides `updateUI()` and `updateErrorUI()` methods to enable you to register handlers that will be dispatched to the main queue.
+All response and error handlers that are registered with the `response()`, `responseJSON()`, and `responseError()` methods will run on a background queue. If you're updating UI with a response or error you'll need to make sure your updates happen on the main thread. ELWebService provides `updateUI()` and `updateErrorUI()` methods to enable you to register handlers that will be dispatched to the main queue.
 
 ```
 service
@@ -169,7 +169,7 @@ brewClient
     .setCachePolicy(.ReloadIgnoringLocalCacheData)
 ```
 
-Rather than providing a request-encoding API as an object that is directly mutated and passed around (ex: `NSURLRequest`), Swallow offers a fixed set of methods to centralize and encapsulate the intended mutations that are made to the request value. 
+Rather than providing a request-encoding API as an object that is directly mutated and passed around (ex: `NSURLRequest`), ELWebService offers a fixed set of methods to centralize and encapsulate the intended mutations that are made to the request value. 
 
 
 #### `setHeaderValue`
@@ -271,7 +271,7 @@ service
 
 ## Building an API Client
 
-Swallow makes it really easy to build a client for consuming a web API. By utilizing extensions, endpoint-specific request and response methods can be added to `WebService` and `ServiceTask`.
+ELWebService makes it really easy to build a client for consuming a web API. By utilizing extensions, endpoint-specific request and response methods can be added to `WebService` and `ServiceTask`.
 
 Ideally we should abstract the details of a request for a given web service endpoint in a high-level method that is more friendly for our API client consumers to use. We can extend `WebService` and add a method for querying the API's search endpoint.
 
@@ -342,5 +342,5 @@ brewClient
 
 ## More Information
 
-For more information check out Swallow's [Readme](https://github.com/TheHolyGrail/Swallow#swallow) as well as the documentation in the [source files](https://github.com/TheHolyGrail/Swallow/tree/master/Source). Feel free to open [issues](https://github.com/TheHolyGrail/Swallow/issues) and of course [pull requests](https://github.com/TheHolyGrail/Swallow/pulls) are always welcomed!
+For more information check out ELWebService's [Readme](https://github.com/TheHolyGrail/ELWebService#ELWebService) as well as the documentation in the [source files](https://github.com/TheHolyGrail/ELWebService/tree/master/Source). Feel free to open [issues](https://github.com/TheHolyGrail/ELWebService/issues) and of course [pull requests](https://github.com/TheHolyGrail/ELWebService/pulls) are always welcomed!
 

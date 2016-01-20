@@ -1,12 +1,12 @@
-# Swallow [![Build Status](https://travis-ci.org/TheHolyGrail/Swallow.svg?branch=master)](https://travis-ci.org/TheHolyGrail/Swallow) [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+# ELWebService [![Build Status](https://travis-ci.org/TheHolyGrail/ELWebService.svg?branch=master)](https://travis-ci.org/TheHolyGrail/ELWebService) [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-Swallow simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, Swallow is not intended to be a fully-featured networking library. By default Swallow uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any `NSURLSession` instance using a [protocol](#sessiondatataskdatasource).
+ELWebService simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, ELWebService is not intended to be a fully-featured networking library. By default ELWebService uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any `NSURLSession` instance using a [protocol](#sessiondatataskdatasource).
 
-See the [Swallow Programming Guide](/docs/Swallow-Programming-Guide.md) for more information. 
+See the [ELWebService Programming Guide](/docs/ELWebService-Programming-Guide.md) for more information. 
 
 ## Requirements
 
-Swallow requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 compatability use the latest [v0.0.x](https://github.com/TheHolyGrail/Swallow/releases/tag/v0.0.3) release.
+ELWebService requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 compatability use the latest [v0.0.x](https://github.com/TheHolyGrail/ELWebService/releases/tag/v0.0.3) release.
 
 ## Installation
 
@@ -15,7 +15,7 @@ Swallow requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 compatability us
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "TheHolyGrail/Swallow" ~> 2.1.2
+github "TheHolyGrail/ELWebService" ~> 2.1.2
 ```
 
 ### Manual
@@ -24,7 +24,7 @@ Install manually by adding `THGWebService.xcodeproj` to your project and configu
 
 ## Usage
 
-Below is a quick overview of how to get started using Swallow. See the [Swallow Programming Guide](/docs/Swallow-Programming-Guide.md) for detailed usage information.
+Below is a quick overview of how to get started using ELWebService. See the [ELWebService Programming Guide](/docs/ELWebService-Programming-Guide.md) for detailed usage information.
 
 
 ### Sending HTTP Requests
@@ -208,9 +208,9 @@ service
 
 ##### SessionDataTaskDataSource
 
-The `SessionDataTaskDataSource` protocol is provided to allow Swallow to work with any NSURLSession-based API. Types conforming to the `SessionDataTaskDataSource` protocol are responsible for creating `NSURLSessionDataTask` objects based on a `NSURLRequest` value and invoking a completion handler after the response of a data task has been received.
+The `SessionDataTaskDataSource` protocol is provided to allow ELWebService to work with any NSURLSession-based API. Types conforming to the `SessionDataTaskDataSource` protocol are responsible for creating `NSURLSessionDataTask` objects based on a `NSURLRequest` value and invoking a completion handler after the response of a data task has been received.
 
-By default Swallow uses the shared session that is provided by `NSURLSession.sharedSession()`.
+By default ELWebService uses the shared session that is provided by `NSURLSession.sharedSession()`.
 
 
 ### Extensions
@@ -268,7 +268,7 @@ service
 
 ## Example
 
-An [example project](/SwallowExample) is included that demonstrates how Swallow can be used to interact with a web service. The project uses [brewhapi](https://github.com/angelodipaolo/brewhapi) as a mock API for fetching and inserting data. brewhapi is freely hosted at [https://brewhapi.herokuapp.com/brews](https://brewhapi.herokuapp.com/brews) for testing.
+An [example project](/ELWebServiceExample) is included that demonstrates how ELWebService can be used to interact with a web service. The project uses [brewhapi](https://github.com/angelodipaolo/brewhapi) as a mock API for fetching and inserting data. brewhapi is freely hosted at [https://brewhapi.herokuapp.com/brews](https://brewhapi.herokuapp.com/brews) for testing.
 
 ## Contributions
 

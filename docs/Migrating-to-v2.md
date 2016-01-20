@@ -1,6 +1,6 @@
 # Migrating to v2
 
-Swallow v2 contains a few breaking changes but migrating from previous versions is fairly straightforward. Below is an overview of how to adapt your existing Swallow code to the changes.
+ELWebService v2 contains a few breaking changes but migrating from previous versions is fairly straightforward. Below is an overview of how to adapt your existing ELWebService code to the changes.
 
 ### New API for Request Configuration
 
@@ -34,13 +34,13 @@ service
     .resume()
 ```
 
-See the [Request Encoding](https://github.com/TheHolyGrail/Swallow/blob/master/docs/Swallow-Programming-Guide.md#request-encoding) section of programming guide for more information.
+See the [Request Encoding](https://github.com/TheHolyGrail/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#request-encoding) section of programming guide for more information.
 
 ### Response Handlers Now Run on a Background Queue
 
 Previously handlers set with `response()`, `responseJSON`, and `responseError()` were run on the main queue. This means you need to move any of your logic that updates UI into a handler set with `updateUI()`.
 
-For more information about how the new `updateUI` and `updateErrorUI` methods work, see the [Updating UI](https://github.com/TheHolyGrail/Swallow/blob/master/docs/Swallow-Programming-Guide.md#updating-ui) section of the programming guide.
+For more information about how the new `updateUI` and `updateErrorUI` methods work, see the [Updating UI](https://github.com/TheHolyGrail/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#updating-ui) section of the programming guide.
 
 ### `ServiceTask` instances no longer resume immediately
 
@@ -61,8 +61,8 @@ service
 
 ### Response Handlers Must Now Return a `ServiceTaskResult`
 
-Swallow v2 introduces the `ServiceTaskResult` enum to control how values flow through the handler chain. This allows response handlers to run on the bg thread and pass processed data to the next response handler in the chain.
+ELWebService v2 introduces the `ServiceTaskResult` enum to control how values flow through the handler chain. This allows response handlers to run on the bg thread and pass processed data to the next response handler in the chain.
 
-Response handlers written for pre-v2 Swallow can be easily upgraded by having the handlers return `.Empty`.
+Response handlers written for pre-v2 ELWebService can be easily upgraded by having the handlers return `.Empty`.
 
-For more information about using `ServiceTaskResult` values in response handlers see the [ServiceTaskResult](https://github.com/TheHolyGrail/Swallow/blob/master/docs/Swallow-Programming-Guide.md#servicetaskresult) section of the programming guide.
+For more information about using `ServiceTaskResult` values in response handlers see the [ServiceTaskResult](https://github.com/TheHolyGrail/ELWebService/blob/master/docs/ELWebService-Programming-Guide.md#servicetaskresult) section of the programming guide.

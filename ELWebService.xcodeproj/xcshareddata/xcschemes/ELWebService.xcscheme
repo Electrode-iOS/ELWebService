@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "179C5C5D1AB079980047169F"
-               BuildableName = "THGWebService.framework"
-               BlueprintName = "THGWebService"
-               ReferencedContainer = "container:THGWebService.xcodeproj">
+               BuildableName = "ELWebService.framework"
+               BlueprintName = "ELWebService"
+               ReferencedContainer = "container:ELWebService.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -28,10 +28,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "179C5C681AB079980047169F"
-               BuildableName = "THGWebServiceTests.xctest"
-               BlueprintName = "THGWebServiceTests"
-               ReferencedContainer = "container:THGWebService.xcodeproj">
+               BlueprintIdentifier = "17088EBC1C50100F007ADE1B"
+               BuildableName = "ELWebServiceTests.xctest"
+               BlueprintName = "ELWebServiceTests"
+               ReferencedContainer = "container:ELWebService.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,10 +46,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "179C5C681AB079980047169F"
-               BuildableName = "THGWebServiceTests.xctest"
-               BlueprintName = "THGWebServiceTests"
-               ReferencedContainer = "container:THGWebService.xcodeproj">
+               BlueprintIdentifier = "17088EBC1C50100F007ADE1B"
+               BuildableName = "ELWebServiceTests.xctest"
+               BlueprintName = "ELWebServiceTests"
+               ReferencedContainer = "container:ELWebService.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "179C5C5D1AB079980047169F"
-            BuildableName = "THGWebService.framework"
-            BlueprintName = "THGWebService"
-            ReferencedContainer = "container:THGWebService.xcodeproj">
+            BuildableName = "ELWebService.framework"
+            BlueprintName = "ELWebService"
+            ReferencedContainer = "container:ELWebService.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -79,9 +79,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "179C5C5D1AB079980047169F"
-            BuildableName = "THGWebService.framework"
-            BlueprintName = "THGWebService"
-            ReferencedContainer = "container:THGWebService.xcodeproj">
+            BuildableName = "ELWebService.framework"
+            BlueprintName = "ELWebService"
+            ReferencedContainer = "container:ELWebService.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -97,9 +97,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "179C5C5D1AB079980047169F"
-            BuildableName = "THGWebService.framework"
-            BlueprintName = "THGWebService"
-            ReferencedContainer = "container:THGWebService.xcodeproj">
+            BuildableName = "ELWebService.framework"
+            BlueprintName = "ELWebService"
+            ReferencedContainer = "container:ELWebService.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
