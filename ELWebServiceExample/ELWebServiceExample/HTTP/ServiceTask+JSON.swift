@@ -1,13 +1,13 @@
 //
 //  ServiceTask+JSON.swift
-//  SwallowExample
+//  ELWebServiceExample
 //
 //  Created by Angelo Di Paolo on 9/30/15.
 //  Copyright © 2015 WalmartLabs. All rights reserved.
 //
 
 import Foundation
-import THGWebService
+import ELWebService
 
 enum ServiceTaskDecodeError: ErrorType {
     case FailedToDecodeJSONArray

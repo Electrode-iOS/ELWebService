@@ -1,6 +1,6 @@
 //
 //  Brewery.swift
-//  SwallowExample
+//  ELWebServiceExample
 //
 //  Created by Angelo Di Paolo on 9/30/15.
 //  Copyright © 2015 WalmartLabs. All rights reserved.

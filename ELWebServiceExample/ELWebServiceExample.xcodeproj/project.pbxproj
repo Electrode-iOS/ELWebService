@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17088EF71C5012C0007ADE1B /* ELWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17088EF41C5012B0007ADE1B /* ELWebService.framework */; };
 		170A613E1BBC132500768A12 /* BrewClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A613A1BBC132500768A12 /* BrewClient.swift */; };
 		170A613F1BBC132500768A12 /* BrewClientAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A613B1BBC132500768A12 /* BrewClientAPI.swift */; };
 		170A61401BBC132500768A12 /* Brew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A613D1BBC132500768A12 /* Brew.swift */; };
@@ -25,23 +24,11 @@
 		17BBC3E01BBC1AAC00D7DE44 /* BrewDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17BBC3DE1BBC1AAC00D7DE44 /* BrewDetailViewController.xib */; };
 		17BBC3E51BBC224A00D7DE44 /* BrewAddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BBC3E31BBC224A00D7DE44 /* BrewAddViewController.swift */; };
 		17BBC3E61BBC224A00D7DE44 /* BrewAddViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17BBC3E41BBC224A00D7DE44 /* BrewAddViewController.xib */; };
+		CAF0AF951C5052280007761C /* ELWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF0AF921C50521E0007761C /* ELWebService.framework */; };
+		CAF0AF961C5052280007761C /* ELWebService.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAF0AF921C50521E0007761C /* ELWebService.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		17088EF31C5012B0007ADE1B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17088EEE1C5012B0007ADE1B /* ELWebService.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 179C5C5E1AB079980047169F;
-			remoteInfo = ELWebService;
-		};
-		17088EF51C5012B0007ADE1B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17088EEE1C5012B0007ADE1B /* ELWebService.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 17088ED11C5010EA007ADE1B;
-			remoteInfo = ELWebServiceTests;
-		};
 		17B21DD71AB8A10D007E5370 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17B21DB91AB8A10D007E5370 /* Project object */;
@@ -49,10 +36,44 @@
 			remoteGlobalIDString = 17B21DC01AB8A10D007E5370;
 			remoteInfo = SwallowExample;
 		};
+		CAF0AF911C50521E0007761C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAF0AF8C1C50521E0007761C /* ELWebService.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 179C5C5E1AB079980047169F;
+			remoteInfo = ELWebService;
+		};
+		CAF0AF931C50521E0007761C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAF0AF8C1C50521E0007761C /* ELWebService.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 17088ED11C5010EA007ADE1B;
+			remoteInfo = ELWebServiceTests;
+		};
+		CAF0AF971C5052280007761C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CAF0AF8C1C50521E0007761C /* ELWebService.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 179C5C5D1AB079980047169F;
+			remoteInfo = ELWebService;
+		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		CA61C9961C50518400742949 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CAF0AF961C5052280007761C /* ELWebService.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		17088EEE1C5012B0007ADE1B /* ELWebService.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ELWebService.xcodeproj; path = ../ELWebService.xcodeproj; sourceTree = "<group>"; };
 		170A613A1BBC132500768A12 /* BrewClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewClient.swift; sourceTree = "<group>"; };
 		170A613B1BBC132500768A12 /* BrewClientAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewClientAPI.swift; sourceTree = "<group>"; };
 		170A613D1BBC132500768A12 /* Brew.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brew.swift; sourceTree = "<group>"; };
@@ -74,6 +95,7 @@
 		17BBC3DE1BBC1AAC00D7DE44 /* BrewDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrewDetailViewController.xib; sourceTree = "<group>"; };
 		17BBC3E31BBC224A00D7DE44 /* BrewAddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewAddViewController.swift; sourceTree = "<group>"; };
 		17BBC3E41BBC224A00D7DE44 /* BrewAddViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrewAddViewController.xib; sourceTree = "<group>"; };
+		CAF0AF8C1C50521E0007761C /* ELWebService.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ELWebService.xcodeproj; path = ../ELWebService.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,7 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17088EF71C5012C0007ADE1B /* ELWebService.framework in Frameworks */,
+				CAF0AF951C5052280007761C /* ELWebService.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,15 +117,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		17088EEF1C5012B0007ADE1B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				17088EF41C5012B0007ADE1B /* ELWebService.framework */,
-				17088EF61C5012B0007ADE1B /* ELWebServiceTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		170A61391BBC132500768A12 /* HTTP */ = {
 			isa = PBXGroup;
 			children = (
@@ -141,7 +154,7 @@
 		1765E3471ABC652400F9E531 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				17088EEE1C5012B0007ADE1B /* ELWebService.xcodeproj */,
+				CAF0AF8C1C50521E0007761C /* ELWebService.xcodeproj */,
 			);
 			name = Modules;
 			sourceTree = "<group>";
@@ -176,7 +189,8 @@
 				17B21DCF1AB8A10D007E5370 /* LaunchScreen.xib */,
 				17B21DC41AB8A10D007E5370 /* Supporting Files */,
 			);
-			path = SwallowExample;
+			name = SwallowExample;
+			path = ELWebServiceExample;
 			sourceTree = "<group>";
 		};
 		17B21DC41AB8A10D007E5370 /* Supporting Files */ = {
@@ -204,6 +218,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CAF0AF8D1C50521E0007761C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CAF0AF921C50521E0007761C /* ELWebService.framework */,
+				CAF0AF941C50521E0007761C /* ELWebServiceTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -214,10 +237,12 @@
 				17B21DBD1AB8A10D007E5370 /* Sources */,
 				17B21DBE1AB8A10D007E5370 /* Frameworks */,
 				17B21DBF1AB8A10D007E5370 /* Resources */,
+				CA61C9961C50518400742949 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CAF0AF981C5052280007761C /* PBXTargetDependency */,
 			);
 			name = ELWebServiceExample;
 			productName = SwallowExample;
@@ -274,8 +299,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 17088EEF1C5012B0007ADE1B /* Products */;
-					ProjectRef = 17088EEE1C5012B0007ADE1B /* ELWebService.xcodeproj */;
+					ProductGroup = CAF0AF8D1C50521E0007761C /* Products */;
+					ProjectRef = CAF0AF8C1C50521E0007761C /* ELWebService.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -287,18 +312,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		17088EF41C5012B0007ADE1B /* ELWebService.framework */ = {
+		CAF0AF921C50521E0007761C /* ELWebService.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = ELWebService.framework;
-			remoteRef = 17088EF31C5012B0007ADE1B /* PBXContainerItemProxy */;
+			remoteRef = CAF0AF911C50521E0007761C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		17088EF61C5012B0007ADE1B /* ELWebServiceTests.xctest */ = {
+		CAF0AF941C50521E0007761C /* ELWebServiceTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = ELWebServiceTests.xctest;
-			remoteRef = 17088EF51C5012B0007ADE1B /* PBXContainerItemProxy */;
+			remoteRef = CAF0AF931C50521E0007761C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -359,6 +384,11 @@
 			isa = PBXTargetDependency;
 			target = 17B21DC01AB8A10D007E5370 /* ELWebServiceExample */;
 			targetProxy = 17B21DD71AB8A10D007E5370 /* PBXContainerItemProxy */;
+		};
+		CAF0AF981C5052280007761C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ELWebService;
+			targetProxy = CAF0AF971C5052280007761C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -461,7 +491,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				FRAMEWORK_SEARCH_PATHS = "";
-				INFOPLIST_FILE = SwallowExample/Info.plist;
+				INFOPLIST_FILE = ELWebServiceExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.WalmartLabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ELWebServiceExample;
@@ -473,7 +504,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				FRAMEWORK_SEARCH_PATHS = "";
-				INFOPLIST_FILE = SwallowExample/Info.plist;
+				INFOPLIST_FILE = ELWebServiceExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.WalmartLabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ELWebServiceExample;

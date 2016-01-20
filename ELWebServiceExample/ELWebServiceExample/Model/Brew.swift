@@ -1,13 +1,13 @@
 //
 //  Brew.swift
-//  SwallowExample
+//  ELWebServiceExample
 //
 //  Created by Angelo Di Paolo on 9/22/15.
 //  Copyright © 2015 WalmartLabs. All rights reserved.
 //
 
 import Foundation
-import THGWebService
+import ELWebService
 
 struct Brew {
     var name: String
