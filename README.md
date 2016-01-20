@@ -32,7 +32,9 @@ Below is a quick overview of how to get started using ELWebService. See the [ELW
 `WebService` provides an API for making a HTTP request and processing the response data.
 
 ```
-WebService(baseURLString: "https://brewhapi.herokuapp.com/")
+let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
+
+service
   .GET("/brewers")
   .setParameters(["state" : "New York"])
   .response { (response: NSURLResponse?, data: NSData?) in
@@ -44,7 +46,9 @@ WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 To handle the event of a failure provide a closure for error handling by calling the `responseError()` method.
 
 ```
-WebService(baseURLString: "https://brewhapi.herokuapp.com/")
+let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
+
+service
   .GET("/brewers")
   .setParameters(["state" : "New York"])
   .response { (response: NSURLResponse?, data: NSData?) in
@@ -63,7 +67,9 @@ The error handler will only be called after a request results in an error. If an
 Use the `responseJSON()` method to serialize a successful response as a JSON value of type `AnyObject`.
 
 ```
-WebService(baseURLString: "https://brewhapi.herokuapp.com/")
+let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
+
+service
   .GET("/brewers")
   .setParameters(["state" : "New York"])
   .responseJSON { (json: AnyObject) in
