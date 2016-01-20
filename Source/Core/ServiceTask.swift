@@ -1,6 +1,6 @@
 //
 //  ServiceTask.swift
-//  Swallow
+//  ELWebService
 //
 //  Created by Angelo Di Paolo on 2/25/15.
 //  Copyright (c) 2015 TheHolyGrail. All rights reserved.
@@ -66,7 +66,7 @@ public final class ServiceTask {
         self.request = request
         self.dataTaskSource = dataTaskSource
         self.handlerQueue = {
-            let queue = dispatch_queue_create(("com.THGWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
+            let queue = dispatch_queue_create(("com.ELWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
             dispatch_suspend(queue)
             return queue
         }()

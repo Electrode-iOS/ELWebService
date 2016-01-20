@@ -1,6 +1,6 @@
 //
 //  WebServiceTests.swift
-//  THGWebService
+//  ELWebService
 //
 //  Created by Angelo Di Paolo on 3/11/15.
 //  Copyright (c) 2015 TheHolyGrail. All rights reserved.
@@ -8,7 +8,7 @@
 
 import UIKit
 import XCTest
-import THGWebService
+@testable import ELWebService
 
 class WebServiceTests: XCTestCase {
     

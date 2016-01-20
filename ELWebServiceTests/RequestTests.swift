@@ -1,14 +1,14 @@
 //
 //  RequestTests.swift
-//  THGWebService
+//  ELWebService
 //
 //  Created by Angelo Di Paolo on 3/11/15.
 //  Copyright (c) 2015 TheHolyGrail. All rights reserved.
 //
 
 import Foundation
-@testable import THGWebService
 import XCTest
+@testable import ELWebService
 
 /**
  Tests the functionality of the Request struct.
