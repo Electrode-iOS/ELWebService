@@ -2,7 +2,7 @@
 
 ## About ELWebService
 
-[ELWebService](https://github.com/TheHolyGrail/ELWebService) is a lightweight HTTP networking framework written in Swift. ELWebService simplifies interaction with HTTP web services by providing a concise API for encoding a `NSURLRequest` object and processing the resulting `NSURLResponse`. 
+[ELWebService](https://github.com/Electrode-iOS/ELWebService) is a lightweight HTTP networking framework written in Swift. ELWebService simplifies interaction with HTTP web services by providing a concise API for encoding a `NSURLRequest` object and processing the resulting `NSURLResponse`. 
 
 Unlike many other iOS networking libraries, ELWebService is not a wrapper around `NSURLSession` or `NSURLConnection`. Instead ELWebService is designed to be unobtrusive by acting as a convenience for working with request and response objects while leaving the crucial implementation details of the various session delegate methods up to the developer.
 
@@ -342,4 +342,4 @@ brewClient
 
 ## More Information
 
-For more information check out ELWebService's [Readme](https://github.com/TheHolyGrail/ELWebService#ELWebService) as well as the documentation in the [source files](https://github.com/TheHolyGrail/ELWebService/tree/master/Source). Feel free to open [issues](https://github.com/TheHolyGrail/ELWebService/issues) and of course [pull requests](https://github.com/TheHolyGrail/ELWebService/pulls) are always welcomed!
+For more information check out ELWebService's [Readme](https://github.com/Electrode-iOS/ELWebService#ELWebService) as well as the documentation in the [source files](https://github.com/Electrode-iOS/ELWebService/tree/master/Source). Feel free to open [issues](https://github.com/Electrode-iOS/ELWebService/issues) and of course [pull requests](https://github.com/Electrode-iOS/ELWebService/pulls) are always welcomed!

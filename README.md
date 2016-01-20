@@ -2,7 +2,7 @@
 
 ELWebService simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, ELWebService is not intended to be a fully-featured networking library. By default ELWebService uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any `NSURLSession` instance using a [protocol](#sessiondatataskdatasource).
 
-See the [ELWebService Programming Guide](/docs/ELWebService-Programming-Guide.md) for more information. 
+See the [Programming Guide](/docs/Programming-Guide.md) for more information. 
 
 ## Requirements
 
@@ -20,11 +20,11 @@ github "Electrode-iOS/ELWebService" ~> 2.1.2
 
 ### Manual
 
-Install manually by adding `THGWebService.xcodeproj` to your project and configuring your target to link `THGWebService.framework`.
+Install manually by adding `ELWebService.xcodeproj` to your project and configuring your target to link `ELWebService.framework`.
 
 ## Usage
 
-Below is a quick overview of how to get started using ELWebService. See the [ELWebService Programming Guide](/docs/ELWebService-Programming-Guide.md) for detailed usage information.
+Below is a quick overview of how to get started using ELWebService. See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for detailed usage information.
 
 
 ### Sending HTTP Requests
