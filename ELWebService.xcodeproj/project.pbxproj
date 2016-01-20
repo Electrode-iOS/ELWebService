@@ -182,7 +182,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0710;
-				ORGANIZATIONNAME = TheHolyGrail;
+				ORGANIZATIONNAME = WalmartLabs;
 				TargetAttributes = {
 					17088ED01C5010EA007ADE1B = {
 						CreatedOnToolsVersion = 7.2;
@@ -385,7 +385,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.electrode.webService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
 			};
@@ -403,7 +403,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.electrode.webService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
 			};
@@ -419,6 +419,7 @@
 				17088EDB1C5010EA007ADE1B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		179C5C581AB079980047169F /* Build configuration list for PBXProject "ELWebService" */ = {
 			isa = XCConfigurationList;

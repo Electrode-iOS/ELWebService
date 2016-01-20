@@ -250,7 +250,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
-				ORGANIZATIONNAME = TheHolyGrail;
+				ORGANIZATIONNAME = WalmartLabs;
 				TargetAttributes = {
 					17B21DC01AB8A10D007E5370 = {
 						CreatedOnToolsVersion = 6.3;
@@ -463,7 +463,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SwallowExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.TheHolyGrail.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.WalmartLabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ELWebServiceExample;
 			};
 			name = Debug;
@@ -475,7 +475,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = SwallowExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.TheHolyGrail.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.WalmartLabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ELWebServiceExample;
 			};
 			name = Release;
@@ -494,7 +494,7 @@
 				);
 				INFOPLIST_FILE = SwallowExampleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.TheHolyGrail.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.WalmartLabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ELWebServiceExample;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ELWebServiceExample.app/ELWebServiceExample";
 			};
@@ -510,7 +510,7 @@
 				);
 				INFOPLIST_FILE = SwallowExampleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.TheHolyGrail.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.WalmartLabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ELWebServiceExample;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ELWebServiceExample.app/ELWebServiceExample";
 			};
