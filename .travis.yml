@@ -1,4 +1,4 @@
 language: objective-c
 osx_image: xcode7
 script:
-   - xctool -project THGWebService.xcodeproj -scheme THGWebService -sdk iphonesimulator build test
+   - xctool -project ELWebService.xcodeproj -scheme ELWebService -sdk iphonesimulator build test
