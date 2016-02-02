@@ -17,3 +17,37 @@ public enum ServiceTaskResult {
     /// Defines a task resulting in an error
     case Failure(ErrorType)
 }
+
+// MARK: - Objective-C Interop
+
+extension ServiceTaskResult {
+    /// Initialize a service task result value from an Obj-C result
+    init(objCHandlerResult result: ObjCHandlerResult?) {
+        if let error = result?.error {
+            self = .Failure(error)
+        } else if let value = result?.value {
+            self = .Value(value)
+        } else {
+            self = .Empty
+        }
+    }
+}
+
+/// Represents the result of a Obj-C response handler
+@objc public final class ObjCHandlerResult: NSObject {
+    /// The resulting value
+    private(set) var value: AnyObject?
+    
+    /// The resulting error
+    private(set) var error: NSError?
+    
+    /// Initialize a result with a value
+    @objc public init(value: AnyObject) {
+        self.value = value
+    }
+    
+    /// Initialize a result with an error
+    @objc public init(error: NSError) {
+        self.error = error
+    }
+}

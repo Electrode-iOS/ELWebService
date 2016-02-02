@@ -12,7 +12,7 @@ import Foundation
  A `WebService` value provides a concise API for encoding a NSURLRequest object
  and processing the resulting `NSURLResponse` object.
 */
-public final class WebService {
+@objc public final class WebService: NSObject {
     /// Base URL of the web service.
     public let baseURLString: String
     

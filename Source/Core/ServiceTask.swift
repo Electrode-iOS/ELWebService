@@ -14,7 +14,7 @@ import Foundation
  cancelled and suspended like a data task as well as queried for current state
  via the `state` property.
 */
-public final class ServiceTask {
+@objc public final class ServiceTask: NSObject {
     private var request: Request
     
     public typealias ResponseProcessingHandler = (NSData?, NSURLResponse?) -> ServiceTaskResult
@@ -119,7 +119,6 @@ extension ServiceTask {
     }
 }
 
-
 // MARK: NSURLSesssionDataTask
 
 extension ServiceTask {
@@ -161,11 +160,11 @@ extension ServiceTask {
 
 extension ServiceTask {
     /**
-    Add a response handler to be called on the main thread after a successful
-    response has been received.
+     Add a response handler to be called on background thread after a successful
+     response has been received.
     
-    - parameter handler: Response handler to execute upon receiving a response.
-    - returns: Self instance to support chaining.
+     - parameter handler: Response handler to execute upon receiving a response.
+     - returns: Self instance to support chaining.
     */
     public func response(handler: ResponseProcessingHandler) -> Self {
         dispatch_async(handlerQueue) {
@@ -183,6 +182,7 @@ extension ServiceTask {
         return self
     }
     
+    /// TODO: add docs
     public func updateUI(handler: UpdateUIHandler) -> Self {
         dispatch_async(handlerQueue) {
             if let taskResult = self.taskResult {
@@ -204,7 +204,6 @@ extension ServiceTask {
     }
 }
 
-
 // MARK: - JSON
 
 extension ServiceTask {
@@ -213,7 +212,7 @@ extension ServiceTask {
     
     /**
      Add a response handler to serialize the response body as a JSON object. The
-     handler will be dispatched to the main thread.
+     handler will be dispatched to a background thread.
     
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
@@ -242,8 +241,8 @@ extension ServiceTask {
     /**
     Add a response handler to be called if a request results in an error.
     
-    :param: handler Error handler to execute when an error occurs.
-    :returns: Self instance to support chaining.
+    - parameter handler: Error handler to execute when an error occurs.
+    - returns: Self instance to support chaining.
     */
     public func responseError(handler: ErrorHandler) -> Self {
         dispatch_async(handlerQueue) {
@@ -263,8 +262,8 @@ extension ServiceTask {
      Add a response handler to be called if a request results in an error. Handler
      will be called on the main queue.
      
-     :param: handler Error handler to execute when an error occurs.
-     :returns: Self instance to support chaining.
+     - parameter handler: Error handler to execute when an error occurs.
+     - returns: Self instance to support chaining.
      */
     public func updateErrorUI(handler: ErrorHandler) -> Self {
         dispatch_async(handlerQueue) {
@@ -282,16 +281,11 @@ extension ServiceTask {
         
         return self
     }
-    
-    /**
-     Call to indicate that an error occured during the processing of a response.
-     Causes responseError handlers to be called.
-    */
-//    public func throwError(error: ErrorType) {
-//        self.result = .Failure(error)
-//    }
 }
 
+// MARK: - Errors
+
+// TODO: needs docs
 public enum ServiceTaskError: ErrorType {
     case JSONSerializationFailedNilResponseBody
 }

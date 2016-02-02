@@ -10,6 +10,7 @@
 		17088ED61C5010EA007ADE1B /* ELWebService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 179C5C5E1AB079980047169F /* ELWebService.framework */; };
 		17088EEB1C501208007ADE1B /* WebServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE91C501208007ADE1B /* WebServiceTests.swift */; };
 		17088EEC1C501208007ADE1B /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EEA1C501208007ADE1B /* RequestTests.swift */; };
+		17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
 		17D1879E1AB0B173000742BF /* ELWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAF0AF991C5054DE0007761C /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EDF1C5011FB007ADE1B /* WebService.swift */; };
@@ -39,6 +40,7 @@
 		17088EE31C5011FB007ADE1B /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		17088EE91C501208007ADE1B /* WebServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServiceTests.swift; sourceTree = "<group>"; };
 		17088EEA1C501208007ADE1B /* RequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTests.swift; sourceTree = "<group>"; };
+		17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+ObjC.swift"; sourceTree = "<group>"; };
 		179C5C5E1AB079980047169F /* ELWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ELWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17C96AAA1AB0CBB800D49071 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		17D187961AB0B173000742BF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				17088EE01C5011FB007ADE1B /* SessionDataTaskDataSource.swift */,
 				17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */,
 				17088EE21C5011FB007ADE1B /* ServiceTask.swift */,
+				17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */,
 				17088EE31C5011FB007ADE1B /* Request.swift */,
 			);
 			path = Core;
@@ -246,6 +249,7 @@
 				CAF0AF9A1C5054E20007761C /* SessionDataTaskDataSource.swift in Sources */,
 				CAF0AF9D1C5054ED0007761C /* Request.swift in Sources */,
 				CAF0AF991C5054DE0007761C /* WebService.swift in Sources */,
+				17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */,
 				CAF0AF9B1C5054E60007761C /* ServiceTaskResult.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
