@@ -1,3 +1,13 @@
+# [2.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.2.0)
+
+- Added support for Objective-C interoperability. Fixes [#21](https://github.com/Electrode-iOS/ELWebService/issues/21). For information on usage from Obj-C see the [Objective-C Interoperability section](/docs/Programming-Guide.md#objective-c-interoperability) in the [ELWebService Programming Guide](/docs/Programming-Guide.md). Several changes were made to support Obj-C interop:
+  - Made `WebService` inherit from NSObject
+  - Made `ServiceTask` inherit from NSObject
+  - Added `ObjCHandlerResult` class to encapsulate result data from Obj-C handlers
+  - Added `ObjCResponseHandler` closure type to support adding response handlers that work with Obj-C
+  - Extended `ServiceTask` to add specially-named response handler methods to support adding handlers from Obj-C
+  - Added a `ServiceTaskResult` initializer so that a service task result value can be initialized from an `ObjCHandlerResult` value
+
 # [2.1.2](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.1.2)
 
 - Enabled testability for release builds. Fixes [#19](https://github.com/Electrode-iOS/ELWebService/issues/19).
