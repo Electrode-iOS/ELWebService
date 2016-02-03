@@ -41,13 +41,21 @@ extension ServiceTaskResult {
     /// The resulting error
     private(set) var error: NSError?
     
+    public class func resultWithValue(value: AnyObject) -> ObjCHandlerResult {
+        return ObjCHandlerResult(value: value)
+    }
+    
+    public class func resultWithError(error: NSError) -> ObjCHandlerResult {
+        return ObjCHandlerResult(error: error)
+    }
+    
     /// Initialize a result with a value
-    @objc public init(value: AnyObject) {
+    private init(value: AnyObject) {
         self.value = value
     }
     
     /// Initialize a result with an error
-    @objc public init(error: NSError) {
+    private init(error: NSError) {
         self.error = error
     }
 }

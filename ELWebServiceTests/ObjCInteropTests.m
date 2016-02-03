@@ -38,7 +38,7 @@
     ServiceTask *task = [service GET:@"bar"];
     NSString *mockValue = @"12345";
     [task responseObjC:^ObjCHandlerResult *(NSData *data, NSURLResponse *response) {
-        return [[ObjCHandlerResult alloc] initWithValue:mockValue];
+        return [ObjCHandlerResult resultWithValue:mockValue];
     }];
     
     [task updateUIObjC:^(id value) {
@@ -74,7 +74,7 @@
     ServiceTask *task = [service GET:@"bar"];
     NSError *mockError = [[NSError alloc] initWithDomain:@"domain" code:500 userInfo:nil];
     [task responseObjC:^ObjCHandlerResult *(NSData *data, NSURLResponse *response) {
-        return [[ObjCHandlerResult alloc] initWithError:mockError];
+        return [ObjCHandlerResult resultWithError:mockError];
     }];
     [task responseErrorObjC:^(NSError * error) {
         XCTAssertNotNil(error);
@@ -94,7 +94,7 @@
     ServiceTask *task = [service GET:@"bar"];
     NSError *mockError = [[NSError alloc] initWithDomain:@"domain" code:500 userInfo:nil];
     [task responseObjC:^ObjCHandlerResult *(NSData *data, NSURLResponse *response) {
-        return [[ObjCHandlerResult alloc] initWithError:mockError];
+        return [ObjCHandlerResult resultWithError:mockError];
     }];
     [task updateErrorUIObjC:^(NSError * error) {
         XCTAssertNotNil(error);
