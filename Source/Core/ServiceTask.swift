@@ -125,7 +125,9 @@ extension ServiceTask {
     /// Resume the underlying data task.
     public func resume() -> Self {
         if dataTask == nil {
-            dataTask = dataTaskSource?.dataTaskWithRequest(request.urlRequestValue, completionHandler: dataTaskCompletionHandler())
+            dataTask = dataTaskSource?.dataTaskWithRequest(request.urlRequestValue) { data, response, error in
+                self.handleResponse(response, data: data, error: error)
+            }
         }
         
         dataTask?.resume()
@@ -142,17 +144,16 @@ extension ServiceTask {
         dataTask?.cancel()
     }
     
-    private func dataTaskCompletionHandler() -> (NSData?, NSURLResponse?, NSError?) -> Void {
-        return { data, response, error in
-            self.urlResponse = response
-            self.responseData = data
-            
-            if let error = error {
-                self.taskResult = ServiceTaskResult.Failure(error)
-            }
-            
-            dispatch_resume(self.handlerQueue)
+    /// Handle the response and kick off the handler queue
+    internal func handleResponse(response: NSURLResponse?, data: NSData?, error: NSError?) {
+        urlResponse = response
+        responseData = data
+        
+        if let error = error {
+            taskResult = ServiceTaskResult.Failure(error)
         }
+        
+        dispatch_resume(handlerQueue)
     }
 }
 
