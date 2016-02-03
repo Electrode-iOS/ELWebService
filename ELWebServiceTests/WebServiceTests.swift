@@ -382,4 +382,3 @@ class WebServiceTests: XCTestCase {
         waitForExpectationsWithTimeout(2, handler: nil)
     }
 }
-
