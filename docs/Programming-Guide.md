@@ -340,6 +340,95 @@ brewClient
     .resume()
 ```
 
+## Objective-C Interoperability
+
+ELWebService supports use from Objective-C by providing a response handler API that is designated for Objective-C use. Due to the traditional response handlers using `ServiceTaskResult`, an enum type with associated values, Objective-C is unable to call the handler methods since enums with associated values cannot be represented in Objective-C.
+
+To work around this limitation a special `ServiceTask` response handler API is provided. The designated Objective-C methods are named with an `ObjC` suffix to indicate that they are designed to be called only from Objective-C.
+
+```
+extension ServiceTask {
+    internal typealias ObjCResponseHandler = (NSData?, NSURLResponse?) -> ObjCHandlerResult?
+
+    @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self
+
+    @objc public func responseJSONObjC(handler: (AnyObject) -> ObjCHandlerResult?) -> Self
+
+    @objc public func responseErrorObjC(handler: (NSError) -> Void) -> Self
+
+    @objc public func updateUIObjC(handler: (AnyObject?) -> Void) -> Self
+
+    @objc public func updateErrorUIObjC(handler: (NSError) -> Void) -> Self
+}
+```
+
+### Objective-C `ServiceTask` API
+
+The designated Objective-C API allows you to add response handlers and return handler result values just like you would with the Swift API.
+
+The syntax when using the Swift API looks like:
+
+```
+var client = WebService(baseURLString: "https://somehapi.herokuapp.com")
+let task = service.GET("/brewers")
+
+task.responseJSON { json in
+      if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+          // pass encoded value via ServiceTaskResult
+          return .Value(models)
+      } else {
+        // any value conforming to ErrorType
+        return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+      }
+    }
+    .updateUI { value in
+        if let brewers = value as? [Brewer] {
+            // update some UI with brewer models
+        }
+    }
+    .resume()
+```
+
+
+In Objective-C the above Swift example translates into this:
+
+```
+WebService *service = [[WebService alloc] initWithBaseURLString:@"https://somehapi.herokuapp.com"];
+ServiceTask *task = [service GET:@"/brewers"];
+
+[task responseJSON:^HandlerResult *(id json) {
+    NSArray *models = [JSONDecoder decodeBrewersFromJSON:json];
+
+    if (models != nil) {
+        // return result values with `ObjCHandlerResult` instead of `ServiceTaskResult
+        return [ObjCHandlerResult resultWithValue:models];
+        
+    } else {
+        NSError *error
+        return [ObjCHandlerResult resultWithError:error];
+    }
+}];
+
+[task updateUI:^(id value) {
+    if ([value isKindOfClass:[NSArray class]]) {
+         // update UI with brewer models
+    }
+}];
+
+[task resume];
+```
+
+### ObjCHandlerResult
+
+`ServiceTaskResult` cannot be represented in Objective-C because it is defined as an enumeration with associated values. To work around this the `ObjCHandlerResult` class is provided to enable Objective-C response handlers to return a value/empty/error result. The table below shows how `ServiceTaskResult` cases map to `ObjCHandlerResult` values.
+
+Swift                  | Objective-C                                        | Result  
+-----------------------|----------------------------------------------------| ------------------
+`return .Empty`        | `return nil`                                       | No value
+`return .Value(foo)`   | `return [ObjCHandlerResult resultWithValue:value]` | Valid value
+`return .Failure(foo)` | `return [ObjCHandlerResult resultWithError:error]` | Error occured
+
+
 ## More Information
 
 For more information check out ELWebService's [Readme](https://github.com/Electrode-iOS/ELWebService#ELWebService) as well as the documentation in the [source files](https://github.com/Electrode-iOS/ELWebService/tree/master/Source). Feel free to open [issues](https://github.com/Electrode-iOS/ELWebService/issues) and of course [pull requests](https://github.com/Electrode-iOS/ELWebService/pulls) are always welcomed!
