@@ -1,12 +1,12 @@
 # ELWebService [![Build Status](https://travis-ci.org/Electrode-iOS/ELWebService.svg?branch=master)](https://travis-ci.org/Electrode-iOS/ELWebService) [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-ELWebService simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, ELWebService is not intended to be a fully-featured networking library. By default ELWebService uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any `NSURLSession` instance using a [protocol](#sessiondatataskdatasource).
+ELWebService (previously named Swallow) simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, ELWebService is not intended to be a fully-featured networking library. By default ELWebService uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any `NSURLSession` instance using a [protocol](#sessiondatataskdatasource).
 
-See the [Programming Guide](/docs/Programming-Guide.md) for more information. 
+See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information. 
 
 ## Requirements
 
-ELWebService requires Swift 2 and Xcode 7. For Xcode 6 and Swift 1.2 compatability use the latest [v0.0.x](https://github.com/Electrode-iOS/ELWebService/releases/tag/v0.0.3) release.
+ELWebService requires Swift 2.1 and Xcode 7.2.
 
 ## Installation
 
@@ -272,7 +272,27 @@ service
     .resume()
 ```
 
-## Example
+### Objective-C Interoperability
+
+ELWebService supports Objective-C via specially-named response handler methods. See the [Objective-C Interoperability section](/docs/Programming-Guide.md#objective-c-interoperability) in the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information. 
+
+```
+extension ServiceTask {
+    internal typealias ObjCResponseHandler = (NSData?, NSURLResponse?) -> ObjCHandlerResult?
+
+    @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self
+
+    @objc public func responseJSONObjC(handler: (AnyObject) -> ObjCHandlerResult?) -> Self
+
+    @objc public func responseErrorObjC(handler: (NSError) -> Void) -> Self
+
+    @objc public func updateUIObjC(handler: (AnyObject?) -> Void) -> Self
+
+    @objc public func updateErrorUIObjC(handler: (NSError) -> Void) -> Self
+}
+```
+
+## Example Project
 
 An [example project](/ELWebServiceExample) is included that demonstrates how ELWebService can be used to interact with a web service. The project uses [brewhapi](https://github.com/angelodipaolo/brewhapi) as a mock API for fetching and inserting data. brewhapi is freely hosted at [https://brewhapi.herokuapp.com/brews](https://brewhapi.herokuapp.com/brews) for testing.
 
@@ -286,7 +306,7 @@ When contributing code, please refer to our style guide [Dennis](https://github.
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Walmart, Electrode-iOS, and other Contributors
+Copyright (c) 2015 Walmart and other Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
