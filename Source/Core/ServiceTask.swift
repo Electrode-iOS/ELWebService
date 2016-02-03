@@ -183,7 +183,17 @@ extension ServiceTask {
         return self
     }
     
-    /// TODO: add docs
+    /**
+     Add a handler that runs on the main thread and is responsible for updating 
+     the UI with a given value. The handler is only called if a previous response 
+     handler in the chain does **not** return a `.Failure` value.
+     
+     If a response handler returns a value via ServiceTaskResult.Value the
+     associated value will be passed to the update UI handler.
+    
+     - parameter handler: The closure to execute as the updateUI handler.
+     - returns: Self instance to support chaining.
+    */
     public func updateUI(handler: UpdateUIHandler) -> Self {
         dispatch_async(handlerQueue) {
             if let taskResult = self.taskResult {
@@ -261,11 +271,11 @@ extension ServiceTask {
     
     /**
      Add a response handler to be called if a request results in an error. Handler
-     will be called on the main queue.
+     will be called on the main thread.
      
      - parameter handler: Error handler to execute when an error occurs.
      - returns: Self instance to support chaining.
-     */
+    */
     public func updateErrorUI(handler: ErrorHandler) -> Self {
         dispatch_async(handlerQueue) {
             if let taskResult = self.taskResult {
@@ -286,7 +296,8 @@ extension ServiceTask {
 
 // MARK: - Errors
 
-// TODO: needs docs
+/// Errors that can occur when processing a response
 public enum ServiceTaskError: ErrorType {
+    /// Failed to serialize a response body as JSON due to the data being nil.
     case JSONSerializationFailedNilResponseBody
 }
