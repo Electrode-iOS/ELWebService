@@ -76,6 +76,7 @@ import Foundation
 // MARK: - Request API
 
 extension ServiceTask {
+    // TODO: needs docs
     public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
         request.parameterEncoding = encoding ?? .Percent
@@ -86,40 +87,46 @@ extension ServiceTask {
         
         return self
     }
-        
-    public func setBody(data: NSData) -> Self {
+    
+    // TODO: needs docs
+    @objc public func setBody(data: NSData) -> Self {
         request.body = data
         return self
     }
     
-    public func setJSON(json: AnyObject) -> Self {
+    // TODO: needs docs
+    @objc public func setJSON(json: AnyObject) -> Self {
         request.contentType = Request.ContentType.json
         request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
         return self
     }
     
-    public func setHeaders(headers: [String: String]) -> Self {
+    // TODO: needs docs
+    @objc public func setHeaders(headers: [String: String]) -> Self {
         request.headers = headers
         return self
     }
     
-    public func setHeaderValue(value: String, forName name: String) -> Self {
+    // TODO: needs docs
+    @objc public func setHeaderValue(value: String, forName name: String) -> Self {
         request.headers[name] = value
         return self
     }
     
-    public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
+    // TODO: needs docs
+    @objc public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
         request.cachePolicy = cachePolicy
         return self
     }
     
+    // TODO: needs docs
     public func setParameterEncoding(encoding: Request.ParameterEncoding) -> Self {
         request.parameterEncoding = encoding
         return self
     }
 }
 
-// MARK: NSURLSesssionDataTask
+// MARK: - NSURLSesssionDataTask
 
 extension ServiceTask {
     /// Resume the underlying data task.
