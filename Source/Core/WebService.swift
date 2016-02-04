@@ -16,6 +16,7 @@ import Foundation
     /// Base URL of the web service.
     public let baseURLString: String
     
+    
     /**
      Type responsible for creating a `NSURLSessionDataTask` based on a
      `NSURLRequest`.
@@ -135,7 +136,7 @@ extension WebService {
     */
     func request(method: Request.Method, path: String) -> ServiceTask {
         let request = Request(method, url: absoluteURLString(path))
-        return ServiceTask(request: request, dataTaskSource: serviceDataTaskSource)
+        return ServiceTask(encodableRequest: request, dataTaskSource: serviceDataTaskSource)
     }
 }
 

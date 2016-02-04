@@ -15,8 +15,6 @@ import Foundation
  via the `state` property.
 */
 @objc public final class ServiceTask: NSObject {
-    private var request: Request
-    
     public typealias ResponseProcessingHandler = (NSData?, NSURLResponse?) -> ServiceTaskResult
     
     /// A closure type alias for a success handler.
@@ -34,8 +32,16 @@ import Foundation
         }
     }
     
+    private var request: Request?
+    
+    private var urlRequest: NSURLRequest
+    
     /// Dispatch queue that queues up and dispatches handler blocks
-    private let handlerQueue: dispatch_queue_t
+    private let handlerQueue: dispatch_queue_t = {
+        let queue = dispatch_queue_create(("com.ELWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
+        dispatch_suspend(queue)
+        return queue
+    }()
     
     /// Session data task that refers the lifetime of the request.
     private var dataTask: NSURLSessionDataTask?
@@ -61,67 +67,55 @@ import Foundation
      - parameter dataTaskSource: Object responsible for creating a 
       NSURLSessionDataTask used to send the NSURLRequset.
     */
-    
-    init(request: Request, dataTaskSource: SessionDataTaskDataSource) {
-        self.request = request
+    public init(encodableRequest: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
+        self.urlRequest = encodableRequest.urlRequestValue
         self.dataTaskSource = dataTaskSource
-        self.handlerQueue = {
-            let queue = dispatch_queue_create(("com.ELWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
-            dispatch_suspend(queue)
-            return queue
-        }()
     }
 }
 
 // MARK: - Request API
 
 extension ServiceTask {
-    // TODO: needs docs
     public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
-        request.parameters = parameters
-        request.parameterEncoding = encoding ?? .Percent
+        request?.parameters = parameters
+        request?.parameterEncoding = encoding ?? .Percent
         
         if encoding == .JSON {
-            request.contentType = Request.ContentType.json
+            request?.contentType = Request.ContentType.json
         }
         
         return self
     }
     
-    // TODO: needs docs
-    @objc public func setBody(data: NSData) -> Self {
-        request.body = data
+    @available(*, deprecated, message="use URLRequestEncodable instead")
+    public func setBody(data: NSData) -> Self {
+        request?.body = data
         return self
     }
     
-    // TODO: needs docs
-    @objc public func setJSON(json: AnyObject) -> Self {
-        request.contentType = Request.ContentType.json
-        request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
+    public func setJSON(json: AnyObject) -> Self {
+        request?.contentType = Request.ContentType.json
+        request?.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
         return self
     }
     
-    // TODO: needs docs
-    @objc public func setHeaders(headers: [String: String]) -> Self {
-        request.headers = headers
+    public func setHeaders(headers: [String: String]) -> Self {
+        request?.headers = headers
         return self
     }
     
-    // TODO: needs docs
-    @objc public func setHeaderValue(value: String, forName name: String) -> Self {
-        request.headers[name] = value
+    public func setHeaderValue(value: String, forName name: String) -> Self {
+        request?.headers[name] = value
         return self
     }
     
-    // TODO: needs docs
-    @objc public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
-        request.cachePolicy = cachePolicy
+    public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
+        request?.cachePolicy = cachePolicy
         return self
     }
     
-    // TODO: needs docs
     public func setParameterEncoding(encoding: Request.ParameterEncoding) -> Self {
-        request.parameterEncoding = encoding
+        request?.parameterEncoding = encoding
         return self
     }
 }
@@ -132,7 +126,13 @@ extension ServiceTask {
     /// Resume the underlying data task.
     public func resume() -> Self {
         if dataTask == nil {
-            dataTask = dataTaskSource?.dataTaskWithRequest(request.urlRequestValue) { data, response, error in
+            
+            // legacy, should be removed after request encoding methods are dropped from ServiceTask
+            if let request = request {
+                urlRequest = request.urlRequestValue
+            }
+            
+            dataTask = dataTaskSource?.dataTaskWithRequest(urlRequest) { data, response, error in
                 self.handleResponse(response, data: data, error: error)
             }
         }
