@@ -342,7 +342,61 @@ brewClient
 
 ## Objective-C Interoperability
 
-ELWebService supports use from Objective-C by providing a response handler API that is designated for Objective-C use. Due to the traditional response handlers using `ServiceTaskResult`, an enum type with associated values, Objective-C is unable to call the handler methods since enums with associated values cannot be represented in Objective-C.
+Most of ELWebService's Swift API bridges over to Objective-C but there are a few cases where special Objective-C APIs are needed to wrap constructs that only exist in Swift.
+
+### Objective-C `ServiceTask` Request API
+
+ELWebService provides a special Objective-C request API for setting request parameters and the type of parameter encoding. Since `Request.ParameterEncoding` is defined as a nested type in the `Request` struct it cannot be represented in Objective-C and therefore methods like `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)` cannot be called from Objective-C.
+
+To work around this limitation a special `ServiceTask` request API is provided for setting request parameters and their coresponding type of encoding. The designated Objective-C methods are named with an `ObjC` suffix to indicate that they are designed to be called only from Objective-C.
+
+```
+extension ServiceTask {
+    /**
+     Set request parameter values and configure them to be JSON-encoded.
+     
+     This method is designed to only be called from Obj-C. Please use
+     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     when calling from Swift.
+     
+     - parameter parameters: Request parameter values.
+    */
+    @objc public func setJSONEncodedParametersObjC(parameters: [String : AnyObject]) -> Self
+
+    /**
+     Set request parameter values and configure them to be Percent-encoded.
+     
+     This method is designed to be called from Obj-C only. Please use
+     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     when calling from Swift.
+     
+     - parameter parameters: Request parameter values.
+    */
+    @objc public func setPercentEncodedParametersObjC(parameters: [String : AnyObject]) -> Self
+
+    /**
+     Configure the request parameters to be JSON-encoded.
+    
+     This method is designed to be called from Obj-C only. Please use
+     `setParameterEncoding(encoding: .JSON)` when calling
+     from Swift.
+    */
+    @objc public func setJSONParameterEncodingObjC() -> Self
+
+    /**
+     Configure the request parameters to be Percent-encoded.
+     
+     This method is designed to be called from Obj-C only. Please use
+     `setParameterEncoding(encoding: .Percent)` when calling
+     from Swift.
+    */
+    @objc public func setPercentParameterEncodingObjC() -> Self
+}
+```
+
+### Objective-C `ServiceTask` Response API
+
+Response handlers use `ServiceTaskResult`, an enum type with associated values, which means Objective-C is unable to define response handlers since enums with associated values cannot be represented in Objective-C.
 
 To work around this limitation a special `ServiceTask` response handler API is provided. The designated Objective-C methods are named with an `ObjC` suffix to indicate that they are designed to be called only from Objective-C.
 
@@ -362,7 +416,6 @@ extension ServiceTask {
 }
 ```
 
-### Objective-C `ServiceTask` API
 
 The designated Objective-C API allows you to add response handlers and return handler result values just like you would with the Swift API.
 
