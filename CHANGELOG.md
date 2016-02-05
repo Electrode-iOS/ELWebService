@@ -1,3 +1,7 @@
+# [2.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.3.0)
+
+- Added better support for Objective-C interoperability by introducing a special request API for Obj-C. See [Objective-C ServiceTask Request API](https://github.com/Electrode-iOS/ELWebService/blob/master/docs/Programming-Guide.md#objective-c-servicetask-request-api) section in the programming guide for more information.
+
 # [2.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.2.0)
 
 - Added support for Objective-C interoperability. Fixes [#21](https://github.com/Electrode-iOS/ELWebService/issues/21). For information on usage from Obj-C see the [Objective-C Interoperability section](/docs/Programming-Guide.md#objective-c-interoperability) in the [ELWebService Programming Guide](/docs/Programming-Guide.md). Several changes were made to support Obj-C interop:
