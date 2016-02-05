@@ -8,7 +8,62 @@
 
 import Foundation
 
-/// Response handler methods that add Obj-C interopability 
+// MARK: - Obj-C Interop for Request API
+
+extension ServiceTask {
+    /**
+     Set request parameter values and configure them to be JSON-encoded.
+     
+     This method is designed to only be called from Obj-C. Please use
+     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     when calling from Swift.
+     
+     - parameter parameters: Request parameter values.
+    */
+    @objc public func setJSONEncodedParametersObjC(parameters: [String: AnyObject]) -> Self {
+        setParameters(parameters, encoding: .JSON)
+        return self
+    }
+    
+    /**
+     Set request parameter values and configure them to be Percent-encoded.
+     
+     This method is designed to be called from Obj-C only. Please use
+     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     when calling from Swift.
+     
+     - parameter parameters: Request parameter values.
+    */
+    @objc public func setPercentEncodedParametersObjC(parameters: [String: AnyObject]) -> Self {
+        setParameters(parameters, encoding: .Percent)
+        return self
+    }
+        
+    /**
+     Configure the request parameters to be JSON-encoded.
+    
+     This method is designed to be called from Obj-C only. Please use
+     `setParameterEncoding(encoding: .JSON)` when calling
+     from Swift.
+    */
+    @objc public func setJSONParameterEncodingObjC() {
+        setParameterEncoding(.JSON)
+    }
+    
+    /**
+     Configure the request parameters to be Percent-encoded.
+     
+     This method is designed to be called from Obj-C only. Please use
+     `setParameterEncoding(encoding: .Percent)` when calling
+     from Swift.
+    */
+    @objc public func setPercentParameterEncodingObjC() {
+        setParameterEncoding(.Percent)
+    }
+}
+
+// MARK: - Obj-C Interop for Response Handler API
+
 extension ServiceTask {
     
     /// Response handler type for Obj-C
