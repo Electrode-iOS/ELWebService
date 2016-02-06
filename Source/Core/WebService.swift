@@ -41,7 +41,7 @@ import Foundation
     }
 }
 
-// MARK: - Web Service API
+// MARK: - Request API
 
 extension WebService {
     /**
@@ -118,24 +118,35 @@ extension WebService {
     public func HEAD(path: String) -> ServiceTask {
         return request(.HEAD, path: path)
     }
+    
+    /**
+     Create a service task to fulfill a service request. By default the service
+     task is started by calling resume(). To prevent service tasks from
+     automatically resuming set the `startTasksImmediately` of the WebService
+     value to `false`.
+     
+     - parameter method: HTTP request method.
+     - parameter path: Request path. The value can be relative to the base URL string
+     or absolute.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
+     a given request.
+     */
+    func request(method: Request.Method, path: String) -> ServiceTask {
+        return serviceTask(request: Request(method, url: absoluteURLString(path)))
+    }
+    
+    /// Create a service task to fulfill a given request.
+    func serviceTask(request request: Request) -> ServiceTask {
+        return ServiceTask(request: request, dataTaskSource: self)
+    }
 }
 
-extension WebService {
-    /**
-    Create a service task to fulfill a service request. By default the service
-    task is started by calling resume(). To prevent service tasks from
-    automatically resuming set the `startTasksImmediately` of the WebService
-    value to `false`.
-    
-    - parameter method: HTTP request method.
-    - parameter path: Request path. The value can be relative to the base URL string
-    or absolute.
-    - returns: A ServiceTask instance that refers to the lifetime of processing
-    a given request.
-    */
-    func request(method: Request.Method, path: String) -> ServiceTask {
-        let request = Request(method, url: absoluteURLString(path))
-        return ServiceTask(request: request, dataTaskSource: serviceDataTaskSource)
+// MARK: - NSURLSessionDataTask API
+
+extension WebService: SessionDataTaskDataSource {
+    /// NSURLSessionDataTask API
+    @objc public func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
+        return serviceDataTaskSource.dataTaskWithRequest(request, completionHandler: completionHandler)
     }
 }
 

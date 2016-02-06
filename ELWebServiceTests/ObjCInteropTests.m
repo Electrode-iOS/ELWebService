@@ -18,7 +18,7 @@
 
 // MARK: - ServiceTask tests
 
-- (void)test_responseObjC_handlerIsCalled {
+- (void)test_responseObjC_calledWhenReturningErrorFromResponseHandler {
     XCTestExpectation *expectation = [self expectationWithDescription:@"response handler is called"];
     WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
     ServiceTask *task = [service GET:@"bar"];

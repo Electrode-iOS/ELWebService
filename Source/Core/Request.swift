@@ -15,7 +15,7 @@ protocol ParameterEncoder {
 }
 
 /// Defines an interface for encoding a `NSURLRequest`.
-protocol URLRequestEncodable {
+public protocol URLRequestEncodable {
     var urlRequestValue: NSURLRequest {get}
 }
 
@@ -196,6 +196,12 @@ extension Request: URLRequestEncodable {
         }
 
         return urlRequest.copy() as! NSURLRequest
+    }
+}
+
+extension NSURLRequest: URLRequestEncodable {
+    public var urlRequestValue: NSURLRequest {
+        return self
     }
 }
 
