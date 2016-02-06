@@ -1,3 +1,7 @@
+# [2.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.4.0)
+
+- Added `dataTaskWithRequest` method [low-level WebService API](https://github.com/Electrode-iOS/ELWebService/blob/a52b8e8e852353c7e3a2979f68add7f662fb3593/Source/Core/WebService.swift#L148-L150) for creating `NSURLSessionDataTask` from `NSURLRequest` objects
+
 # [2.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.3.0)
 
 - Added better support for Objective-C interoperability by introducing a special request API for Obj-C. See [Objective-C ServiceTask Request API](https://github.com/Electrode-iOS/ELWebService/blob/master/docs/Programming-Guide.md#objective-c-servicetask-request-api) section in the programming guide for more information.
