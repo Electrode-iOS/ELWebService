@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 /**
  A lightweight wrapper around `NSURLSessionDataTask` that provides a chainable
  API for processing the result of a data task. A `ServiceTask` instance can be
@@ -32,16 +33,14 @@ import Foundation
         }
     }
     
-    private var request: Request?
+    private var request: Request
     
-    private var urlRequest: NSURLRequest
+    private var urlRequest: NSURLRequest {
+        return request.urlRequestValue
+    }
     
     /// Dispatch queue that queues up and dispatches handler blocks
-    private let handlerQueue: dispatch_queue_t = {
-        let queue = dispatch_queue_create(("com.ELWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
-        dispatch_suspend(queue)
-        return queue
-    }()
+    private let handlerQueue: dispatch_queue_t
     
     /// Session data task that refers the lifetime of the request.
     private var dataTask: NSURLSessionDataTask?
@@ -67,9 +66,14 @@ import Foundation
      - parameter dataTaskSource: Object responsible for creating a 
       NSURLSessionDataTask used to send the NSURLRequset.
     */
-    public init(encodableRequest: URLRequestEncodable, dataTaskSource: SessionDataTaskDataSource) {
-        self.urlRequest = encodableRequest.urlRequestValue
+    init(request: Request, dataTaskSource: SessionDataTaskDataSource) {
+        self.request = request
         self.dataTaskSource = dataTaskSource
+        self.handlerQueue = {
+            let queue = dispatch_queue_create(("com.ELWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
+            dispatch_suspend(queue)
+            return queue
+        }()
     }
 }
 
@@ -77,45 +81,44 @@ import Foundation
 
 extension ServiceTask {
     public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
-        request?.parameters = parameters
-        request?.parameterEncoding = encoding ?? .Percent
+        request.parameters = parameters
+        request.parameterEncoding = encoding ?? .Percent
         
         if encoding == .JSON {
-            request?.contentType = Request.ContentType.json
+            request.contentType = Request.ContentType.json
         }
         
         return self
     }
     
-    @available(*, deprecated, message="use URLRequestEncodable instead")
     public func setBody(data: NSData) -> Self {
-        request?.body = data
+        request.body = data
         return self
     }
     
     public func setJSON(json: AnyObject) -> Self {
-        request?.contentType = Request.ContentType.json
-        request?.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
+        request.contentType = Request.ContentType.json
+        request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
         return self
     }
     
     public func setHeaders(headers: [String: String]) -> Self {
-        request?.headers = headers
+        request.headers = headers
         return self
     }
     
     public func setHeaderValue(value: String, forName name: String) -> Self {
-        request?.headers[name] = value
+        request.headers[name] = value
         return self
     }
     
     public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
-        request?.cachePolicy = cachePolicy
+        request.cachePolicy = cachePolicy
         return self
     }
     
     public func setParameterEncoding(encoding: Request.ParameterEncoding) -> Self {
-        request?.parameterEncoding = encoding
+        request.parameterEncoding = encoding
         return self
     }
 }
@@ -126,12 +129,6 @@ extension ServiceTask {
     /// Resume the underlying data task.
     public func resume() -> Self {
         if dataTask == nil {
-            
-            // legacy, should be removed after request encoding methods are dropped from ServiceTask
-            if let request = request {
-                urlRequest = request.urlRequestValue
-            }
-            
             dataTask = dataTaskSource?.dataTaskWithRequest(urlRequest) { data, response, error in
                 self.handleResponse(response, data: data, error: error)
             }
