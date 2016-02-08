@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "17088EBC1C50100F007ADE1B"
+               BlueprintIdentifier = "17088ED01C5010EA007ADE1B"
                BuildableName = "ELWebServiceTests.xctest"
                BlueprintName = "ELWebServiceTests"
                ReferencedContainer = "container:ELWebService.xcodeproj">
@@ -40,13 +40,14 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      codeCoverageEnabled = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "17088EBC1C50100F007ADE1B"
+               BlueprintIdentifier = "17088ED01C5010EA007ADE1B"
                BuildableName = "ELWebServiceTests.xctest"
                BlueprintName = "ELWebServiceTests"
                ReferencedContainer = "container:ELWebService.xcodeproj">
