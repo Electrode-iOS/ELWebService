@@ -40,7 +40,7 @@ import Foundation
     }
     
     /// Dispatch queue that queues up and dispatches handler blocks
-    private let handlerQueue: dispatch_queue_t
+    private let handlerQueue: NSOperationQueue
     
     /// Session data task that refers the lifetime of the request.
     private var dataTask: NSURLSessionDataTask?
@@ -83,10 +83,15 @@ import Foundation
         self.request = request
         self.dataTaskSource = dataTaskSource
         self.handlerQueue = {
-            let queue = dispatch_queue_create(("com.ELWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
-            dispatch_suspend(queue)
+            let queue = NSOperationQueue()
+            queue.maxConcurrentOperationCount = 1
+            queue.suspended = true
             return queue
         }()
+    }
+    
+    deinit {
+        handlerQueue.cancelAllOperations()
     }
 }
 
@@ -177,7 +182,7 @@ extension ServiceTask {
             taskResult = ServiceTaskResult.Failure(error)
         }
         
-        dispatch_resume(handlerQueue)
+        handlerQueue.suspended = false
     }
 }
 
@@ -192,7 +197,7 @@ extension ServiceTask {
      - returns: Self instance to support chaining.
     */
     public func response(handler: ResponseProcessingHandler) -> Self {
-        dispatch_async(handlerQueue) {
+        handlerQueue.addOperationWithBlock {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(_): return // bail out to avoid next handler from running
@@ -219,7 +224,7 @@ extension ServiceTask {
      - returns: Self instance to support chaining.
     */
     public func updateUI(handler: UpdateUIHandler) -> Self {
-        dispatch_async(handlerQueue) {
+        handlerQueue.addOperationWithBlock {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Value(let value):
@@ -284,7 +289,7 @@ extension ServiceTask {
     - returns: Self instance to support chaining.
     */
     public func responseError(handler: ErrorHandler) -> Self {
-        dispatch_async(handlerQueue) {
+        handlerQueue.addOperationWithBlock {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(let error): handler(error)
@@ -305,7 +310,7 @@ extension ServiceTask {
      - returns: Self instance to support chaining.
     */
     public func updateErrorUI(handler: ErrorHandler) -> Self {
-        dispatch_async(handlerQueue) {
+        handlerQueue.addOperationWithBlock {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(let error):
