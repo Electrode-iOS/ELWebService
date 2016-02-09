@@ -46,7 +46,16 @@ import Foundation
     private var dataTask: NSURLSessionDataTask?
     
     /// Result of the service task
-    private var taskResult: ServiceTaskResult?
+    private var taskResult: ServiceTaskResult? {
+        didSet {
+            // Use observer to watch for error result to send to passthrough
+            guard let result = taskResult else { return }
+            switch result {
+            case .Failure(let error): passthroughDelegate?.serviceResultFailure(error)
+            case .Empty, .Value(_): return
+            }
+        }
+    }
     
     /// Response body data
     private var responseData: NSData?
@@ -278,9 +287,7 @@ extension ServiceTask {
         dispatch_async(handlerQueue) {
             if let taskResult = self.taskResult {
                 switch taskResult {
-                case .Failure(let error):
-                    self.passthroughDelegate?.serviceResultFailure(error)
-                    handler(error)
+                case .Failure(let error): handler(error)
                 case .Value(_): break
                 case .Empty: break
                 }
