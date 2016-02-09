@@ -54,7 +54,11 @@ import Foundation
     /// URL response
     private var urlResponse: NSURLResponse?
     
+    /// Type responsible for creating NSURLSessionDataTask objects
     private weak var dataTaskSource: SessionDataTaskDataSource?
+    
+    /// Delegate interface for handling raw response and request events
+    internal weak var passthroughDelegate: ServicePassthroughDelegate?
     
     // MARK: Intialization
     
@@ -62,9 +66,9 @@ import Foundation
      Initialize a ServiceTask value to fulfill an HTTP request.
     
      - parameter urlRequestEncoder: Value responsible for encoding a NSURLRequest
-      instance to send.
-     - parameter dataTaskSource: Object responsible for creating a 
-      NSURLSessionDataTask used to send the NSURLRequset.
+       instance to send.
+     - parameter dataTaskSource: Object responsible for creating a
+       NSURLSessionDataTask used to send the NSURLRequset.
     */
     init(request: Request, dataTaskSource: SessionDataTaskDataSource) {
         self.request = request
@@ -80,6 +84,7 @@ import Foundation
 // MARK: - Request API
 
 extension ServiceTask {
+    /// TODO: Needs docs
     public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
         request.parameterEncoding = encoding ?? .Percent
@@ -91,32 +96,38 @@ extension ServiceTask {
         return self
     }
     
+    /// TODO: Needs docs
     public func setBody(data: NSData) -> Self {
         request.body = data
         return self
     }
     
+    /// TODO: Needs docs
     public func setJSON(json: AnyObject) -> Self {
         request.contentType = Request.ContentType.json
         request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
         return self
     }
     
+    /// TODO: Needs docs
     public func setHeaders(headers: [String: String]) -> Self {
         request.headers = headers
         return self
     }
     
+    /// TODO: Needs docs
     public func setHeaderValue(value: String, forName name: String) -> Self {
         request.headers[name] = value
         return self
     }
     
+    /// TODO: Needs docs
     public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
         request.cachePolicy = cachePolicy
         return self
     }
     
+    /// TODO: Needs docs
     public func setParameterEncoding(encoding: Request.ParameterEncoding) -> Self {
         request.parameterEncoding = encoding
         return self
@@ -204,11 +215,15 @@ extension ServiceTask {
                 switch taskResult {
                 case .Value(let value):
                     dispatch_async(dispatch_get_main_queue()) {
+                        self.passthroughDelegate?.updateUIBegin(self.urlResponse)
                         handler(value)
+                        self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                     }
                 case .Empty:
                     dispatch_async(dispatch_get_main_queue()) {
+                        self.passthroughDelegate?.updateUIBegin(self.urlResponse)
                         handler(nil)
+                        self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                     }
                 case .Failure(_): break
                 }
@@ -263,7 +278,9 @@ extension ServiceTask {
         dispatch_async(handlerQueue) {
             if let taskResult = self.taskResult {
                 switch taskResult {
-                case .Failure(let error): handler(error)
+                case .Failure(let error):
+                    self.passthroughDelegate?.serviceResultFailure(error)
+                    handler(error)
                 case .Value(_): break
                 case .Empty: break
                 }
