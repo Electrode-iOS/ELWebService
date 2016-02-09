@@ -40,13 +40,22 @@ import Foundation
     }
     
     /// Dispatch queue that queues up and dispatches handler blocks
-    private let handlerQueue: dispatch_queue_t
+    private let handlerQueue: NSOperationQueue
     
     /// Session data task that refers the lifetime of the request.
     private var dataTask: NSURLSessionDataTask?
     
     /// Result of the service task
-    private var taskResult: ServiceTaskResult?
+    private var taskResult: ServiceTaskResult? {
+        didSet {
+            // Use observer to watch for error result to send to passthrough
+            guard let result = taskResult else { return }
+            switch result {
+            case .Failure(let error): passthroughDelegate?.serviceResultFailure(error)
+            case .Empty, .Value(_): return
+            }
+        }
+    }
     
     /// Response body data
     private var responseData: NSData?
@@ -54,7 +63,11 @@ import Foundation
     /// URL response
     private var urlResponse: NSURLResponse?
     
+    /// Type responsible for creating NSURLSessionDataTask objects
     private weak var dataTaskSource: SessionDataTaskDataSource?
+    
+    /// Delegate interface for handling raw response and request events
+    internal weak var passthroughDelegate: ServicePassthroughDelegate?
     
     // MARK: Intialization
     
@@ -62,24 +75,30 @@ import Foundation
      Initialize a ServiceTask value to fulfill an HTTP request.
     
      - parameter urlRequestEncoder: Value responsible for encoding a NSURLRequest
-      instance to send.
-     - parameter dataTaskSource: Object responsible for creating a 
-      NSURLSessionDataTask used to send the NSURLRequset.
+       instance to send.
+     - parameter dataTaskSource: Object responsible for creating a
+       NSURLSessionDataTask used to send the NSURLRequset.
     */
     init(request: Request, dataTaskSource: SessionDataTaskDataSource) {
         self.request = request
         self.dataTaskSource = dataTaskSource
         self.handlerQueue = {
-            let queue = dispatch_queue_create(("com.ELWebService.ServiceTask" as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
-            dispatch_suspend(queue)
+            let queue = NSOperationQueue()
+            queue.maxConcurrentOperationCount = 1
+            queue.suspended = true
             return queue
         }()
+    }
+    
+    deinit {
+        handlerQueue.cancelAllOperations()
     }
 }
 
 // MARK: - Request API
 
 extension ServiceTask {
+    /// TODO: Needs docs
     public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
         request.parameterEncoding = encoding ?? .Percent
@@ -91,32 +110,38 @@ extension ServiceTask {
         return self
     }
     
+    /// TODO: Needs docs
     public func setBody(data: NSData) -> Self {
         request.body = data
         return self
     }
     
+    /// TODO: Needs docs
     public func setJSON(json: AnyObject) -> Self {
         request.contentType = Request.ContentType.json
         request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
         return self
     }
     
+    /// TODO: Needs docs
     public func setHeaders(headers: [String: String]) -> Self {
         request.headers = headers
         return self
     }
     
+    /// TODO: Needs docs
     public func setHeaderValue(value: String, forName name: String) -> Self {
         request.headers[name] = value
         return self
     }
     
+    /// TODO: Needs docs
     public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
         request.cachePolicy = cachePolicy
         return self
     }
     
+    /// TODO: Needs docs
     public func setParameterEncoding(encoding: Request.ParameterEncoding) -> Self {
         request.parameterEncoding = encoding
         return self
@@ -157,7 +182,7 @@ extension ServiceTask {
             taskResult = ServiceTaskResult.Failure(error)
         }
         
-        dispatch_resume(handlerQueue)
+        handlerQueue.suspended = false
     }
 }
 
@@ -172,7 +197,7 @@ extension ServiceTask {
      - returns: Self instance to support chaining.
     */
     public func response(handler: ResponseProcessingHandler) -> Self {
-        dispatch_async(handlerQueue) {
+        handlerQueue.addOperationWithBlock {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(_): return // bail out to avoid next handler from running
@@ -199,16 +224,20 @@ extension ServiceTask {
      - returns: Self instance to support chaining.
     */
     public func updateUI(handler: UpdateUIHandler) -> Self {
-        dispatch_async(handlerQueue) {
+        handlerQueue.addOperationWithBlock {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Value(let value):
                     dispatch_async(dispatch_get_main_queue()) {
+                        self.passthroughDelegate?.updateUIBegin(self.urlResponse)
                         handler(value)
+                        self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                     }
                 case .Empty:
                     dispatch_async(dispatch_get_main_queue()) {
+                        self.passthroughDelegate?.updateUIBegin(self.urlResponse)
                         handler(nil)
+                        self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                     }
                 case .Failure(_): break
                 }
@@ -260,7 +289,7 @@ extension ServiceTask {
     - returns: Self instance to support chaining.
     */
     public func responseError(handler: ErrorHandler) -> Self {
-        dispatch_async(handlerQueue) {
+        handlerQueue.addOperationWithBlock {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(let error): handler(error)
@@ -281,7 +310,7 @@ extension ServiceTask {
      - returns: Self instance to support chaining.
     */
     public func updateErrorUI(handler: ErrorHandler) -> Self {
-        dispatch_async(handlerQueue) {
+        handlerQueue.addOperationWithBlock {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(let error):

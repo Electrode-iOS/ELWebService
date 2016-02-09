@@ -21,7 +21,6 @@ import Foundation
      `NSURLRequest`.
     */
     public var dataTaskSource: SessionDataTaskDataSource?
-    
     private var serviceDataTaskSource: SessionDataTaskDataSource {
         if let dataTaskSource = dataTaskSource {
             return dataTaskSource
@@ -29,6 +28,7 @@ import Foundation
             return NSURLSession.sharedSession()
         }
     }
+    private weak var passthroughDelegate: ServicePassthroughDelegate?
     
     // MARK: Initialization
     
@@ -38,6 +38,11 @@ import Foundation
     */
     public init(baseURLString: String) {
         self.baseURLString = baseURLString
+    }
+    
+    public convenience init(baseURLString: String, passthroughDelegate: ServicePassthroughDelegate) {
+        self.init(baseURLString: baseURLString)
+        self.passthroughDelegate = passthroughDelegate
     }
 }
 
@@ -137,7 +142,9 @@ extension WebService {
     
     /// Create a service task to fulfill a given request.
     func serviceTask(request request: Request) -> ServiceTask {
-        return ServiceTask(request: request, dataTaskSource: self)
+        let task = ServiceTask(request: request, dataTaskSource: self)
+        task.passthroughDelegate = passthroughDelegate
+        return task
     }
 }
 
@@ -146,7 +153,12 @@ extension WebService {
 extension WebService: SessionDataTaskDataSource {
     /// NSURLSessionDataTask API
     @objc public func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
-        return serviceDataTaskSource.dataTaskWithRequest(request, completionHandler: completionHandler)
+        passthroughDelegate?.requestSent(request)
+        
+        return serviceDataTaskSource.dataTaskWithRequest(request) { data, response, error in
+            self.passthroughDelegate?.responseReceived(response, data: data, error: error)
+            completionHandler(data, response, error)
+        }
     }
 }
 
