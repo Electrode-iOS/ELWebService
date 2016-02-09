@@ -11,6 +11,7 @@
 		17088EEB1C501208007ADE1B /* WebServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE91C501208007ADE1B /* WebServiceTests.swift */; };
 		17088EEC1C501208007ADE1B /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EEA1C501208007ADE1B /* RequestTests.swift */; };
 		1720E8241C6A483100DBB925 /* ServicePassthroughDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720E8231C6A483100DBB925 /* ServicePassthroughDelegate.swift */; };
+		1720E8261C6A508000DBB925 /* ServicePassthroughDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */; };
 		17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */; };
 		17821A011C623B2D00D3837D /* ObjCInteropTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 17821A001C623B2D00D3837D /* ObjCInteropTests.m */; };
 		17821A031C623D2C00D3837D /* ServiceTask+TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17821A021C623D2C00D3837D /* ServiceTask+TestUtils.swift */; };
@@ -44,6 +45,7 @@
 		17088EE91C501208007ADE1B /* WebServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebServiceTests.swift; sourceTree = "<group>"; };
 		17088EEA1C501208007ADE1B /* RequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTests.swift; sourceTree = "<group>"; };
 		1720E8231C6A483100DBB925 /* ServicePassthroughDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicePassthroughDelegate.swift; sourceTree = "<group>"; };
+		1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicePassthroughDelegateTests.swift; sourceTree = "<group>"; };
 		17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+ObjC.swift"; sourceTree = "<group>"; };
 		178219FF1C623B2C00D3837D /* ELWebServiceTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ELWebServiceTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		17821A001C623B2D00D3837D /* ObjCInteropTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCInteropTests.m; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				17088EE91C501208007ADE1B /* WebServiceTests.swift */,
 				17088ED51C5010EA007ADE1B /* Info.plist */,
 				178219FF1C623B2C00D3837D /* ELWebServiceTests-Bridging-Header.h */,
+				1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */,
 			);
 			path = ELWebServiceTests;
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 				17088EEC1C501208007ADE1B /* RequestTests.swift in Sources */,
 				17821A031C623D2C00D3837D /* ServiceTask+TestUtils.swift in Sources */,
 				17088EEB1C501208007ADE1B /* WebServiceTests.swift in Sources */,
+				1720E8261C6A508000DBB925 /* ServicePassthroughDelegateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
