@@ -15,9 +15,7 @@ class WebServiceTests: XCTestCase {
     // MARK: Utilities
     
     var baseURL: String {
-        get {
-            return "http://httpbin.org/"
-        }
+        return "http://httpbin.org/"
     }
     
     func responseHandler(expectation expectation: XCTestExpectation) -> (NSData?, NSURLResponse?) -> ServiceTaskResult {
