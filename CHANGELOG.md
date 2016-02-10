@@ -1,3 +1,9 @@
+# [2.5.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.5.0)
+
+- Changed deployment target to 8.0
+- Replaced ServiceTask's GCD queue with NSOperationQueue so queued blocks can be cancelled in deinit
+- Added `ServicePassthroughDelegate` protocol for handling raw request and response events
+
 # [2.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.4.0)
 
 - Added `dataTaskWithRequest` method [low-level WebService API](https://github.com/Electrode-iOS/ELWebService/blob/a52b8e8e852353c7e3a2979f68add7f662fb3593/Source/Core/WebService.swift#L148-L150) for creating `NSURLSessionDataTask` from `NSURLRequest` objects
