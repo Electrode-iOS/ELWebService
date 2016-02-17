@@ -25,3 +25,7 @@ public protocol ServicePassthroughDelegate: class {
     /// Called when a ServiceTask handler returns a .Failure(error) result
     func serviceResultFailure(error: ErrorType)
 }
+
+public protocol ServicePassthroughDataSource {
+    var servicePassthroughDelegate: ServicePassthroughDelegate {get}
+}

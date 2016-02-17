@@ -38,6 +38,12 @@ import Foundation
     */
     public init(baseURLString: String) {
         self.baseURLString = baseURLString
+        
+        super.init()
+        
+        if let passthroughDataSource = self as? ServicePassthroughDataSource {
+            passthroughDelegate = passthroughDataSource.servicePassthroughDelegate
+        }
     }
     
     public convenience init(baseURLString: String, passthroughDelegate: ServicePassthroughDelegate) {
