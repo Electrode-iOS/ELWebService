@@ -93,9 +93,9 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
      */
-    @objc public func responseJSONObjC(handler: (AnyObject) -> ObjCHandlerResult?) -> Self {
-        return responseJSON { json in
-            return ServiceTaskResult(objCHandlerResult: handler(json))
+    @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self {
+        return responseJSON { json, response in
+            return ServiceTaskResult(objCHandlerResult: handler(json, response))
         }
     }
     
