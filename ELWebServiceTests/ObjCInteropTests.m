@@ -61,6 +61,7 @@
         XCTAssertTrue([dictionary isKindOfClass:[NSDictionary class]]);
         XCTAssertTrue([dictionary[@"foo"] isEqualToString:@"bar"]);
         [expectation fulfill];
+        return nil;
     }];
     
     [task injectResponse:[NSURLResponse mockResponse] data:[NSData mockJSONData] error:nil];
