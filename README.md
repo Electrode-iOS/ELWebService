@@ -2,7 +2,7 @@
 
 ELWebService (previously named Swallow) simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, ELWebService is not intended to be a fully-featured networking library. By default ELWebService uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any `NSURLSession` instance using a [protocol](#sessiondatataskdatasource).
 
-See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information. 
+See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
 
 ## Requirements
 
@@ -72,7 +72,7 @@ let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 service
   .GET("/brewers")
   .setParameters(["state" : "New York"])
-  .responseJSON { (json: AnyObject) in
+  .responseJSON { (json: AnyObject, response: NSURLResponse?) in
     // process response as JSON
   }
   .resume()
@@ -115,7 +115,7 @@ Send a `POST` request with body parameters.
 ```
 let service = WebService(baseURLString: "http://httpbin.org")
 let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
-        
+
 service
     .POST("/post")
     .setParameters(parameters)
@@ -137,7 +137,7 @@ Send a `POST` request with JSON encoded parameters.
 let service = WebService(baseURLString: "http://httpbin.org")
 
 service
-    .POST("/post") 
+    .POST("/post")
     .setParameters(["foo" : "bar", "number" : 42], encoding: .JSON)
     .resume()
 ```
@@ -158,7 +158,7 @@ Alternatively you can specify the explicit JSON payload to send as the request b
 let service = WebService(baseURLString: "http://httpbin.org")
 
 service
-    .POST("/post") 
+    .POST("/post")
     .setJSON(["hmm": ["foo" : "bar", "number" : 42]])
     .resume()
 ```
@@ -196,12 +196,12 @@ let service = WebService(baseURLString: "https://somehapi.herokuapp.com")
 
 service
     .GET("/brewers")
-    .responseJSON { json in
+    .responseJSON { json, response in
         if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
             return .Value(models)
         } else {
           // any value conforming to ErrorType
-          return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+          return .Failure(JSONDecoderError.FailedToDecodeBrewer)
         }
     }
     .responseError { error in
@@ -225,7 +225,7 @@ Add custom request methods by extending `WebService`.
 
 ```
 public extension WebService {
-    
+
     public func fetchBrewers(state state: String) -> ServiceTask {
         return GET("/brewers").setParameters(["state" : name])
     }
@@ -238,13 +238,13 @@ The chainable service task API makes it easy to create custom response handlers 
 extension ServiceTask {
 
     func responseAsBrewers(handler: ([Brewer]) -> Void) -> Self {
-        return 
-            responseJSON { json in
+        return
+            responseJSON { json, response in
               if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
                   return .Value(models)
               } else {
                 // any value conforming to ErrorType
-                return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+                return .Failure(JSONDecoderError.FailedToDecodeBrewer)
               }
             }
             .updateUI { value in
@@ -274,7 +274,7 @@ service
 
 ### Objective-C Interoperability
 
-ELWebService supports Objective-C via specially-named response handler methods. See the [Objective-C Interoperability section](/docs/Programming-Guide.md#objective-c-interoperability) in the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information. 
+ELWebService supports Objective-C via specially-named response handler methods. See the [Objective-C Interoperability section](/docs/Programming-Guide.md#objective-c-interoperability) in the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
 
 ```
 extension ServiceTask {
@@ -282,7 +282,7 @@ extension ServiceTask {
 
     @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self
 
-    @objc public func responseJSONObjC(handler: (AnyObject) -> ObjCHandlerResult?) -> Self
+    @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self
 
     @objc public func responseErrorObjC(handler: (NSError) -> Void) -> Self
 

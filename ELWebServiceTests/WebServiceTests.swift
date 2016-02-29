@@ -32,8 +32,8 @@ class WebServiceTests: XCTestCase {
         }
     }
     
-    func jsonResponseHandler(expectation expectation: XCTestExpectation) -> (AnyObject) -> ServiceTaskResult {
-        return { json in
+    func jsonResponseHandler(expectation expectation: XCTestExpectation) -> (AnyObject, NSURLResponse?) -> ServiceTaskResult {
+        return { json, response in
             XCTAssertTrue(!NSThread.isMainThread())
 
             if json is NSDictionary {
@@ -226,7 +226,7 @@ class WebServiceTests: XCTestCase {
                 
                 return .Empty
             }
-            .responseJSON { json in
+            .responseJSON { json, response in
                 let castedJSON = json as? [String : AnyObject]
                 XCTAssert(castedJSON != nil)
 
@@ -260,7 +260,7 @@ class WebServiceTests: XCTestCase {
                 
                 return .Empty
             }
-            .responseJSON { json in
+            .responseJSON { json, response in
                 let castedJSON = json as? [String : AnyObject]
                 XCTAssert(castedJSON != nil)
                 
@@ -293,7 +293,7 @@ class WebServiceTests: XCTestCase {
                 
                 return .Empty
             }
-            .responseJSON { json in
+            .responseJSON { json, response in
                 let castedJSON = json as? [String : AnyObject]
                 XCTAssert(castedJSON != nil)
                 
@@ -329,7 +329,7 @@ class WebServiceTests: XCTestCase {
                 
                 return .Empty
             }
-            .responseJSON { json in
+            .responseJSON { json, reponse in
                 let castedJSON = json as? [String : AnyObject]
                 XCTAssert(castedJSON != nil)
                 
@@ -364,7 +364,7 @@ class WebServiceTests: XCTestCase {
                 
                 return .Empty
             }
-            .responseJSON { json in
+            .responseJSON { json, repsponse in
                 let castedJSON = json as? [String : AnyObject]
                 XCTAssert(castedJSON != nil)
                 

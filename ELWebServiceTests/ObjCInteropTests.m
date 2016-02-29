@@ -56,7 +56,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"updateUI handler is called"];
     WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
     ServiceTask *task = [service GET:@"bar"];
-    [task responseJSONObjC:^ObjCHandlerResult *(id json) {
+    [task responseJSONObjC:^ObjCHandlerResult *(id json, NSURLResponse *response) {
         NSDictionary *dictionary = json;
         XCTAssertTrue([dictionary isKindOfClass:[NSDictionary class]]);
         XCTAssertTrue([dictionary[@"foo"] isEqualToString:@"bar"]);
