@@ -166,7 +166,7 @@ extension WebService: SessionDataTaskDataSource {
         passthroughDelegate?.requestSent(request)
         
         return serviceDataTaskSource.dataTaskWithRequest(request) { data, response, error in
-            self.passthroughDelegate?.responseReceived(response, data: data, error: error)
+            self.passthroughDelegate?.responseReceived(response, data: data, request: request, error: error)
             completionHandler(data, response, error)
         }
     }
