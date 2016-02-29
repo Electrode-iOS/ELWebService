@@ -14,7 +14,7 @@ public protocol ServicePassthroughDelegate: class {
     func requestSent(request: NSURLRequest)
     
     /// Called after a NSURLSessionDataTask has completed
-    func responseReceived(response: NSURLResponse?, data: NSData?, error: NSError?)
+    func responseReceived(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: NSError?)
     
     /// Called before an updateUI handler is invoked
     func updateUIBegin(response: NSURLResponse?)
@@ -24,6 +24,14 @@ public protocol ServicePassthroughDelegate: class {
     
     /// Called when a ServiceTask handler returns a .Failure(error) result
     func serviceResultFailure(error: ErrorType)
+    
+    func modifiedRequest(request: NSURLRequest) -> NSURLRequest?
+}
+
+extension ServicePassthroughDelegate {
+    func modifiedRequest(request: NSURLRequest) -> NSURLRequest? {
+        return nil
+    }
 }
 
 public protocol ServicePassthroughDataSource {
