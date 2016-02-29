@@ -152,7 +152,11 @@ extension WebService {
 
 extension WebService: SessionDataTaskDataSource {
     /// NSURLSessionDataTask API
-    @objc public func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
+    @objc public func dataTaskWithRequest(var request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
+        if let modifiedRequest = passthroughDelegate?.modifiedRequest(request) {
+            request = modifiedRequest
+        }
+        
         passthroughDelegate?.requestSent(request)
         
         return serviceDataTaskSource.dataTaskWithRequest(request) { data, response, error in

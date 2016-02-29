@@ -24,4 +24,12 @@ public protocol ServicePassthroughDelegate: class {
     
     /// Called when a ServiceTask handler returns a .Failure(error) result
     func serviceResultFailure(error: ErrorType)
+    
+    func modifiedRequest(request: NSURLRequest) -> NSURLRequest?
+}
+
+extension ServicePassthroughDelegate {
+    func modifiedRequest(request: NSURLRequest) -> NSURLRequest? {
+        return nil
+    }
 }
