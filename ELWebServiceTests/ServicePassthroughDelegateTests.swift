@@ -85,7 +85,7 @@ class ServicePassthroughDelegateSpy: ServicePassthroughDelegate {
         requestSentExpectation?.fulfill()
     }
     
-    func responseReceived(response: NSURLResponse?, data: NSData?, error: NSError?) {
+    func responseReceived(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: NSError?) {
         responseReceivedExpectation?.fulfill()
     }
     
