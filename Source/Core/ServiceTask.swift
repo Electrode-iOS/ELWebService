@@ -43,7 +43,7 @@ import Foundation
     private let handlerQueue: NSOperationQueue
     
     /// Session data task that refers the lifetime of the request.
-    private var dataTask: NSURLSessionDataTask?
+    private var dataTask: DataTask?
     
     /// Result of the service task
     private var taskResult: ServiceTaskResult? {
@@ -64,7 +64,7 @@ import Foundation
     private var urlResponse: NSURLResponse?
     
     /// Type responsible for creating NSURLSessionDataTask objects
-    private weak var dataTaskSource: SessionDataTaskDataSource?
+    private var session: Session?
     
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
@@ -79,9 +79,9 @@ import Foundation
      - parameter dataTaskSource: Object responsible for creating a
        NSURLSessionDataTask used to send the NSURLRequset.
     */
-    init(request: Request, dataTaskSource: SessionDataTaskDataSource) {
+    init(request: Request, session: Session) {
         self.request = request
-        self.dataTaskSource = dataTaskSource
+        self.session = session
         self.handlerQueue = {
             let queue = NSOperationQueue()
             queue.maxConcurrentOperationCount = 1
@@ -154,7 +154,7 @@ extension ServiceTask {
     /// Resume the underlying data task.
     public func resume() -> Self {
         if dataTask == nil {
-            dataTask = dataTaskSource?.dataTaskWithRequest(urlRequest) { data, response, error in
+            dataTask = session?.dataTask(request: urlRequest) { data, response, error in
                 self.handleResponse(response, data: data, error: error)
             }
         }

@@ -20,14 +20,17 @@ import Foundation
      Type responsible for creating a `NSURLSessionDataTask` based on a
      `NSURLRequest`.
     */
-    public var dataTaskSource: SessionDataTaskDataSource?
-    private var serviceDataTaskSource: SessionDataTaskDataSource {
-        if let dataTaskSource = dataTaskSource {
-            return dataTaskSource
-        } else {
-            return NSURLSession.sharedSession()
+    @available(*, deprecated, message="Use the Session protocol instead.")
+    public var dataTaskSource: SessionDataTaskDataSource? {
+        set {
+            guard let newValue = newValue else { return }
+            session = newValue
+        }
+        get {
+            return session as? SessionDataTaskDataSource
         }
     }
+    public var session: Session = NSURLSession.sharedSession()
     private weak var passthroughDelegate: ServicePassthroughDelegate?
     
     // MARK: Initialization
@@ -148,23 +151,47 @@ extension WebService {
     
     /// Create a service task to fulfill a given request.
     func serviceTask(request request: Request) -> ServiceTask {
-        let task = ServiceTask(request: request, dataTaskSource: self)
+        let task = ServiceTask(request: request, session: self)
         task.passthroughDelegate = passthroughDelegate
         return task
     }
 }
 
-// MARK: - NSURLSessionDataTask API
+// MARK: - Session
 
-extension WebService: SessionDataTaskDataSource {
-    /// NSURLSessionDataTask API
-    @objc public func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
-        passthroughDelegate?.requestSent(request)
-        
-        return serviceDataTaskSource.dataTaskWithRequest(request) { data, response, error in
+extension WebService: Session {
+    typealias TaskHandler = (NSData?, NSURLResponse?, NSError?) -> Void
+    
+    public func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
+        // legacy support. only use dataTaskSource when defined
+        // TODO: remove legacy call in 3.0.0
+        if let dataTaskSource = dataTaskSource {
+            return dataTask(session: dataTaskSource, request: request, completion: completion)
+        } else {
+            return dataTask(session: session, request: request, completion: completion)
+        }
+    }
+    
+    func dataTask(session session: Session, request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
+        passthroughDelegate?.requestSent(request.urlRequestValue)
+        return session.dataTask(request: request, completion: onTaskCompletion(completion))
+    }
+    
+    func onTaskCompletion(completionHandler: TaskHandler) -> TaskHandler {
+        return { data, response, error in
             self.passthroughDelegate?.responseReceived(response, data: data, error: error)
             completionHandler(data, response, error)
         }
+    }
+}
+
+// MARK: - Legacy NSURLSessionDataTask API
+
+extension WebService: SessionDataTaskDataSource {
+    // legacy. remove in v3.0.0
+    @available(*, deprecated, message="Use dataTask(request:completion:) instead.")
+    @objc public func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
+        return dataTask(request: request, completion: completionHandler) as! NSURLSessionDataTask
     }
 }
 
