@@ -157,7 +157,7 @@ extension WebService {
     }
 }
 
-// MARK: - Session
+// MARK: - Session API
 
 extension WebService: Session {
     typealias TaskHandler = (NSData?, NSURLResponse?, NSError?) -> Void

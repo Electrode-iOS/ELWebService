@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 /**
  A lightweight wrapper around `NSURLSessionDataTask` that provides a chainable
  API for processing the result of a data task. A `ServiceTask` instance can be
