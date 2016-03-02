@@ -13,10 +13,6 @@ public protocol MockSession: Session {
 }
 
 extension MockSession {
-    func stubbedResponse(request request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?) {
-        return (nil, nil, nil)
-    }
-    
     public func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
         completion(stubbedResponse(request: request))
         return MockDataTask()
