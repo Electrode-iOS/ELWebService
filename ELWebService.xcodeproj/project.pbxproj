@@ -14,8 +14,11 @@
 		1720E8261C6A508000DBB925 /* ServicePassthroughDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */; };
 		17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */; };
 		175B36441C85ED6400F385DD /* Mocking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175B36431C85ED6400F385DD /* Mocking.swift */; };
+		177ECD741C8738F70049EB6F /* MockingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177ECD731C8738F70049EB6F /* MockingTests.swift */; };
+		177ECD761C8743B50049EB6F /* ServiceTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177ECD751C8743B50049EB6F /* ServiceTaskTests.swift */; };
+		177ECD781C877B5C0049EB6F /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177ECD771C877B5C0049EB6F /* Mocks.swift */; };
 		17821A011C623B2D00D3837D /* ObjCInteropTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 17821A001C623B2D00D3837D /* ObjCInteropTests.m */; };
-		17821A031C623D2C00D3837D /* ServiceTask+TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17821A021C623D2C00D3837D /* ServiceTask+TestUtils.swift */; };
+		17821A031C623D2C00D3837D /* ServiceTask+ResponseInjection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17821A021C623D2C00D3837D /* ServiceTask+ResponseInjection.swift */; };
 		17BA678F1C8416C500A26309 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BA678E1C8416C500A26309 /* Session.swift */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
 		17D1879E1AB0B173000742BF /* ELWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -50,9 +53,12 @@
 		1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicePassthroughDelegateTests.swift; sourceTree = "<group>"; };
 		17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+ObjC.swift"; sourceTree = "<group>"; };
 		175B36431C85ED6400F385DD /* Mocking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocking.swift; sourceTree = "<group>"; };
+		177ECD731C8738F70049EB6F /* MockingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockingTests.swift; sourceTree = "<group>"; };
+		177ECD751C8743B50049EB6F /* ServiceTaskTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTaskTests.swift; sourceTree = "<group>"; };
+		177ECD771C877B5C0049EB6F /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		178219FF1C623B2C00D3837D /* ELWebServiceTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ELWebServiceTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		17821A001C623B2D00D3837D /* ObjCInteropTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCInteropTests.m; sourceTree = "<group>"; };
-		17821A021C623D2C00D3837D /* ServiceTask+TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+TestUtils.swift"; sourceTree = "<group>"; };
+		17821A021C623D2C00D3837D /* ServiceTask+ResponseInjection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+ResponseInjection.swift"; sourceTree = "<group>"; };
 		179C5C5E1AB079980047169F /* ELWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ELWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17BA678E1C8416C500A26309 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		17C96AAA1AB0CBB800D49071 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -82,13 +88,16 @@
 		17088ED21C5010EA007ADE1B /* ELWebServiceTests */ = {
 			isa = PBXGroup;
 			children = (
+				178219FF1C623B2C00D3837D /* ELWebServiceTests-Bridging-Header.h */,
+				17088ED51C5010EA007ADE1B /* Info.plist */,
+				177ECD731C8738F70049EB6F /* MockingTests.swift */,
 				17821A001C623B2D00D3837D /* ObjCInteropTests.m */,
 				17088EEA1C501208007ADE1B /* RequestTests.swift */,
-				17821A021C623D2C00D3837D /* ServiceTask+TestUtils.swift */,
-				17088EE91C501208007ADE1B /* WebServiceTests.swift */,
-				17088ED51C5010EA007ADE1B /* Info.plist */,
-				178219FF1C623B2C00D3837D /* ELWebServiceTests-Bridging-Header.h */,
+				177ECD751C8743B50049EB6F /* ServiceTaskTests.swift */,
+				17821A021C623D2C00D3837D /* ServiceTask+ResponseInjection.swift */,
 				1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */,
+				17088EE91C501208007ADE1B /* WebServiceTests.swift */,
+				177ECD771C877B5C0049EB6F /* Mocks.swift */,
 			);
 			path = ELWebServiceTests;
 			sourceTree = "<group>";
@@ -256,10 +265,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				177ECD741C8738F70049EB6F /* MockingTests.swift in Sources */,
 				17821A011C623B2D00D3837D /* ObjCInteropTests.m in Sources */,
 				17088EEC1C501208007ADE1B /* RequestTests.swift in Sources */,
-				17821A031C623D2C00D3837D /* ServiceTask+TestUtils.swift in Sources */,
+				17821A031C623D2C00D3837D /* ServiceTask+ResponseInjection.swift in Sources */,
+				177ECD761C8743B50049EB6F /* ServiceTaskTests.swift in Sources */,
 				17088EEB1C501208007ADE1B /* WebServiceTests.swift in Sources */,
+				177ECD781C877B5C0049EB6F /* Mocks.swift in Sources */,
 				1720E8261C6A508000DBB925 /* ServicePassthroughDelegateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

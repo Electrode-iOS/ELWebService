@@ -18,6 +18,10 @@
 
 // MARK: - ServiceTask tests
 
+- (NSHTTPURLResponse *)mockResponse {
+    return [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:200 HTTPVersion:nil headerFields:nil];
+}
+
 - (void)test_responseObjC_handlerGetsCalled {
     XCTestExpectation *expectation = [self expectationWithDescription:@"response handler is called"];
     WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
@@ -27,7 +31,7 @@
         return nil;
     }];
     
-    [task injectResponse:[NSURLResponse mockResponse] data:nil error:nil];
+    [task injectResponse:[self mockResponse] data:nil error:nil];
     
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
@@ -47,7 +51,7 @@
         [expectation fulfill];
     }];
     
-    [task injectResponse:[NSURLResponse mockResponse] data:nil error:nil];
+    [task injectResponse:[self mockResponse] data:nil error:nil];
     
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
@@ -64,7 +68,9 @@
         return nil;
     }];
     
-    [task injectResponse:[NSURLResponse mockResponse] data:[NSData mockJSONData] error:nil];
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:200 HTTPVersion:nil headerFields:nil];
+    
+    [task injectResponse:response data:[NSData mockJSONData] error:nil];
     
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
@@ -84,7 +90,7 @@
         [expectation fulfill];
     }];
     
-    [task injectResponse:[NSURLResponse mockResponse] data:nil error:nil];
+    [task injectResponse:[self mockResponse] data:nil error:nil];
 
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
@@ -104,7 +110,7 @@
         [expectation fulfill];
     }];
 
-    [task injectResponse:[NSURLResponse mockResponse] data:nil error:nil];
+    [task injectResponse:[self mockResponse] data:nil error:nil];
     
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
