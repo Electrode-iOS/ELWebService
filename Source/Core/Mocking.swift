@@ -22,6 +22,10 @@ extension MockSession {
 public final class MockDataTask: DataTask {
     private(set) public var state = NSURLSessionTaskState.Suspended
     
+    public init() {
+        
+    }
+    
     public func suspend() {
         state = .Suspended
     }
