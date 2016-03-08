@@ -36,3 +36,32 @@ class MockingTests: XCTestCase {
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running)
     }
 }
+
+extension MockingTests {
+    func test_mockResponse_initializationWithData() {
+        let data = NSData()
+        let response = MockResponse(statusCode: 200, data: data)
+        
+        XCTAssertNotNil(response.data)
+        XCTAssertEqual(data, response.data)
+    }
+}
+
+extension MockingTests {
+    func test_mockResponse_returnsErrorResultWhenRequestURLIsInvalid() {
+        struct InvalidURLRequestEncodable: URLRequestEncodable {
+            var urlRequestValue: NSURLRequest {
+                return NSURLRequest()
+            }
+        }
+        
+        let data = NSData()
+        let mockedResponse = MockResponse(statusCode: 200, data: data)
+        
+        let (responseData, httpResponse, error) = mockedResponse.dataTaskResult(InvalidURLRequestEncodable())
+        
+        XCTAssertNil(httpResponse)
+        XCTAssertNil(responseData)
+        XCTAssertNotNil(error)
+    }
+}

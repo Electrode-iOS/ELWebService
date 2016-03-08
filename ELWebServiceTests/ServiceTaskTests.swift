@@ -10,10 +10,20 @@ import XCTest
 @testable import ELWebService
 
 class ServiceTaskTests: XCTestCase {
+    // MARK: Stub
+    
+    func successfulTask() -> ServiceTask {
+        let session = MockSession()
+        session.addStub(MockResponse(statusCode: 200))
+        
+        return ServiceTask(request: Request(.GET, url: "/status/200"), session: session)
+    }
+    
+    // MARK: Tests
+    
     func test_updateUI_runsOnTheMainThread() {
-        let expectation = expectationWithDescription("updateUI handler is run")
-        let request = Request(.GET, url: "/foo")
-        let task = ServiceTask(request: request, session: RespondsWith200Session())
+        let expectation = expectationWithDescription("updateUI handler is called")
+        let task = successfulTask()
         
         task.response { data, response in
                 return .Empty
@@ -28,9 +38,8 @@ class ServiceTaskTests: XCTestCase {
     }
     
     func test_updateUI_receivesResponseHandlerValue() {
-        let expectation = expectationWithDescription("updateUI handler is run")
-        let request = Request(.GET, url: "/foo")
-        let task = ServiceTask(request: request, session: RespondsWith200Session())
+        let expectation = expectationWithDescription("updateUI handler is called")
+        let task = successfulTask()
 
         task.response { data, response in
                 return ServiceTaskResult.Value(true)
@@ -50,9 +59,8 @@ class ServiceTaskTests: XCTestCase {
     }
     
     func test_response_runsOnBackgroundThread() {
-        let expectation = expectationWithDescription("response handler is run")
-        let request = Request(.GET, url: "/foo")
-        let task = ServiceTask(request: request, session: RespondsWith200Session())
+        let expectation = expectationWithDescription("response handler is called")
+        let task = successfulTask()
         
         task.response { data, response in
                 XCTAssertTrue(!NSThread.isMainThread())
@@ -71,8 +79,10 @@ class ServiceTaskTests: XCTestCase {
 extension ServiceTaskTests {
     func test_responseJSON_handlerIsCalledWhenJSONIsValid() {
         let expectation = expectationWithDescription("JSON response handler is called")
-        let request = Request(.GET, url: "/status/200")
-        let task = ServiceTask(request: request, session: JSONSession())
+        let session = MockSession()
+        
+        session.addStub(MockResponse(statusCode: 200, json: ["foo": "bar"]))
+        let task = ServiceTask(request: Request(.GET, url: "/json"), session: session)
         
         task.responseJSON { json in
                 expectation.fulfill()
@@ -85,8 +95,9 @@ extension ServiceTaskTests {
     
     func test_responseJSON_errorHandlerIsCalledWhenJSONIsInvalid() {
         let expectation = expectationWithDescription("Error handler is called")
-        let request = Request(.GET, url: "/status/200")
-        let task = ServiceTask(request: request, session: InvalidJSONSession())
+        let session = MockSession()
+        session.addStub(MockResponse(statusCode: 500))
+        let task = ServiceTask(request: Request(.GET, url: "/json"), session: session)
         
         task.responseJSON { json in
                 XCTFail("responseJSON handler should not be called when JSON is invalid")
@@ -104,10 +115,24 @@ extension ServiceTaskTests {
 // MARK: - Errors
 
 extension ServiceTaskTests {
+    // MARK: Stub
+    
+    func errorTask() -> ServiceTask {
+        enum TaskTestError: ErrorType {
+            case RequestFailed
+        }
+        
+        let session = MockSession()
+        session.addStub(TaskTestError.RequestFailed as NSError)
+        
+        return ServiceTask(request: Request(.GET, url: "/error"), session: session)
+    }
+    
+    // MARK: Tests
+    
     func test_responseError_handlerCalledWhenSessionReturnsError() {
         let expectation = expectationWithDescription("Error handler called when session returns an error")
-        let request = Request(.GET, url: "/status/200")
-        let task = ServiceTask(request: request, session: ErrorSession())
+        let task = errorTask()
         
         task.responseError { error in
                 expectation.fulfill()
@@ -119,8 +144,7 @@ extension ServiceTaskTests {
     
     func test_responseError_responseHandlerIsNotCalled() {
         let expectation = expectationWithDescription("Error handler called when session returns an error")
-        let request = Request(.GET, url: "/status/200")
-        let task = ServiceTask(request: request, session: ErrorSession())
+        let task = errorTask()
         
         task.response { data, response in
                 XCTFail("Response handler should not be called when session returns an error")
@@ -136,8 +160,7 @@ extension ServiceTaskTests {
     
     func test_responseError_runsOnBackgroundThread() {
         let expectation = expectationWithDescription("Error handler called when session returns an error")
-        let request = Request(.GET, url: "/status/200")
-        let task = ServiceTask(request: request, session: ErrorSession())
+        let task = errorTask()
         
         task.responseError { error in
                 XCTAssertTrue(!NSThread.isMainThread())
@@ -150,8 +173,7 @@ extension ServiceTaskTests {
     
     func test_updateErrorUI_handlerCalledWhenSessionReturnsError() {
         let expectation = expectationWithDescription("Error handler called when session returns an error")
-        let request = Request(.GET, url: "/status/200")
-        let task = ServiceTask(request: request, session: ErrorSession())
+        let task = errorTask()
         
         task.updateErrorUI { error in
                 expectation.fulfill()
@@ -163,8 +185,7 @@ extension ServiceTaskTests {
     
     func test_updateErrorUI_runsOnMainThread() {
         let expectation = expectationWithDescription("Error handler called when session returns an error")
-        let request = Request(.GET, url: "/status/200")
-        let task = ServiceTask(request: request, session: ErrorSession())
+        let task = errorTask()
         
         task.updateErrorUI { error in
                 XCTAssertTrue(NSThread.isMainThread(), "updateErrorUI handler should be running on the main thread")
@@ -176,7 +197,7 @@ extension ServiceTaskTests {
     }
 }
 
-// MARK: - Request
+// MARK: - Request API
 
 extension ServiceTaskTests {
     func test_setHeaders_headerValuesGetEncodedInURLRequest() {
@@ -188,13 +209,11 @@ extension ServiceTaskTests {
         task.setHeaders(headers)
         task.resume()
         
-        let urlRequest = session.request?.urlRequestValue
-        XCTAssertNotNil(urlRequest)
+        let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedURLRequest)
+        XCTAssertNotNil(recordedURLRequest?.allHTTPHeaderFields)
         
-        
-        XCTAssertNotNil(urlRequest?.allHTTPHeaderFields)
-        
-        let deliveredHeaders = urlRequest!.allHTTPHeaderFields!
+        let deliveredHeaders = recordedURLRequest!.allHTTPHeaderFields!
         RequestTests.assertRequestParametersNotEqual(deliveredHeaders, toOriginalParameters: request.headers)
     }
 }

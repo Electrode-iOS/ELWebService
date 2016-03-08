@@ -27,9 +27,11 @@ extension WebServiceTests {
         let task = service.request(.GET, path: "/get")
         task.resume()
         
-        XCTAssertNotNil(session.request)
         
-        let url = session.request?.urlRequestValue.URL
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
+        
+        let url = recordedRequest?.URL
         XCTAssertNotNil(url)
         
         let absoluteString = url!.absoluteString
@@ -44,10 +46,10 @@ extension WebServiceTests {
         let task = service.GET("/get")
         task.resume()
         
-        let urlRequest = session.request?.urlRequestValue
-        XCTAssertNotNil(urlRequest)
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
         
-        let method = urlRequest?.HTTPMethod
+        let method = recordedRequest?.HTTPMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "GET")
@@ -61,10 +63,10 @@ extension WebServiceTests {
         let task = service.POST("/post")
         task.resume()
         
-        let urlRequest = session.request?.urlRequestValue
-        XCTAssertNotNil(urlRequest)
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
         
-        let method = urlRequest?.HTTPMethod
+        let method = recordedRequest?.HTTPMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "POST")
@@ -78,10 +80,10 @@ extension WebServiceTests {
         let task = service.DELETE("/delete")
         task.resume()
         
-        let urlRequest = session.request?.urlRequestValue
-        XCTAssertNotNil(urlRequest)
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
         
-        let method = urlRequest?.HTTPMethod
+        let method = recordedRequest?.HTTPMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "DELETE")
@@ -95,10 +97,10 @@ extension WebServiceTests {
         let task = service.HEAD("/head")
         task.resume()
         
-        let urlRequest = session.request?.urlRequestValue
-        XCTAssertNotNil(urlRequest)
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
         
-        let method = urlRequest?.HTTPMethod
+        let method = recordedRequest?.HTTPMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "HEAD")
@@ -112,10 +114,10 @@ extension WebServiceTests {
         let task = service.PUT("/put")
         task.resume()
         
-        let urlRequest = session.request?.urlRequestValue
-        XCTAssertNotNil(urlRequest)
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
         
-        let method = urlRequest?.HTTPMethod
+        let method = recordedRequest?.HTTPMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "PUT")

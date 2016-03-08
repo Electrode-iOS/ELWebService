@@ -18,7 +18,6 @@
 		1772B1601C88F11E006587E0 /* ParameterEncodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1772B15F1C88F11E006587E0 /* ParameterEncodingTests.swift */; };
 		177ECD741C8738F70049EB6F /* MockingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177ECD731C8738F70049EB6F /* MockingTests.swift */; };
 		177ECD761C8743B50049EB6F /* ServiceTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177ECD751C8743B50049EB6F /* ServiceTaskTests.swift */; };
-		177ECD781C877B5C0049EB6F /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177ECD771C877B5C0049EB6F /* Mocks.swift */; };
 		17821A011C623B2D00D3837D /* ObjCInteropTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 17821A001C623B2D00D3837D /* ObjCInteropTests.m */; };
 		17821A031C623D2C00D3837D /* ServiceTask+ResponseInjection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17821A021C623D2C00D3837D /* ServiceTask+ResponseInjection.swift */; };
 		17BA678F1C8416C500A26309 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BA678E1C8416C500A26309 /* Session.swift */; };
@@ -59,7 +58,6 @@
 		1772B15F1C88F11E006587E0 /* ParameterEncodingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterEncodingTests.swift; sourceTree = "<group>"; };
 		177ECD731C8738F70049EB6F /* MockingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockingTests.swift; sourceTree = "<group>"; };
 		177ECD751C8743B50049EB6F /* ServiceTaskTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTaskTests.swift; sourceTree = "<group>"; };
-		177ECD771C877B5C0049EB6F /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		178219FF1C623B2C00D3837D /* ELWebServiceTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ELWebServiceTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		17821A001C623B2D00D3837D /* ObjCInteropTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjCInteropTests.m; sourceTree = "<group>"; };
 		17821A021C623D2C00D3837D /* ServiceTask+ResponseInjection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+ResponseInjection.swift"; sourceTree = "<group>"; };
@@ -103,7 +101,6 @@
 				17821A021C623D2C00D3837D /* ServiceTask+ResponseInjection.swift */,
 				1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */,
 				17088EE91C501208007ADE1B /* WebServiceTests.swift */,
-				177ECD771C877B5C0049EB6F /* Mocks.swift */,
 			);
 			path = ELWebServiceTests;
 			sourceTree = "<group>";
@@ -278,7 +275,6 @@
 				17821A031C623D2C00D3837D /* ServiceTask+ResponseInjection.swift in Sources */,
 				177ECD761C8743B50049EB6F /* ServiceTaskTests.swift in Sources */,
 				17088EEB1C501208007ADE1B /* WebServiceTests.swift in Sources */,
-				177ECD781C877B5C0049EB6F /* Mocks.swift in Sources */,
 				1772B1601C88F11E006587E0 /* ParameterEncodingTests.swift in Sources */,
 				1720E8261C6A508000DBB925 /* ServicePassthroughDelegateTests.swift in Sources */,
 			);

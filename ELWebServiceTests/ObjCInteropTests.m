@@ -16,11 +16,18 @@
 
 @implementation ObjCInteropTests
 
-// MARK: - ServiceTask tests
+// MARK: - Stubs
 
 - (NSHTTPURLResponse *)mockResponse {
     return [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:200 HTTPVersion:nil headerFields:nil];
 }
+
+- (NSData *)mockJSONData {
+    NSDictionary *json = @{@"foo": @"bar"};
+    return [NSJSONSerialization dataWithJSONObject:json options:0 error:nil];
+}
+
+// MARK: - ServiceTask Tests
 
 - (void)test_responseObjC_handlerGetsCalled {
     XCTestExpectation *expectation = [self expectationWithDescription:@"response handler is called"];
@@ -70,7 +77,7 @@
     
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:200 HTTPVersion:nil headerFields:nil];
     
-    [task injectResponse:response data:[NSData mockJSONData] error:nil];
+    [task injectResponse:response data:[self mockJSONData] error:nil];
     
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
