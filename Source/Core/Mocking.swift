@@ -68,6 +68,10 @@ public class MockSession: Session {
     typealias Stub = (MockableDataTaskResult, (URLRequestEncodable) -> (Bool))
     lazy var stubs = [Stub]()
     
+    public init() {
+        
+    }
+    
     public func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
         requestSent(request)
         
