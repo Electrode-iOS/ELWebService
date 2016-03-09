@@ -12,23 +12,28 @@ ELWebService was built to offer simple but powerful constructs for enabling your
 
 ## How ELWebService Works with NSURLSession
 
-By default ELWebService uses the shared session returned from `NSURLSession.sharedSession()` to create data tasks but can be customized to work with any session instance with a single protocol method. This gives you the freedom to provide your own `NSURLSession` implementation while giving you a lightweight API for dispatching and handling `NSURLSessionDataTask` objects.
+By default ELWebService uses the shared session returned from `NSURLSession.sharedSession()` to create data tasks but can be customized to work with any session instance. This gives you the freedom to provide your own `NSURLSession` instance while giving you a lightweight API for dispatching and handling `NSURLSessionDataTask` objects.
 
-By conforming to `SessionDataTaskDataSource`, your code has complete control over the `NSURLSession` configuration and simply provides a `NSURLSessionDataTask` for ELWebService to work with.
+By conforming to `Session`, your code has complete control over the `NSURLSession` configuration and simply provides a `NSURLSessionDataTask` for ELWebService to work with.
 
 ```
-struct MyDataTaskDataSource: SessionDataTaskDataSource {
-    func dataTaskWithRequest(request: NSURLRequest, 
-                          completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask? {
-        return NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: completion);
+class MySession: Session {
+    func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
+        return NSURLSession.sharedSession().dataTaskWithRequest(request.urlRequestValue, completionHandler: completion) as DataTask
     }
 }
 ```
-Configure ELWebService to use your data task source with a single line of code.
+Configure ELWebService to use your session.
 
 ```
 var client = WebService(baseURLString: "http://myapi")
-client.dataTaskSource = MyDataTaskDataSource() // use custom `NSURLSession` instance
+client.session = MySession() // use custom `NSURLSession` instance
+```
+
+To simplify usage further, `NSURLSession` already conforms to the `Session` protocol which allows you to set the `session` property directly with a `NSURLSession` instance.
+
+```
+client.session = NSURLSession(configuration: NSURLSessionConfiguration())
 ```
 
 ## Sending Requests
@@ -481,7 +486,143 @@ Swift                  | Objective-C                                        | Re
 `return .Value(foo)`   | `return [ObjCHandlerResult resultWithValue:value]` | Valid value
 `return .Failure(foo)` | `return [ObjCHandlerResult resultWithError:error]` | Error occured
 
+## Session protocol
+
+TODO: add docs about `Session` protocol.
+
+## Mocking
+
+ELWebService provides a simple but flexible mocking API that allows you to mock your web service's underlying session, data tasks, and data task result, the data passed to the data task's completion handler.
+
+```
+let expectation = expectationWithDescription("responseAsBrews handler called when JSON is valid")
+
+// create a mock session
+let session = MockSession()
+
+// add a response stub to the session
+let brewerJSON = ["name": "Long Trail Brewing Company", "location": "Vermont"]
+let mockedResponse = MockResponse(statusCode: 200, json: ["brewers": [brewerJSON]])
+session.addStub(mockedResponse)
+
+// inject mock session as your web service's session
+let service = WebService(baseURLString: "http://brewhapi.herokuapp.com/")
+service.session = session
+
+// make a request that will be fulfilled by the mocked response
+service
+    .fetchBrewWithBrewID("12345")
+    .responseAsBrews { brews in
+        XCTAssertEqual(brews.count, 1)
+        expectation.fulfill()
+    }.updateErrorUI { error in
+        XCTFail("updateErrorUI handler should not be called when JSON is valid")
+    }
+    .resume()
+
+
+waitForExpectationsWithTimeout(2.0, handler: nil)
+```
+
+### MockableDataTaskResult
+
+`MockableDataTaskResult` is a type that returns the data to be mocked as the result of a session's data task. When implementing this type, you are defining the data that will be passed to your session's completion handler.
+
+```
+public protocol MockableDataTaskResult {
+    func dataTaskResult(request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?)
+}
+```
+
+ELWebService provides `MockableDataTaskResult` implementations for several types:
+
+- `NSURLResponse`/`NSHTTPURLResponse`
+- `NSError`
+- `MockResponse`
+
+`MockableDataTaskResult` can be used to extend your own types so that they can be used as mocked responses and added as stubs to a mock session.
+
+```
+struct MyMockedResult: MockableDataTaskResult {
+    func dataTaskResult(request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?) {
+        guard let url = request.urlRequestValue.URL else { return (nil, nil, nil) }
+        
+        let response = NSHTTPURLResponse(URL: url, MIMEType: nil, expectedContentLength: 12345, textEncodingName: nil)
+        return (nil, response, nil)
+    }
+}
+```
+
+### MockResponse
+
+`MockResponse` stores the meta and body data of a response. It is provided as a convenient alternative to stubbing `NSHTTPURLResponse` and `NSData` objects directly and allows you to define both response data and meta data within a single type. 
+
+In the simplest form, `MockResponse` can be initialized with only a status code.
+
+```
+let noConentResponse = MockResponse(statusCode: 204)
+```
+
+`MockResponse` has an initializer for mocking JSON data as the response body. Below a response is mocked with a status code of 200 and `["foo": "bar"]` JSON data to serialize as the response body data. 
+
+```
+let response = MockResponse(statusCode: 200, json: ["foo": "bar"])
+```
+
+A initializer is provided for defining a raw `NSData` value as the response body data. The example below mocks a response with a raw `NSData` value as the response body along with a HTTP header named "Content-Length" whose value is is "12345".
+
+```
+let responseData: NSData = mockResponseData()
+var response = MockResponse(statusCode: 200, data: responseData)
+response.headers = ["Content-Length": "12345"]
+```
+
+### MockSession
+
+`MockSession` is a class that implements the `Session` protocol and provides an API for adding mocked responses as stubs.
+
+Create a mock session and inject it as the session of your web service.
+
+```
+let mockSession = MockSession()
+let service = WebService(baseURLString: "https://somehapi.herokuapp.com")
+service.session = mockSession
+```
+
+Types that conform to `MockableDataTaskResult` can be added as stubs of a mock session.
+
+```
+/// add a stub that matches any request
+let response = MockResponse(statusCode: 200, json: ["foo": "bar"])
+mockSession.addStub(response)
+```
+
+A matcher can be defined that will determine if the mocked response is used as a response stub for a given request.
+
+```
+/// use matcher tp return `true` for the requests that the stub should response to 
+let response = MockResponse(statusCode: 200, json: ["foo": "bar"])
+
+// add a stub that matches only requests with "/brews" in the URL path
+mockSession.stub(response) { (matchingRequest: URLEncodableRequest) in
+
+    if let path = matchingRequest.urlRequestValue.URL?.path {
+        // use this stub if the path contains /brews
+        return path.containsString("/brews")
+    }
+
+    // do not use this stub for this request
+    return false
+}
+```
+
+Errors can also be used as stubs. When providing an error stub the data task result returned to your session will contain the error as well as nil values for both the `NSData` and `NSURLResponse` values. This enables you to test your response handler in the event the request fails and the session returns an error.
+
+```
+session.addStub(ResponseError.FailedToSendRequest as NSError)
+```
+
 
 ## More Information
 
-For more information check out ELWebService's [Readme](https://github.com/Electrode-iOS/ELWebService#ELWebService) as well as the documentation in the [source files](https://github.com/Electrode-iOS/ELWebService/tree/master/Source). Feel free to open [issues](https://github.com/Electrode-iOS/ELWebService/issues) and of course [pull requests](https://github.com/Electrode-iOS/ELWebService/pulls) are always welcomed!
+For more information check out ELWebService's documentation in the [source files](https://github.com/Electrode-iOS/ELWebService/tree/master/Source). Feel free to open [issues](https://github.com/Electrode-iOS/ELWebService/issues) and of course [pull requests](https://github.com/Electrode-iOS/ELWebService/pulls) are always welcomed!
