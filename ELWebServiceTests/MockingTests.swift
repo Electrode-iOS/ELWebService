@@ -9,6 +9,8 @@
 import XCTest
 import ELWebService
 
+// MARK: - Mock Data Task
+
 class MockingTests: XCTestCase {
     func test_mockDataTask_changesStateWhenSuspended() {
         let task = MockDataTask()
@@ -37,6 +39,50 @@ class MockingTests: XCTestCase {
     }
 }
 
+// MARK: - Mock Session
+
+extension MockingTests {
+    func test_mockSession_matchesStubWhenMatcherReturnsTrue() {
+        struct StubRequest: URLRequestEncodable {
+            var urlRequestValue: NSURLRequest {
+                return NSURLRequest(URL: NSURL(string: "")!)
+            }
+        }
+        
+        let session = MockSession()
+        let response = MockResponse(statusCode: 200)
+        session.addStub(response) { _ in return true }
+        
+        let (_, urlResponse, error) = session.stubbedResponse(request: StubRequest())
+        
+        let httpResponse = urlResponse as? NSHTTPURLResponse
+        
+        XCTAssertNotNil(httpResponse)
+        XCTAssertEqual(httpResponse!.statusCode, 200)
+        XCTAssertNil(error)
+    }
+    
+    func test_mockSession_failsToMatchStubWhenMatcherReturnsFalse() {
+        struct StubRequest: URLRequestEncodable {
+            var urlRequestValue: NSURLRequest {
+                return NSURLRequest(URL: NSURL(string: "")!)
+            }
+        }
+        
+        let session = MockSession()
+        let response = MockResponse(statusCode: 200)
+        session.addStub(response) { _ in return false }
+        
+        let (data, urlResponse, error) = session.stubbedResponse(request: StubRequest())
+
+        XCTAssertNil(data)
+        XCTAssertNil(urlResponse)
+        XCTAssertNil(error)
+    }
+}
+
+// MARK: - Mock Response
+
 extension MockingTests {
     func test_mockResponse_initializationWithData() {
         let data = NSData()
@@ -45,9 +91,7 @@ extension MockingTests {
         XCTAssertNotNil(response.data)
         XCTAssertEqual(data, response.data)
     }
-}
-
-extension MockingTests {
+    
     func test_mockResponse_returnsErrorResultWhenRequestURLIsInvalid() {
         struct InvalidURLRequestEncodable: URLRequestEncodable {
             var urlRequestValue: NSURLRequest {
@@ -63,5 +107,26 @@ extension MockingTests {
         XCTAssertNil(httpResponse)
         XCTAssertNil(responseData)
         XCTAssertNotNil(error)
+    }
+}
+
+extension MockingTests {
+    func test_urlResponse_mockableDataTask() {
+        let url = NSURL(string: "/test_urlResponse_mockableDataTask")!
+        let response = NSURLResponse(URL: url, MIMEType: nil, expectedContentLength: 0, textEncodingName: nil)
+        let request = NSURLRequest(URL: url)
+        
+        let (_, urlResponse, _) = response.dataTaskResult(request)
+        
+        XCTAssertEqual(urlResponse, response)
+    }
+    
+    func test_error_mockableDataTask() {
+        let error = NSError(domain: "test", code: 500, userInfo: nil)
+        let request = NSURLRequest(URL: NSURL(string: "/test_error_mockableDataTask")!)
+        
+        let (_, _, resultError) = error.dataTaskResult(request)
+        
+        XCTAssertEqual(resultError, error)
     }
 }
