@@ -27,9 +27,9 @@ import Foundation
     public var state: NSURLSessionTaskState {
         if let state = dataTask?.state {
             return state
-        } else {
-            return .Suspended
         }
+        
+        return .Suspended
     }
     
     private var request: Request
@@ -257,17 +257,15 @@ extension ServiceTask {
     */
     public func responseJSON(handler: JSONHandler) -> Self {
         return response { data, response in
-            if let data = data {
-                do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
-                    return handler(json)
-                } catch let jsonError as NSError {
-                    return .Failure(jsonError)
-                } catch {
-                    fatalError()
-                }
-            } else {
+            guard let data = data else {
                 return .Failure(ServiceTaskError.JSONSerializationFailedNilResponseBody)
+            }
+            
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+                return handler(json)
+            } catch let error {
+                return .Failure(error)
             }
         }
     }
@@ -310,8 +308,7 @@ extension ServiceTask {
                     dispatch_async(dispatch_get_main_queue()) {
                         handler(error)
                     }
-                case .Value(_): break
-                case .Empty: break
+                case .Empty, .Value(_): break
                 }
             }
         }
