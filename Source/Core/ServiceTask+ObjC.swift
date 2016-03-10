@@ -46,8 +46,9 @@ extension ServiceTask {
      `setParameterEncoding(encoding: .JSON)` when calling
      from Swift.
     */
-    @objc public func setJSONParameterEncodingObjC() {
+    @objc public func setJSONParameterEncodingObjC() -> Self {
         setParameterEncoding(.JSON)
+        return self
     }
     
     /**
@@ -57,8 +58,9 @@ extension ServiceTask {
      `setParameterEncoding(encoding: .Percent)` when calling
      from Swift.
     */
-    @objc public func setPercentParameterEncodingObjC() {
+    @objc public func setPercentParameterEncodingObjC() -> Self {
         setParameterEncoding(.Percent)
+        return self
     }
 }
 
