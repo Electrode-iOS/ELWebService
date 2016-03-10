@@ -31,7 +31,7 @@ import Foundation
         }
     }
     public var session: Session = NSURLSession.sharedSession()
-    private weak var passthroughDelegate: ServicePassthroughDelegate?
+    internal private(set) weak var passthroughDelegate: ServicePassthroughDelegate?
     
     // MARK: Initialization
     
@@ -167,9 +167,9 @@ extension WebService: Session {
         // TODO: remove legacy call in 3.0.0
         if let dataTaskSource = dataTaskSource {
             return dataTask(session: dataTaskSource, request: request, completion: completion)
-        } else {
-            return dataTask(session: session, request: request, completion: completion)
         }
+        
+        return dataTask(session: session, request: request, completion: completion)
     }
     
     func dataTask(session session: Session, request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
