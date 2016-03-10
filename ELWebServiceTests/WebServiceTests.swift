@@ -164,6 +164,22 @@ extension WebServiceTests {
         XCTAssertTrue(service.session is NSURLSession)
         XCTAssertTrue(service.session as! NSURLSession === urlSession)
     }
+    
+    // TODO: legacy test, remove after dataTaskSource API is removed
+    func test_dataTaskSource_returnsDataTask() {
+        final class MockDataTaskSource: SessionDataTaskDataSource {
+            func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
+                return NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: completionHandler)
+            }
+        }
+        let dataTaskSource = MockDataTaskSource()
+        let request = NSURLRequest(URL: NSURL(string: "http://httpbin.org/")!)
+        
+        let task = dataTaskSource.dataTask(request: request) { data, response, error in }
+        
+        XCTAssertTrue(task is NSURLSessionDataTask)
+        XCTAssertEqual((task as! NSURLSessionDataTask).state, NSURLSessionTaskState.Suspended)
+    }
 }
 
 // MARK: - servicePassthroughDelegate

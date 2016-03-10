@@ -402,7 +402,6 @@ extension ServiceTaskTests {
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
         XCTAssertNotNil(recordedURLRequest?.HTTPBody)
-        
     }
     
     // setParameters
@@ -473,6 +472,106 @@ extension ServiceTaskTests {
         // test original parameters against encoded
         if let bodyJSON = bodyJSON as? [String : AnyObject] {
             RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: json)
+        } else {
+            XCTFail("Failed to cast JSON as [String : AnyObject]")
+        }
+    }
+}
+
+// MARK: - Obj-C Request API
+
+extension WebServiceTests {
+    func test_setPercentParameterEncodingObjC_encodesParametersAsPercent() {
+        var request = Request(.POST, url: "/test_setPercentParameterEncodingObjC_")
+        request.parameters = ["percentEncoded": "this needs percent encoded"]
+        request.parameterEncoding = .JSON
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+        
+        task.setPercentParameterEncodingObjC()
+        task.resume()
+        
+        let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedURLRequest)
+        XCTAssertNotNil(recordedURLRequest?.HTTPBody)
+        
+        let encodedData = recordedURLRequest!.HTTPBody
+        XCTAssertNotNil(encodedData)
+        
+        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
+        let components = stringValue.componentsSeparatedByString("=")
+        XCTAssertEqual(components[0], "percentEncoded")
+        XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
+    }
+    
+    func test_setJSONParameterEncodingObjC_encodedParametersAsJSON() {
+        var request = Request(.POST, url: "/test_setJSONParameterEncodingObjC_")
+        request.parameters = ["percentEncoded": "this needs percent encoded"]
+        request.parameterEncoding = .Percent
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+        
+        task.setJSONParameterEncodingObjC()
+        task.resume()
+        
+        let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedURLRequest)
+        XCTAssertNotNil(recordedURLRequest!.HTTPBody)
+        
+        let bodyJSON = try? NSJSONSerialization.JSONObjectWithData(recordedURLRequest!.HTTPBody!, options: NSJSONReadingOptions())
+        XCTAssertNotNil(bodyJSON, "JSON should not be nil")
+        
+        // test original parameters against encoded
+        if let bodyJSON = bodyJSON as? [String : AnyObject] {
+            RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: request.parameters)
+        } else {
+            XCTFail("Failed to cast JSON as [String : AnyObject]")
+        }
+    }
+    
+    func test_setPercentEncodedParametersObjC_encodesParametersAsPercent() {
+        var request = Request(.POST, url: "/test_setPercentParameterEncodingObjC_")
+        request.parameterEncoding = .JSON
+        let parameters = ["percentEncoded": "this needs percent encoded"]
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+        
+        task.setPercentEncodedParametersObjC(parameters)
+        task.resume()
+        
+        let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedURLRequest)
+        XCTAssertNotNil(recordedURLRequest?.HTTPBody)
+        
+        let encodedData = recordedURLRequest!.HTTPBody
+        XCTAssertNotNil(encodedData)
+        
+        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
+        let components = stringValue.componentsSeparatedByString("=")
+        XCTAssertEqual(components[0], "percentEncoded")
+        XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
+    }
+    
+    func test_setJSONParameterEncodingObjC_encodesParametersAsJSON() {
+        var request = Request(.POST, url: "/test_setJSONParameterEncodingObjC_")
+        let parameters = ["percentEncoded": "this needs percent encoded"]
+        request.parameterEncoding = .Percent
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+        
+        task.setJSONEncodedParametersObjC(parameters)
+        task.resume()
+        
+        let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedURLRequest)
+        XCTAssertNotNil(recordedURLRequest!.HTTPBody)
+        
+        let bodyJSON = try? NSJSONSerialization.JSONObjectWithData(recordedURLRequest!.HTTPBody!, options: NSJSONReadingOptions())
+        XCTAssertNotNil(bodyJSON, "JSON should not be nil")
+        
+        // test original parameters against encoded
+        if let bodyJSON = bodyJSON as? [String : AnyObject] {
+            RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: request.parameters)
         } else {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
