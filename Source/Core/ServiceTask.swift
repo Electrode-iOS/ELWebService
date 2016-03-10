@@ -102,10 +102,6 @@ extension ServiceTask {
         request.parameters = parameters
         request.parameterEncoding = encoding ?? .Percent
         
-        if encoding == .JSON {
-            request.contentType = Request.ContentType.json
-        }
-        
         return self
     }
     
