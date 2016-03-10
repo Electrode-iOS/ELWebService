@@ -292,6 +292,42 @@ extension ServiceTask {
 }
 ```
 
+### Mocking
+
+ELWebService provides a simple but flexible mocking API that allows you to mock your web service's underlying session, data tasks, and data task result, the data passed to the data task's completion handler.
+
+```
+let expectation = expectationWithDescription("responseAsBrews handler called when JSON is valid")
+
+// create a mock session
+let session = MockSession()
+
+// add a response stub to the session
+let brewerJSON = ["name": "Long Trail Brewing Company", "location": "Vermont"]
+let mockedResponse = MockResponse(statusCode: 200, json: ["brewers": [brewerJSON]])
+session.addStub(mockedResponse)
+
+// inject mock session as your web service's session
+let service = WebService(baseURLString: "http://brewhapi.herokuapp.com/")
+service.session = session
+
+// make a request that will be fulfilled by the mocked response
+service
+    .fetchBrewWithBrewID("12345")
+    .responseAsBrews { brews in
+        XCTAssertEqual(brews.count, 1)
+        expectation.fulfill()
+    }.updateErrorUI { error in
+        XCTFail("updateErrorUI handler should not be called when JSON is valid")
+    }
+    .resume()
+
+
+waitForExpectationsWithTimeout(2.0, handler: nil)
+```
+
+For more information on the Mocking API see the [mocking section](/docs/Programming-Guide.md#mocking) of the ELWebService Programming Guide.
+
 ## Example Project
 
 An [example project](/ELWebServiceExample) is included that demonstrates how ELWebService can be used to interact with a web service. The project uses [brewhapi](https://github.com/angelodipaolo/brewhapi) as a mock API for fetching and inserting data. brewhapi is freely hosted at [https://brewhapi.herokuapp.com/brews](https://brewhapi.herokuapp.com/brews) for testing.
