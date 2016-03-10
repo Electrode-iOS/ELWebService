@@ -10,15 +10,9 @@ import UIKit
 import XCTest
 @testable import ELWebService
 
-class WebServiceTests: XCTestCase {
-    var baseURL: String {
-        return "http://httpbin.org/"
-    }
-}
-
 // MARK: - Request Creation
 
-extension WebServiceTests {
+class WebServiceTests: XCTestCase {
     func test_request_constructsValidAbsoluteURL() {
         let service = WebService(baseURLString:  "http://httpbin.org/")
         let session = RequestRecordingSession()
@@ -141,5 +135,52 @@ extension WebServiceTests {
         let url = service.absoluteURLString("http://httpbin.org/get")
         
         XCTAssertEqual(url, "http://httpbin.org/get")
+    }
+}
+
+// MARK - dataTaskWithRequest
+
+extension WebServiceTests {
+    // TODO: legacy test, remove after dataTaskWithRequest API is removed
+    func test_dataTaskWithRequest_returnsSuspendedDataTask() {
+        let service = WebService(baseURLString: "http://httpbin.org/")
+        let request = NSURLRequest(URL: NSURL(string: "http://httpbin.org/")!)
+        
+        let task = service.dataTaskWithRequest(request) { data, response, error in }
+        
+        XCTAssertEqual(task.state, NSURLSessionTaskState.Suspended)
+    }
+}
+
+// MARK: - dataTaskSource
+
+extension WebServiceTests {
+    // TODO: legacy test, remove after dataTaskSource API is removed
+    func test_dataTaskSource_setterSetsSession() {
+        let urlSession = NSURLSession.sharedSession()
+        let service = WebService(baseURLString: "http://httpbin.org/")
+        service.dataTaskSource = urlSession
+        
+        XCTAssertTrue(service.session is NSURLSession)
+        XCTAssertTrue(service.session as! NSURLSession === urlSession)
+    }
+}
+
+// MARK: - servicePassthroughDelegate
+
+extension WebService: ServicePassthroughDataSource {
+    static let mockPassthroughDelegate = ServicePassthroughDelegateSpy()
+    
+    public var servicePassthroughDelegate: ServicePassthroughDelegate {
+        return WebService.mockPassthroughDelegate
+    }
+}
+
+extension WebServiceTests {
+    func test_servicePassthroughDelegate_setsToSelfWhenImplemented() {
+        let service = WebService(baseURLString: "http://httpbin.org/")
+        
+        XCTAssertNotNil(service.passthroughDelegate)
+        XCTAssertTrue(service.passthroughDelegate! === WebService.mockPassthroughDelegate as ServicePassthroughDelegate)
     }
 }
