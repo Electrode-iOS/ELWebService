@@ -174,12 +174,12 @@ extension WebService: Session {
     
     func dataTask(session session: Session, request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
         passthroughDelegate?.requestSent(request.urlRequestValue)
-        return session.dataTask(request: request, completion: onTaskCompletion(completion))
+        return session.dataTask(request: request, completion: onTaskCompletion(request, completionHandler: completion))
     }
     
-    func onTaskCompletion(completionHandler: TaskHandler) -> TaskHandler {
+    func onTaskCompletion(request: URLRequestEncodable, completionHandler: TaskHandler) -> TaskHandler {
         return { data, response, error in
-            self.passthroughDelegate?.responseReceived(response, data: data, error: error)
+            self.passthroughDelegate?.responseReceived(response, data: data, request: request.urlRequestValue, error: error)
             completionHandler(data, response, error)
         }
     }

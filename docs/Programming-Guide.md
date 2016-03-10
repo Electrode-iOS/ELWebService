@@ -2,7 +2,7 @@
 
 ## About ELWebService
 
-[ELWebService](https://github.com/Electrode-iOS/ELWebService) is a lightweight HTTP networking framework written in Swift. ELWebService simplifies interaction with HTTP web services by providing a concise API for encoding a `NSURLRequest` object and processing the resulting `NSURLResponse`. 
+[ELWebService](https://github.com/Electrode-iOS/ELWebService) is a lightweight HTTP networking framework written in Swift. ELWebService simplifies interaction with HTTP web services by providing a concise API for encoding a `NSURLRequest` object and processing the resulting `NSURLResponse`.
 
 Unlike many other iOS networking libraries, ELWebService is not a wrapper around `NSURLSession` or `NSURLConnection`. Instead ELWebService is designed to be unobtrusive by acting as a convenience for working with request and response objects while leaving the crucial implementation details of the various session delegate methods up to the developer.
 
@@ -92,7 +92,7 @@ Use the `responseJSON()` method to add a closure for handling the response as se
 ```
 brewClient
     .GET("/brewers")
-    .responseJSON { json: AnyObject? in
+    .responseJSON { json: AnyObject?, response: NSURLResponse? in
         // process JSON
     }
     .responseError { error in
@@ -108,12 +108,12 @@ All response and error handlers that are registered with the `response()`, `resp
 ```
 service
     .GET("/brewers")
-    .responseJSON { json in
+    .responseJSON { json, response in
       if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
           return .Value(models)
       } else {
         // any value conforming to ErrorType
-        return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+        return .Failure(JSONDecoderError.FailedToDecodeBrewer)
       }
     }
     .updateUI { value in
@@ -145,7 +145,7 @@ brewClient
     .setParameters(["name": "Trashboat Brewing"])
 ```
 
-The code above produces a request with the body contents set to `"name=Trashboat%20Brewing"`. 
+The code above produces a request with the body contents set to `"name=Trashboat%20Brewing"`.
 
 JSON can be sent by specifying the parameter encoding to be `.JSON`.
 
@@ -174,7 +174,7 @@ brewClient
     .setCachePolicy(.ReloadIgnoringLocalCacheData)
 ```
 
-Rather than providing a request-encoding API as an object that is directly mutated and passed around (ex: `NSURLRequest`), ELWebService offers a fixed set of methods to centralize and encapsulate the intended mutations that are made to the request value. 
+Rather than providing a request-encoding API as an object that is directly mutated and passed around (ex: `NSURLRequest`), ELWebService offers a fixed set of methods to centralize and encapsulate the intended mutations that are made to the request value.
 
 
 #### `setHeaderValue`
@@ -235,7 +235,7 @@ The example below uses `ServiceTaskResult` to first filter out any responses tha
 
 The second response handler in the example serializes the response a JSON and attempts to decode the JSON as an array of model values. If the decoding succeeds the handler uses the `.Value` result to pass the model values to handler registered by `updateUI()`. In the case of a failure a `.Failure` result is returned with a decoding error.
 
-Finally the `updateUI()` handler will be run if all previous response handlers did not return a `.Failure` result. The update UI handler is passed the value that was returned from the last response handler in the chain via a `.Value` result. 
+Finally the `updateUI()` handler will be run if all previous response handlers did not return a `.Failure` result. The update UI handler is passed the value that was returned from the last response handler in the chain via a `.Value` result.
 
 ```
 service
@@ -243,14 +243,14 @@ service
     .response { data, response in
         // filter reseponses that do not respond with status 200
 
-        if let httpResponse = response as? NSHTTPURLResponse 
+        if let httpResponse = response as? NSHTTPURLResponse
             where httpResponse.statusCode != 200 {
             return .Failure(ResponseError.ExpectedStatus200)
         }
 
         return .Empty
     }
-    .responseJSON { json in
+    .responseJSON { json, response in
         // decode JSON as an array of models
 
         if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
@@ -258,7 +258,7 @@ service
             return .Value(models)
         } else {
             // any value conforming to ErrorType
-            return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+            return .Failure(JSONDecoderError.FailedToDecodeBrewer)
         }
     }
     .updateUI { (value: Any) in
@@ -311,13 +311,13 @@ Along with request methods it would be nice to have response handler methods tha
 extension ServiceTask {
 
     func responseAsBrewers(handler: ([Brewer]) -> Void) -> Self {
-        return 
-            responseJSON { json in
+        return
+            responseJSON { json, response in
               if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
                   return .Value(models)
               } else {
                 // any value conforming to ErrorType
-                return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+                return .Failure(JSONDecoderError.FailedToDecodeBrewer)
               }
             }
             .updateUI { value in
@@ -359,29 +359,29 @@ To work around this limitation a special `ServiceTask` request API is provided f
 extension ServiceTask {
     /**
      Set request parameter values and configure them to be JSON-encoded.
-     
+
      This method is designed to only be called from Obj-C. Please use
      `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
      when calling from Swift.
-     
+
      - parameter parameters: Request parameter values.
     */
     @objc public func setJSONEncodedParametersObjC(parameters: [String : AnyObject]) -> Self
 
     /**
      Set request parameter values and configure them to be Percent-encoded.
-     
+
      This method is designed to be called from Obj-C only. Please use
      `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
      when calling from Swift.
-     
+
      - parameter parameters: Request parameter values.
     */
     @objc public func setPercentEncodedParametersObjC(parameters: [String : AnyObject]) -> Self
 
     /**
      Configure the request parameters to be JSON-encoded.
-    
+
      This method is designed to be called from Obj-C only. Please use
      `setParameterEncoding(encoding: .JSON)` when calling
      from Swift.
@@ -390,7 +390,7 @@ extension ServiceTask {
 
     /**
      Configure the request parameters to be Percent-encoded.
-     
+
      This method is designed to be called from Obj-C only. Please use
      `setParameterEncoding(encoding: .Percent)` when calling
      from Swift.
@@ -411,7 +411,7 @@ extension ServiceTask {
 
     @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self
 
-    @objc public func responseJSONObjC(handler: (AnyObject) -> ObjCHandlerResult?) -> Self
+    @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self
 
     @objc public func responseErrorObjC(handler: (NSError) -> Void) -> Self
 
@@ -430,13 +430,13 @@ The syntax when using the Swift API looks like:
 var client = WebService(baseURLString: "https://somehapi.herokuapp.com")
 let task = service.GET("/brewers")
 
-task.responseJSON { json in
+task.responseJSON { json, response in
       if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
           // pass encoded value via ServiceTaskResult
           return .Value(models)
       } else {
         // any value conforming to ErrorType
-        return .Failure(JSONDecoderError.FailedToDecodeBrewer) 
+        return .Failure(JSONDecoderError.FailedToDecodeBrewer)
       }
     }
     .updateUI { value in
@@ -454,13 +454,13 @@ In Objective-C the above Swift example translates into this:
 WebService *service = [[WebService alloc] initWithBaseURLString:@"https://somehapi.herokuapp.com"];
 ServiceTask *task = [service GET:@"/brewers"];
 
-[task responseJSON:^HandlerResult *(id json) {
+[task responseJSON:^HandlerResult *(id json, NSURLResponse *response) {
     NSArray *models = [JSONDecoder decodeBrewersFromJSON:json];
 
     if (models != nil) {
         // return result values with `ObjCHandlerResult` instead of `ServiceTaskResult
         return [ObjCHandlerResult resultWithValue:models];
-        
+
     } else {
         NSError *error
         return [ObjCHandlerResult resultWithError:error];
