@@ -196,8 +196,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(_): return // bail out to avoid next handler from running
-                case .Value(_): break
-                case .Empty: break
+                case .Empty, .Value(_): break
                 }
             }
             
@@ -288,8 +287,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(let error): handler(error)
-                case .Value(_): break
-                case .Empty: break
+                case .Empty, .Value(_): break
                 }
             }
         }
