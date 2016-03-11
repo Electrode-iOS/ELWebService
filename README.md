@@ -1,8 +1,6 @@
 # ELWebService [![Build Status](https://travis-ci.org/Electrode-iOS/ELWebService.svg?branch=master)](https://travis-ci.org/Electrode-iOS/ELWebService) [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-ELWebService (previously named Swallow) simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing the resulting `NSURLResponse` object. Designed as a lightweight utility for communicating with web services, ELWebService is not intended to be a fully-featured networking library. By default ELWebService uses the shared `NSURLSession` instance to create data tasks but can be configured to work with any `NSURLSession` instance using a [protocol](#sessiondatataskdatasource).
-
-See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
+ELWebService (previously named Swallow) simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing `NSURLResponse` and `NSData` response objects. See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
 
 ## Requirements
 
@@ -182,7 +180,7 @@ Error handlers are registered by providing a closure to run in the case the hand
 let service = WebService(baseURLString: "https://somehapi.herokuapp.com")
 
 service
-    .GET("/foo")
+    .GET("/brewers")
     .responseError { error in
       // I am error
     }
@@ -206,68 +204,6 @@ service
     }
     .responseError { error in
       // handle errors
-    }
-    .resume()
-```
-
-### Protocols
-
-##### SessionDataTaskDataSource
-
-The `SessionDataTaskDataSource` protocol is provided to allow ELWebService to work with any NSURLSession-based API. Types conforming to the `SessionDataTaskDataSource` protocol are responsible for creating `NSURLSessionDataTask` objects based on a `NSURLRequest` value and invoking a completion handler after the response of a data task has been received.
-
-By default ELWebService uses the shared session that is provided by `NSURLSession.sharedSession()`.
-
-
-### Extensions
-
-Add custom request methods by extending `WebService`.
-
-```
-public extension WebService {
-
-    public func fetchBrewers(state state: String) -> ServiceTask {
-        return GET("/brewers").setParameters(["state" : name])
-    }
-}
-```
-
-The chainable service task API makes it easy to create custom response handlers by extending `ServiceTask`.
-
-```
-extension ServiceTask {
-
-    func responseAsBrewers(handler: ([Brewer]) -> Void) -> Self {
-        return
-            responseJSON { json, response in
-              if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
-                  return .Value(models)
-              } else {
-                // any value conforming to ErrorType
-                return .Failure(JSONDecoderError.FailedToDecodeBrewer)
-              }
-            }
-            .updateUI { value in
-                if let brewers = value as? [Brewer] {
-                  handler(value)
-                }
-            }
-    }
-}
-```
-
-Custom request methods and response handlers help make interactions with the web service more expressive.
-
-```
-let service = WebService(baseURLString: "https://somehapi.herokuapp.com")
-
-service
-    .fetchBrewers(state: "New York")
-    .responseAsBrewers { (stores: [Brewer]) in
-      // update UI with model data
-    }
-    .responseError { error in
-      // handle error
     }
     .resume()
 ```
