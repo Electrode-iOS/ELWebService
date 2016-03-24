@@ -50,7 +50,10 @@ import Foundation
             // Use observer to watch for error result to send to passthrough
             guard let result = taskResult else { return }
             switch result {
-            case .Failure(let error): passthroughDelegate?.serviceResultFailure(error)
+            case .Failure(let error):
+                if responseError == nil {
+                    passthroughDelegate?.serviceResultFailure(error)
+                }
             case .Empty, .Value(_): return
             }
         }
@@ -61,6 +64,8 @@ import Foundation
     
     /// URL response
     private var urlResponse: NSURLResponse?
+    
+    private var responseError: NSError?
     
     /// Type responsible for creating NSURLSessionDataTask objects
     private var session: Session?
@@ -172,9 +177,10 @@ extension ServiceTask {
     internal func handleResponse(response: NSURLResponse?, data: NSData?, error: NSError?) {
         urlResponse = response
         responseData = data
+        responseError = error
         
-        if let error = error {
-            taskResult = ServiceTaskResult.Failure(error)
+        if let responseError = responseError {
+            taskResult = ServiceTaskResult.Failure(responseError)
         }
         
         handlerQueue.suspended = false
