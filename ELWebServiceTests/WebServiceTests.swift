@@ -10,373 +10,193 @@ import UIKit
 import XCTest
 @testable import ELWebService
 
+// MARK: - Request Creation
+
 class WebServiceTests: XCTestCase {
-    
-    // MARK: Utilities
-    
-    var baseURL: String {
-        return "http://httpbin.org/"
-    }
-    
-    func responseHandler(expectation expectation: XCTestExpectation) -> (NSData?, NSURLResponse?) -> ServiceTaskResult {
-        return { data, response in
-            XCTAssertTrue(!NSThread.isMainThread())
-
-            let httpResponse = response as! NSHTTPURLResponse
-            
-            if httpResponse.statusCode == 200 {
-                expectation.fulfill()
-            }
-            
-            return ServiceTaskResult.Empty
-        }
-    }
-    
-    func jsonResponseHandler(expectation expectation: XCTestExpectation) -> (AnyObject, NSURLResponse?) -> ServiceTaskResult {
-        return { json, response in
-            XCTAssertTrue(!NSThread.isMainThread())
-
-            if json is NSDictionary {
-                expectation.fulfill()
-            }
-            
-            return ServiceTaskResult.Empty
-        }
-    }
-
-    // MARK: Tests
-    
-    func testUpdateUI() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let uiExpectation = expectationWithDescription("Received status 200")
-        let service = WebService(baseURLString: baseURL)
+    func test_request_constructsValidAbsoluteURL() {
+        let service = WebService(baseURLString:  "http://httpbin.org/")
+        let session = RequestRecordingSession()
+        service.session = session
         
-        let task = service
-            .GET("/get")
-            .response { data, response in
-                XCTAssertTrue(!NSThread.isMainThread())
-                
-                let httpResponse = response as! NSHTTPURLResponse
-                
-                if httpResponse.statusCode == 200 {
-                    successExpectation.fulfill()
-                }
-                
-                return ServiceTaskResult.Value(true)
-            }
-            .updateUI { value in
-                XCTAssertTrue(NSThread.isMainThread())
-
-                if let value = value as? Bool where value == true {
-                    uiExpectation.fulfill()
-                } else {
-                    fatalError()
-                }
-            }
-            .resume()
+        let task = service.request(.GET, path: "/get")
+        task.resume()
         
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
+        
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
+        
+        let url = recordedRequest?.URL
+        XCTAssertNotNil(url)
+        
+        let absoluteString = url!.absoluteString
+        XCTAssertEqual(absoluteString, "http://httpbin.org/get")
     }
     
-    func testGetEndpoint() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
-        let service = WebService(baseURLString: baseURL)
-        let task = service
-                    .GET("/get")
-                    .response(handler)
-                    .resume()
+    func test_get_createsGETRequest() {
+        let service = WebService(baseURLString:  "http://httpbin.org/")
+        let session = RequestRecordingSession()
+        service.session = session
+        
+        let task = service.GET("/get")
+        task.resume()
+        
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
+        
+        let method = recordedRequest?.HTTPMethod
+        XCTAssertNotNil(method)
+        
+        XCTAssertEqual(method!, "GET")
+    }
+    
+    func test_post_createPOSTRequest() {
+        let service = WebService(baseURLString:  "http://httpbin.org/")
+        let session = RequestRecordingSession()
+        service.session = session
+        
+        let task = service.POST("/post")
+        task.resume()
+        
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
+        
+        let method = recordedRequest?.HTTPMethod
+        XCTAssertNotNil(method)
+        
+        XCTAssertEqual(method!, "POST")
+    }
+    
+    func test_delete_createDELETERequest() {
+        let service = WebService(baseURLString:  "http://httpbin.org/")
+        let session = RequestRecordingSession()
+        service.session = session
+        
+        let task = service.DELETE("/delete")
+        task.resume()
+        
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
+        
+        let method = recordedRequest?.HTTPMethod
+        XCTAssertNotNil(method)
+        
+        XCTAssertEqual(method!, "DELETE")
+    }
+    
+    func test_head_createHEADRequest() {
+        let service = WebService(baseURLString:  "http://httpbin.org/")
+        let session = RequestRecordingSession()
+        service.session = session
+        
+        let task = service.HEAD("/head")
+        task.resume()
+        
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
+        
+        let method = recordedRequest?.HTTPMethod
+        XCTAssertNotNil(method)
+        
+        XCTAssertEqual(method!, "HEAD")
+    }
+    
+    func test_put_createPUTRequest() {
+        let service = WebService(baseURLString:  "http://httpbin.org/")
+        let session = RequestRecordingSession()
+        service.session = session
+        
+        let task = service.PUT("/put")
+        task.resume()
+        
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
+        
+        let method = recordedRequest?.HTTPMethod
+        XCTAssertNotNil(method)
+        
+        XCTAssertEqual(method!, "PUT")
+    }
+}
 
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testAbsoluteURLString() {
+// MARK: - absoluteURLString
+
+extension WebServiceTests {
+    func test_absoluteURLString_constructsValidAbsoluteURL() {
         let service = WebService(baseURLString: "http://www.walmart.com/")
+        
         let url = service.absoluteURLString("/foo")
+        
         XCTAssertEqual(url, "http://www.walmart.com/foo")
     }
     
-    /// Verify that absolute paths work against a different base URL.
-    func testGetAbsolutePath() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
-        let service = WebService(baseURLString: "www.walmart.com")
-        let task = service
-            .GET("http://httpbin.org/get")
-            .response(handler)
-            .resume()
+    func test_absoluteURLString_constructsValidURLWhenPathIsAbsoluteURL() {
+        let service = WebService(baseURLString: "http://www.walmart.com/")
+        
+        let url = service.absoluteURLString("http://httpbin.org/get")
+        
+        XCTAssertEqual(url, "http://httpbin.org/get")
+    }
+}
 
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testPostEndpoint() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
-        let service = WebService(baseURLString: baseURL)
-        let task = service
-            .POST("/post")
-            .response(handler)
-            .resume()
-        
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testPutEndpoint() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
-        let service = WebService(baseURLString: baseURL)
-        let task = service
-            .PUT("/put")
-            .response(handler)
-            .resume()
+// MARK - dataTaskWithRequest
 
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testDeleteEndpoint() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let handler = responseHandler(expectation: successExpectation)
-        let service = WebService(baseURLString: baseURL)
-        let task = service
-            .DELETE("/delete")
-            .response(handler)
-            .resume()
+extension WebServiceTests {
+    // TODO: legacy test, remove after dataTaskWithRequest API is removed
+    func test_dataTaskWithRequest_returnsSuspendedDataTask() {
+        let service = WebService(baseURLString: "http://httpbin.org/")
+        let request = NSURLRequest(URL: NSURL(string: "http://httpbin.org/")!)
         
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
+        let task = service.dataTaskWithRequest(request) { data, response, error in }
+        
+        XCTAssertEqual(task.state, NSURLSessionTaskState.Suspended)
     }
+}
 
-    func testErrorHandler() {
-        let baseURL = "httpppppp://httpbin.org/"
-        let errorExpectation = expectationWithDescription("Error handler called for bad URL")
-        var wasResponseCalled = false
-        
-        WebService(baseURLString: baseURL)
-            .GET("/")
-            .response { data, response in
-                wasResponseCalled = true
-                return ServiceTaskResult.Empty
-            }
-            .responseError { error in
-                XCTAssertTrue(!NSThread.isMainThread())
-                XCTAssertFalse(wasResponseCalled, "Response should not be called for error cases")
-                errorExpectation.fulfill()
-            }
-            .resume()
+// MARK: - dataTaskSource
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+extension WebServiceTests {
+    // TODO: legacy test, remove after dataTaskSource API is removed
+    func test_dataTaskSource_setterSetsSession() {
+        let urlSession = NSURLSession.sharedSession()
+        let service = WebService(baseURLString: "http://httpbin.org/")
+        service.dataTaskSource = urlSession
+        
+        XCTAssertTrue(service.session is NSURLSession)
+        XCTAssertTrue(service.session as! NSURLSession === urlSession)
     }
     
-    func testUpdateErrorUIHandler() {
-        let baseURL = "httpppppp://httpbin.org/"
-        let errorExpectation = expectationWithDescription("Error handler called for bad URL")
-        var wasResponseCalled = false
-        
-        WebService(baseURLString: baseURL)
-            .GET("/")
-            .response { data, response in
-                wasResponseCalled = true
-                return ServiceTaskResult.Empty
+    // TODO: legacy test, remove after dataTaskSource API is removed
+    func test_dataTaskSource_returnsDataTask() {
+        final class MockDataTaskSource: SessionDataTaskDataSource {
+            func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
+                return NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: completionHandler)
             }
-            .updateErrorUI { error in
-                XCTAssertTrue(NSThread.isMainThread())
-                XCTAssertFalse(wasResponseCalled, "Response should not be called for error cases")
-                errorExpectation.fulfill()
-            }
-            .resume()
+        }
+        let dataTaskSource = MockDataTaskSource()
+        let request = NSURLRequest(URL: NSURL(string: "http://httpbin.org/")!)
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        let task = dataTaskSource.dataTask(request: request) { data, response, error in }
+        
+        XCTAssertTrue(task is NSURLSessionDataTask)
+        XCTAssertEqual((task as! NSURLSessionDataTask).state, NSURLSessionTaskState.Suspended)
     }
-    
-    
-    
-    func testGetJSON() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let handler = jsonResponseHandler(expectation: successExpectation)
-        let service = WebService(baseURLString: baseURL)
-        let task = service
-            .GET("/get")
-            .responseJSON(handler)
-            .resume()
+}
 
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running, "Task should be running by default")
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testGetPercentEncodedParameters() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let service = WebService(baseURLString: baseURL)
-        let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
-        
-        service
-            .GET("/get")
-                .setParameters(parameters)
-            .response { data, response in
-                
-                let httpResponse = response as! NSHTTPURLResponse
-                
-                if httpResponse.statusCode == 200 {
-                    successExpectation.fulfill()
-                }
-                
-                return .Empty
-            }
-            .responseJSON { json, response in
-                let castedJSON = json as? [String : AnyObject]
-                XCTAssert(castedJSON != nil)
+// MARK: - servicePassthroughDelegate
 
-                let deliveredParameters = castedJSON!["args"] as? [String : AnyObject]
-                XCTAssert(deliveredParameters != nil)
-                
-                RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
-                
-                return .Empty
-            }
-            .resume()
+extension WebService: ServicePassthroughDataSource {
+    static let mockPassthroughDelegate = ServicePassthroughDelegateSpy()
+    
+    public var servicePassthroughDelegate: ServicePassthroughDelegate {
+        return WebService.mockPassthroughDelegate
+    }
+}
 
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testPostPercentEncodedParameters() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let service = WebService(baseURLString: baseURL)
-        let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
+extension WebServiceTests {
+    func test_servicePassthroughDelegate_setsToSelfWhenImplemented() {
+        let service = WebService(baseURLString: "http://httpbin.org/")
         
-        service
-            .POST("/post")
-                .setParameters(parameters)
-            .response { data, response in
-                
-                let httpResponse = response as! NSHTTPURLResponse
-                
-                if httpResponse.statusCode == 200 {
-                    successExpectation.fulfill()
-                }
-                
-                return .Empty
-            }
-            .responseJSON { json, response in
-                let castedJSON = json as? [String : AnyObject]
-                XCTAssert(castedJSON != nil)
-                
-                let deliveredParameters = castedJSON!["form"] as? [String : AnyObject]
-                XCTAssert(deliveredParameters != nil)
-                
-                RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
-                
-                return .Empty
-            }
-            .resume()
-
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testPostJSONEncodedParameters() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let service = WebService(baseURLString: baseURL)
-        let parameters = ["foo" : "bar", "number" : 42]
-        
-        service
-            .POST("/post")
-                .setParameters(parameters, encoding: .JSON)
-            .response { data, response in
-                let httpResponse = response as! NSHTTPURLResponse
-                
-                if httpResponse.statusCode == 200 {
-                    successExpectation.fulfill()
-                }
-                
-                return .Empty
-            }
-            .responseJSON { json, response in
-                let castedJSON = json as? [String : AnyObject]
-                XCTAssert(castedJSON != nil)
-                
-                let deliveredParameters = castedJSON!["json"] as? [String : AnyObject]
-                XCTAssert(deliveredParameters != nil)
-                
-                RequestTests.assertRequestParametersNotEqual(deliveredParameters!, toOriginalParameters: parameters)
-                
-                return .Empty
-            }
-            .resume()
-        
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testPostJSONEncodedArray() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let service = WebService(baseURLString: baseURL)
-        
-        let jsonObject = ["foo" : "bar", "number" : 42]
-        let jsonArray = [jsonObject, jsonObject]
-        
-        service
-            .POST("/post")
-                .setParameterEncoding(.JSON)
-                .setJSON(jsonArray)
-            .response { data, response in
-                let httpResponse = response as! NSHTTPURLResponse
-                
-                if httpResponse.statusCode == 200 {
-                    successExpectation.fulfill()
-                }
-                
-                return .Empty
-            }
-            .responseJSON { json, reponse in
-                let castedJSON = json as? [String : AnyObject]
-                XCTAssert(castedJSON != nil)
-                
-                let deliveredArray = castedJSON!["json"] as? [[String : AnyObject]]
-                XCTAssert(deliveredArray != nil)
-                
-                for deliveredJSONObject in deliveredArray! {
-                    RequestTests.assertRequestParametersNotEqual(deliveredJSONObject, toOriginalParameters: jsonObject)
-                }
-                
-                return .Empty
-            }
-            .resume()
-        
-        waitForExpectationsWithTimeout(2, handler: nil)
-    }
-    
-    func testHeadersDelivered() {
-        let successExpectation = expectationWithDescription("Received status 200")
-        let service = WebService(baseURLString: baseURL)
-        let headers =  ["Some-Test-Header" :"testValue"]
-        
-        service
-            .GET("/get")
-                .setHeaders(headers)
-            .response { data, response in
-                let httpResponse = response as! NSHTTPURLResponse
-                
-                if httpResponse.statusCode == 200 {
-                    successExpectation.fulfill()
-                }
-                
-                return .Empty
-            }
-            .responseJSON { json, repsponse in
-                let castedJSON = json as? [String : AnyObject]
-                XCTAssert(castedJSON != nil)
-                
-                let deliveredHeaders = castedJSON!["headers"] as? [String : AnyObject]
-                XCTAssert(deliveredHeaders != nil)
-                
-                RequestTests.assertRequestParametersNotEqual(deliveredHeaders!, toOriginalParameters: headers)
-                
-                return .Empty
-            }
-            .resume()
-        
-        waitForExpectationsWithTimeout(2, handler: nil)
+        XCTAssertNotNil(service.passthroughDelegate)
+        XCTAssertTrue(service.passthroughDelegate! === WebService.mockPassthroughDelegate as ServicePassthroughDelegate)
     }
 }

@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 /**
  A lightweight wrapper around `NSURLSessionDataTask` that provides a chainable
  API for processing the result of a data task. A `ServiceTask` instance can be
@@ -28,9 +27,9 @@ import Foundation
     public var state: NSURLSessionTaskState {
         if let state = dataTask?.state {
             return state
-        } else {
-            return .Suspended
         }
+        
+        return .Suspended
     }
     
     private var request: Request
@@ -43,7 +42,7 @@ import Foundation
     private let handlerQueue: NSOperationQueue
     
     /// Session data task that refers the lifetime of the request.
-    private var dataTask: NSURLSessionDataTask?
+    private var dataTask: DataTask?
     
     /// Result of the service task
     private var taskResult: ServiceTaskResult? {
@@ -64,7 +63,7 @@ import Foundation
     private var urlResponse: NSURLResponse?
     
     /// Type responsible for creating NSURLSessionDataTask objects
-    private weak var dataTaskSource: SessionDataTaskDataSource?
+    private var session: Session?
     
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
@@ -79,9 +78,9 @@ import Foundation
      - parameter dataTaskSource: Object responsible for creating a
        NSURLSessionDataTask used to send the NSURLRequset.
     */
-    init(request: Request, dataTaskSource: SessionDataTaskDataSource) {
+    init(request: Request, session: Session) {
         self.request = request
-        self.dataTaskSource = dataTaskSource
+        self.session = session
         self.handlerQueue = {
             let queue = NSOperationQueue()
             queue.maxConcurrentOperationCount = 1
@@ -102,10 +101,6 @@ extension ServiceTask {
     public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
         request.parameterEncoding = encoding ?? .Percent
-        
-        if encoding == .JSON {
-            request.contentType = Request.ContentType.json
-        }
         
         return self
     }
@@ -154,7 +149,7 @@ extension ServiceTask {
     /// Resume the underlying data task.
     public func resume() -> Self {
         if dataTask == nil {
-            dataTask = dataTaskSource?.dataTaskWithRequest(urlRequest) { data, response, error in
+            dataTask = session?.dataTask(request: urlRequest) { data, response, error in
                 self.handleResponse(response, data: data, error: error)
             }
         }
@@ -201,8 +196,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(_): return // bail out to avoid next handler from running
-                case .Value(_): break
-                case .Empty: break
+                case .Empty, .Value(_): break
                 }
             }
             
@@ -263,17 +257,15 @@ extension ServiceTask {
     */
     public func responseJSON(handler: JSONHandler) -> Self {
         return response { data, response in
-            if let data = data {
-                do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
-                    return handler(json, response)
-                } catch let jsonError as NSError {
-                    return .Failure(jsonError)
-                } catch {
-                    fatalError()
-                }
-            } else {
+            guard let data = data else {
                 return .Failure(ServiceTaskError.JSONSerializationFailedNilResponseBody)
+            }
+            
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+                return handler(json, response)
+            } catch let error {
+                return .Failure(error)
             }
         }
     }
@@ -293,8 +285,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(let error): handler(error)
-                case .Value(_): break
-                case .Empty: break
+                case .Empty, .Value(_): break
                 }
             }
         }
@@ -317,8 +308,7 @@ extension ServiceTask {
                     dispatch_async(dispatch_get_main_queue()) {
                         handler(error)
                     }
-                case .Value(_): break
-                case .Empty: break
+                case .Empty, .Value(_): break
                 }
             }
         }

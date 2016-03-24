@@ -10,16 +10,13 @@ import Foundation
 import XCTest
 @testable import ELWebService
 
-/**
- Tests the functionality of the Request struct.
-*/
+///  Tests the functionality of the Request struct.
 class RequestTests: XCTestCase {
-    
     // MARK: Utilities
     
     /**
-    Compares values of top-level keys for equality and asserts when unequal.
-    Supports Int and String value types only.
+     Compares values of top-level keys for equality and asserts when unequal.
+     Supports Int and String value types only.
     */
     static func assertRequestParametersNotEqual(parameters: [String: AnyObject], toOriginalParameters originalParameters: [String: AnyObject]) {
         
@@ -35,14 +32,12 @@ class RequestTests: XCTestCase {
                 let comparisonValue = comparisonValue as? Int {
                     XCTAssertEqual(originalValue, comparisonValue)
             } else {
-                XCTAssert(false, "Failed to downcast JSON values for originalValue: \(originalValue) and \(comparisonValue)")
+                XCTFail("Failed to downcast JSON values for originalValue: \(originalValue) and \(comparisonValue)")
             }
         }
     }
     
-    /**
-     Creates a Request value for testing.
-    */
+    /// Creates a Request value for testing.
     static func CreateTestRequest() -> Request {
         let url = "http://httpbin.org/get"
         var request = Request(.GET, url: url)
@@ -52,10 +47,7 @@ class RequestTests: XCTestCase {
     
     // MARK: Tests
     
-    /**
-     Test Request's conformance to URLRequestEncodable.
-    */
-    func testEncodeURLRequest() {
+    func test_urlRequestValue_encodedHeaderFields() {
         let request = RequestTests.CreateTestRequest()
         let urlRequest = request.urlRequestValue
         
@@ -67,11 +59,16 @@ class RequestTests: XCTestCase {
         }
     }
     
-    /**
-     Verify that HTTP header computed properties and constants return the proper
-     values when set.
-    */
-    func testHeaderProperties() {
+    func test_urlRequestValue_validURLWithEmptyParameters() {
+        let request = Request(.GET, url: "http://httpbin.org/")
+        let urlRequest = request.urlRequestValue
+        let urlString = urlRequest.URL?.absoluteString
+        
+        XCTAssertNotNil(urlString)
+        XCTAssertFalse(urlString!.containsString("?"))
+    }
+    
+    func test_headerProperties_setValuesInTheCorrectHeaderFields() {
         let contentType = "application/json"
         let userAgent = "user agent value"
         
@@ -86,11 +83,20 @@ class RequestTests: XCTestCase {
         XCTAssertEqual(Request.Headers.accept, "Accept")
         XCTAssertEqual(Request.Headers.cacheControl, "Cache-Control")
     }
+    
+    func test_headerProperties_getValuesFromTheCorrectHeaderFields() {
+        let contentType = "application/json"
+        let userAgent = "user agent value"
+        var request = RequestTests.CreateTestRequest()
         
-    /**
-     Verify that request parameters are properly percent encoded.
-    */
-    func testPercentEncodedParameters() {
+        request.headers["Content-Type"] = contentType
+        request.headers["User-Agent"] = userAgent
+        
+        XCTAssertEqual(request.userAgent, userAgent)
+        XCTAssertEqual(request.contentType, contentType)
+    }
+    
+    func test_parameters_encodedInURLAsPercentEncoding() {
         var request = RequestTests.CreateTestRequest()
         let parameters = ["foo" : "bar", "paramName" : "paramValue", "percentEncoded" : "this needs percent encoded"]
         request.parameters = parameters
@@ -106,44 +112,52 @@ class RequestTests: XCTestCase {
             }
             
         } else {
-            XCTAssert(false, "queryItems should not be nil")
+            XCTFail("queryItems should not be nil")
         }
         
         XCTAssertEqual((components.queryItems!).count, parameters.keys.count)
     }
     
-    /**
-     Verify that request parameters are properly JSON encoded.
-    */
-    func testJSONEncodedParameters() {
-        let encoding = Request.ParameterEncoding.JSON
-        let parameters: [String: AnyObject] = ["foo" : "bar", "paramName" : "paramValue", "number" : 42]
-        let data = encoding.encodeBody(parameters)
-        let json: AnyObject
+    func test_parameters_encodedInBodyAsPercentEncoding() {
+        var request = Request(.POST, url: "http://httpbin.org/")
+        let parameters = ["percentEncoded" : "this needs percent encoded"]
+        request.parameters = parameters
+        request.parameterEncoding = .Percent
         
-        XCTAssert(data != nil, "Encoded JSON data should not be nil")
+        let urlRequest = request.urlRequestValue
         
-        do {
-            json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions())
-        } catch {
-            fatalError("Serialized JSON should not be nil")
-        }
+        let encodedData = urlRequest.HTTPBody
+        XCTAssertNotNil(encodedData)
         
-        // test original parameters against encoded
+        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
+        let components = stringValue.componentsSeparatedByString("=")
+        XCTAssertEqual(components[0], "percentEncoded")
+        XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
+    }
+
+    func test_settingParameterEncodingToJSON_setsContentTypeToJSON() {
+        var request = Request(.GET, url: "http://httpbin.org/")
         
-        if let json = json as? [String : AnyObject] {
-            RequestTests.assertRequestParametersNotEqual(json, toOriginalParameters: parameters)
-        } else {
-            fatalError("Failed to cast JSON as [String : AnyObject]")
-        }
+        request.parameterEncoding = .JSON
+        
+        XCTAssertEqual(request.contentType, Request.ContentType.json)
     }
     
-    func test_urlRequestValue_validURLWithEmptyParameters() {
-        let request = Request(.GET, url: "http://httpbin.org/")
+    func test_setBody_overwritesExistingBodyData() {
+        var request = Request(.POST, url: "http://httpbin.org/")
+        let parameters = ["percentEncoded" : "this needs percent encoded"]
+        request.parameters = parameters
+        request.parameterEncoding = .Percent
+        let testData = "newBody".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        request.body = testData
+        
         let urlRequest = request.urlRequestValue
-        let urlString = urlRequest.URL?.absoluteString
-
-        XCTAssertNotNil(urlString)
-        XCTAssertFalse(urlString!.containsString("?"))
+    
+        let encodedBody = urlRequest.HTTPBody
+        XCTAssertNotNil(encodedBody)
+        let stringValue = NSString(data: encodedBody!, encoding: NSUTF8StringEncoding)!
+        let components = stringValue.componentsSeparatedByString("=")
+        XCTAssertEqual(components.count, 1)
+        XCTAssertEqual(encodedBody, testData)
     }
 }

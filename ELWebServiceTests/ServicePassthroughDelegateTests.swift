@@ -66,6 +66,14 @@ class ServicePassthroughDelegateTests: XCTestCase {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
+    
+    func test_passthroughDelegate_modifiedRequestReturnsNil() {
+        let passthroughSpy = ServicePassthroughDelegateSpy()
+        
+        let result = passthroughSpy.modifiedRequest(NSURLRequest())
+        
+        XCTAssertNil(result)
+    }
 }
 
 // MARK - Mocks
