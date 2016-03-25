@@ -66,6 +66,14 @@ class ServicePassthroughDelegateTests: XCTestCase {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
+    
+    func test_passthroughDelegate_modifiedRequestReturnsNil() {
+        let passthroughSpy = ServicePassthroughDelegateSpy()
+        
+        let result = passthroughSpy.modifiedRequest(NSURLRequest())
+        
+        XCTAssertNil(result)
+    }
 }
 
 // MARK - Mocks
@@ -97,7 +105,7 @@ class ServicePassthroughDelegateSpy: ServicePassthroughDelegate {
         updateUIEndExpectation?.fulfill()
     }
     
-    func serviceResultFailure(error: ErrorType) {
+    func serviceResultFailure(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: ErrorType) {
         serviceResultFailureExpecation?.fulfill()
     }
 }

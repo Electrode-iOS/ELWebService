@@ -15,8 +15,15 @@ import Foundation
  received. Adopt this protocol in order to specify the `NSURLSession` instance
  used to send requests.
  */
-public protocol SessionDataTaskDataSource: class {
+@available(*, deprecated, message="Use Session protocol instead.")
+public protocol SessionDataTaskDataSource: class, Session {
     func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask
+}
+
+extension SessionDataTaskDataSource {
+    func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
+        return dataTaskWithRequest(request.urlRequestValue, completionHandler: completion)
+    }
 }
 
 extension NSURLSession: SessionDataTaskDataSource {}

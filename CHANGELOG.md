@@ -1,3 +1,29 @@
+# [3.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.0.0)
+
+- Updated the Objective-C request API to return `self` instance for API consistency
+- Simplified query parameter encoding with `NSURLQueryItem` Previously, query parameters were encoded manually by piecing together string values with `stringByAddingPercentEncodingWithAllowedCharacters`. This change allows `NSURLQueryItem` to handle the percent encoding and uses `NSURLComponents` to produce the encoded query string.
+- Updated ELWebService unit tests to use mock sessions instead of sending requests over the network.
+- Added more unit tests, **increasing code coverage to 99%**
+- Added unit tests to example project to demonstrate session and response mocking
+
+### Breaking Changes
+
+- Added `NSURLResponse` parameter to `JSONHandler` closure to enable JSON response handler to access response meta data. ([24d7d5a](https://github.com/Electrode-iOS/ELWebService/commit/24d7d5a2dc4832a6555547f03f487cb65a3ac450))
+- Deployment target turned down to 8.0. ([c4b9b6e](https://github.com/Electrode-iOS/ELWebService/commit/c4b9b6e7f420538d4dd42653df62c75178907407))
+
+### Deprecations
+
+- Deprecated `SessionDataTaskDataSource` protocol in favor of `Session`.
+- Deprecated WebService's `dataTaskSource` property. Use `Session` protocol and set the `session` property instead.
+- Deprecated WebService's `dataTaskWithRequest(request:completionHandler)` method. Use `dataTask(request:completion:)` instead.
+
+### New Features
+
+- Added `Session` and `DataTask` protocols to decouple `NSURLSession` and `NSURLSessionDataTask` from `ServiceTask` and `WebService`. These new protocols enable code to mock the session and data task objects so that unit tests can be performed without sending requests over the network. The framework provides implementations that make `NSURLSession` conform to `Session` and `NSURLSessionDataTask` conform to `DataTask`
+- Added Mocking API. See the [mocking API documentation](https://github.com/Electrode-iOS/ELWebService/blob/58293ce86f268adcf2cf2a68b64a72caab7fb76a/docs/Programming-Guide.md#mocking) for usage information.
+  - Added `MockSession` and `MockDataTask` protocols as a mocking interface for `Session` and `DataTask` types.
+  - Added `MockResponse` for easier response mocking
+
 # [2.5.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v2.5.0)
 
 - Changed deployment target to 8.0

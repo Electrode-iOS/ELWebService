@@ -46,8 +46,9 @@ extension ServiceTask {
      `setParameterEncoding(encoding: .JSON)` when calling
      from Swift.
     */
-    @objc public func setJSONParameterEncodingObjC() {
+    @objc public func setJSONParameterEncodingObjC() -> Self {
         setParameterEncoding(.JSON)
+        return self
     }
     
     /**
@@ -57,8 +58,9 @@ extension ServiceTask {
      `setParameterEncoding(encoding: .Percent)` when calling
      from Swift.
     */
-    @objc public func setPercentParameterEncodingObjC() {
+    @objc public func setPercentParameterEncodingObjC() -> Self {
         setParameterEncoding(.Percent)
+        return self
     }
 }
 
@@ -93,9 +95,9 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
      */
-    @objc public func responseJSONObjC(handler: (AnyObject) -> ObjCHandlerResult?) -> Self {
-        return responseJSON { json in
-            return ServiceTaskResult(objCHandlerResult: handler(json))
+    @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self {
+        return responseJSON { json, response in
+            return ServiceTaskResult(objCHandlerResult: handler(json, response))
         }
     }
     

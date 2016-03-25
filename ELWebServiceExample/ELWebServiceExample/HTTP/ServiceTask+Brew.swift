@@ -13,7 +13,7 @@ extension ServiceTask {
     
     func responseAsBrews(handler: ([Brew]) -> Void) -> Self {
         return
-            responseJSON { json in
+            responseJSON { json, response in
                 if let json = self.jsonObject(json, forKey: "brews"),
                     let jsonArray = json as? [AnyObject],
                     let decodedArray = ModelDecoder<Brew>.decodeArray(jsonArray) {
