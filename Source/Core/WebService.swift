@@ -173,15 +173,20 @@ extension WebService: Session {
     }
     
     func dataTask(session session: Session, request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
-        
-        var urlRequest = request.urlRequestValue
-        
-        if let modifiedRequest = passthroughDelegate?.modifiedRequest(urlRequest) {
-            urlRequest = modifiedRequest
-        }
+        let urlRequest = canonicalRequest(request: request).urlRequestValue
         
         passthroughDelegate?.requestSent(urlRequest)
-        return session.dataTask(request: urlRequest, completion: onTaskCompletion(request, completionHandler: completion))
+        return session.dataTask(request: urlRequest, completion: onTaskCompletion(urlRequest, completionHandler: completion))
+    }
+    
+    func canonicalRequest(request request: URLRequestEncodable) -> URLRequestEncodable {
+        let urlRequest = request.urlRequestValue
+        
+        if let modifiedRequest = passthroughDelegate?.modifiedRequest(urlRequest) {
+            return modifiedRequest
+        }
+        
+        return urlRequest
     }
     
     func onTaskCompletion(request: URLRequestEncodable, completionHandler: TaskHandler) -> TaskHandler {
