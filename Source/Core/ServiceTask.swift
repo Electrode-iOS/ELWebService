@@ -52,7 +52,7 @@ import Foundation
             switch result {
             case .Failure(let error):
                 if responseError == nil {
-                    passthroughDelegate?.serviceResultFailure(error)
+                    passthroughDelegate?.serviceResultFailure(urlResponse, data: responseData, request: urlRequest, error: error)
                 }
             case .Empty, .Value(_): return
             }

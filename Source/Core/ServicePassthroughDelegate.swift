@@ -23,7 +23,7 @@ public protocol ServicePassthroughDelegate: class {
     func updateUIEnd(response: NSURLResponse?)
     
     /// Called when a ServiceTask handler returns a .Failure(error) result
-    func serviceResultFailure(error: ErrorType)
+    func serviceResultFailure(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: ErrorType)
     
     func modifiedRequest(request: NSURLRequest) -> NSURLRequest?
 }

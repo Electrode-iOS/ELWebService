@@ -105,7 +105,7 @@ class ServicePassthroughDelegateSpy: ServicePassthroughDelegate {
         updateUIEndExpectation?.fulfill()
     }
     
-    func serviceResultFailure(error: ErrorType) {
+    func serviceResultFailure(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: ErrorType) {
         serviceResultFailureExpecation?.fulfill()
     }
 }
