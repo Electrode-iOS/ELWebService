@@ -4,7 +4,7 @@ ELWebService (previously named Swallow) simplifies interaction with HTTP web ser
 
 ## Requirements
 
-ELWebService requires Swift 2.1 and Xcode 7.2.
+ELWebService requires Swift 2.2 and Xcode 7.3.
 
 ## Installation
 
@@ -13,7 +13,7 @@ ELWebService requires Swift 2.1 and Xcode 7.2.
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "Electrode-iOS/ELWebService" ~> 3.0.0
+github "Electrode-iOS/ELWebService" ~> 3.0.1
 ```
 
 ### Manual

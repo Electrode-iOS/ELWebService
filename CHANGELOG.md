@@ -1,3 +1,7 @@
+# [3.0.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.0.1)
+
+- Resolved Swift 3 deprecation warnings.
+
 # [3.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.0.0)
 
 - Updated the Objective-C request API to return `self` instance for API consistency
