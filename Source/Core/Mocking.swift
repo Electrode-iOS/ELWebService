@@ -104,10 +104,10 @@ public class MockSession: Session {
     public func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
         requestSent(request)
         
-        let response = stubbedResponse(request: request)
+        let (data, response, error) = stubbedResponse(request: request)
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            completion(response)
+            completion(data, response, error)
         }
         
         return MockDataTask()
