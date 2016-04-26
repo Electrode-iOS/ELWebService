@@ -220,7 +220,7 @@ extension ServiceTask {
      response handler.
 
      The handler can return any type of service task result, `.Empty`, `.Value` or
-     `.Error`. The result is propagated to later response handlers.
+     `.Failure`. The result is propagated to later response handlers.
 
      - parameter handler: Transformation handler to execute.
      - returns: Self instance to support chaining.
@@ -364,7 +364,7 @@ extension ServiceTask {
      handler.
      
      The handler can return either a `.Value` or `.Empty`, indicating it was able to
-     recover from the error, or an `.Error`, indicating that it was not able to
+     recover from the error, or an `.Failure`, indicating that it was not able to
      recover. The result is propagated to later response handlers.
      
      - parameter handler: Recovery handler to execute when an error occurs.
