@@ -15,7 +15,7 @@ import Foundation
  via the `state` property.
 */
 @objc public final class ServiceTask: NSObject {
-    public typealias ResponseProcessingHandler = (NSData?, NSURLResponse?) -> ServiceTaskResult
+    public typealias ResponseProcessingHandler = (NSData?, NSURLResponse?) throws -> ServiceTaskResult
     
     /// A closure type alias for a success handler.
     public typealias UpdateUIHandler = (Any?) -> Void
@@ -206,7 +206,11 @@ extension ServiceTask {
                 }
             }
             
-            self.taskResult = handler(self.responseData, self.urlResponse)
+            do {
+                self.taskResult = try handler(self.responseData, self.urlResponse)
+            } catch let error {
+                self.taskResult = .Failure(error)
+            }
         }
 
         return self
@@ -252,7 +256,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for handling the response as JSON.
-    public typealias JSONHandler = (AnyObject, NSURLResponse?) -> ServiceTaskResult
+    public typealias JSONHandler = (AnyObject, NSURLResponse?) throws -> ServiceTaskResult
     
     /**
      Add a response handler to serialize the response body as a JSON object. The
@@ -269,7 +273,7 @@ extension ServiceTask {
             
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
-                return handler(json, response)
+                return try handler(json, response)
             } catch let error {
                 return .Failure(error)
             }
