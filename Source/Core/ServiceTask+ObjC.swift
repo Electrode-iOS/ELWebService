@@ -67,6 +67,11 @@ extension ServiceTask {
 // MARK: - Obj-C Interop for Response Handler API
 
 extension ServiceTask {
+    public enum ObjCBridgeError: ErrorType {
+        /// An error indicating an objc handler should have been called, but the
+        /// value was neither `nil`, nor an object.
+        case NonObjectValue
+    }
     
     /// Response handler type for Obj-C
     typealias ObjCResponseHandler = (NSData?, NSURLResponse?) -> ObjCHandlerResult?
@@ -101,6 +106,49 @@ extension ServiceTask {
         }
     }
     
+    /**
+     Add a response handler to transform a (non-error) result produced by an earlier
+     response handler.
+
+     This method is designed to be called from Obj-C. Please use
+     `transform(handler: ResultTransformer)` when calling from Swift.
+
+     The handler can return any type of service task result, `.Empty`, `.Value` or
+     `.Failure`. The result is propagated to later response handlers.
+
+     - parameter handler: Transformation handler to execute.
+     - returns: Self instance to support chaining.
+     */
+    @objc public func transformObjC(handler: (AnyObject?) -> ObjCHandlerResult?) -> Self {
+        return transform { value in
+            guard let value = value as? AnyObject? else {
+                return .Failure(ObjCBridgeError.NonObjectValue)
+            }
+
+            return ServiceTaskResult(objCHandlerResult: handler(value))
+        }
+    }
+
+    /**
+     Add a response handler to recover from an error produced by an earlier response
+     handler.
+     
+     This method is designed to be called from Obj-C. Please use
+     `recover(handler: ErrorRecoveryHandler)` when calling from Swift.
+
+     The handler can return either a `.Value` or `.Empty`, indicating it was able to
+     recover from the error, or an `.Failure`, indicating that it was not able to
+     recover. The result is propagated to later response handlers.
+
+     - parameter handler: Recovery handler to execute when an error occurs.
+     - returns: Self instance to support chaining.
+     */
+    @objc public func recoverObjC(handler: (NSError) -> ObjCHandlerResult?) -> Self {
+        return recover { error in
+            return ServiceTaskResult(objCHandlerResult: handler(error as NSError))
+        }
+    }
+
     /**
      Add a response handler to be called if a request results in an error.
      
