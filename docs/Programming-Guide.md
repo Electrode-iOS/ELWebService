@@ -181,12 +181,12 @@ All response and error handlers that are registered with the `response()`, `resp
 service
     .GET("/brewers")
     .responseJSON { json, response in
-      if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
-          return .Value(models)
-      } else {
-        // any value conforming to ErrorType
-        return .Failure(JSONDecoderError.FailedToDecodeBrewer)
-      }
+        if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+            return .Value(models)
+        } else {
+            // any value conforming to ErrorType
+            return .Failure(JSONDecoderError.FailedToDecodeBrewer)
+        }
     }
     .updateUI { value in
         // this closure will be dispatched to the main queue via `updateUI()`
@@ -200,7 +200,7 @@ service
 
 ## Request Parameters
 
-Parameterized data that is structured as a dictinoary type of `[String: AnyObject]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
+Parameterized data that is structured as a dictionary type of `[String: AnyObject]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
 
 ```
 service
@@ -299,7 +299,7 @@ Finally the `updateUI()` handler will be run if all previous response handlers d
 service
     .GET("/brewers")
     .response { data, response in
-        // filter reseponses that do not respond with status 200
+        // filter responses that do not have status 200
 
         if let httpResponse = response as? NSHTTPURLResponse
             where httpResponse.statusCode != 200 {
