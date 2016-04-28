@@ -82,7 +82,7 @@ extension ServiceTask {
      */
     @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self {
         return response { data, response in
-            return ServiceTaskResult(objCHandlerResult: handler(data, response))
+            return try handler(data, response)?.valueOrError()
         }
     }
     
@@ -97,7 +97,7 @@ extension ServiceTask {
      */
     @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self {
         return responseJSON { json, response in
-            return ServiceTaskResult(objCHandlerResult: handler(json, response))
+            return try handler(json, response)?.valueOrError()
         }
     }
     

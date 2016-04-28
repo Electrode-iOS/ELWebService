@@ -26,7 +26,7 @@ class ServiceTaskTests: XCTestCase {
         let task = successfulTask()
         
         task.response { data, response in
-                return .Empty
+                return nil
             }
             .updateUI { value in
                 XCTAssertTrue(NSThread.isMainThread())
@@ -44,10 +44,15 @@ class ServiceTaskTests: XCTestCase {
         
         let expectation = expectationWithDescription("responseError handler is called")
         let task = successfulTask()
+        let handlerFailed = true
         
         task
             .response { data, response in
-                return .Failure(ResponseError.IveMadeAHugeMistake)
+                guard !handlerFailed else {
+                    throw ResponseError.IveMadeAHugeMistake
+                }
+                
+                return nil
             }
             .updateUI { value in
                 XCTFail("updateUI handler should not be called")
@@ -65,7 +70,7 @@ class ServiceTaskTests: XCTestCase {
         let task = successfulTask()
 
         task.response { data, response in
-                return ServiceTaskResult.Value(true)
+                return true
             }
             .updateUI { value in
                 if let value = value as? Bool {
@@ -89,7 +94,7 @@ class ServiceTaskTests: XCTestCase {
                 XCTAssertTrue(!NSThread.isMainThread())
                 expectation.fulfill()
    
-                return .Empty
+                return nil
             }
             .resume()
         
@@ -109,7 +114,7 @@ extension ServiceTaskTests {
         
         task.responseJSON { json in
                 expectation.fulfill()
-                return .Empty
+                return nil
             }
             .resume()
         
@@ -128,7 +133,7 @@ extension ServiceTaskTests {
         
         task.responseJSON { json in
                 XCTFail("responseJSON handler should not be called when JSON is invalid")
-                return .Empty
+                return nil
             }
             .responseError { error in
                 expectation.fulfill()
@@ -146,7 +151,7 @@ extension ServiceTaskTests {
         
         task.responseJSON { json in
                 XCTFail("responseJSON handler should not be called when JSON is invalid")
-                return .Empty
+                return nil
             }
             .responseError { error in
                 expectation.fulfill()
@@ -193,7 +198,7 @@ extension ServiceTaskTests {
         
         task.response { data, response in
                 XCTFail("Response handler should not be called when session returns an error")
-                return .Empty
+                return nil
             }
             .responseError { error in
                 expectation.fulfill()
@@ -222,14 +227,19 @@ extension ServiceTaskTests {
         }
         let expectation = expectationWithDescription("Error handler called when session returns an error")
         let task = successfulTask()
+        let shouldFail = true
         
         task
             .response { data, response in
-                return .Failure(ResponseError.StubError)
+                guard !shouldFail else {
+                    throw ResponseError.StubError
+                }
+                
+                return nil
             }
             .response { data, response in
                 XCTFail("response handler should not be called")
-                return .Empty
+                return nil
             }
             .responseError { error in
                 expectation.fulfill()
@@ -248,17 +258,17 @@ extension ServiceTaskTests {
         
         task
             .response { data, response in
-                return .Empty
+                return nil
             }
             .response { data, response in
-                return .Value(1)
+                return 1
             }
             .responseError { error in
                 XCTFail("responseError should not be called")
             }
             .response { data, response in
                 expectation.fulfill()
-                return .Empty
+                return nil
             }
             .resume()
         
@@ -274,17 +284,17 @@ extension ServiceTaskTests {
         
         task
             .response { data, response in
-                return .Empty
+                return nil
             }
             .response { data, response in
-                return .Value(1)
+                return 1
             }
             .updateErrorUI { error in
                 XCTFail("updateErrorUI should not be called")
             }
             .response { data, response in
                 expectation.fulfill()
-                return .Empty
+                return nil
             }
             .resume()
         

@@ -21,7 +21,7 @@ class ServicePassthroughDelegateTests: XCTestCase {
         let _ = service
             .GET("/get")
             .response { data, response in
-                return .Value(true)
+                return true
             }
             .updateUI { value in
             }
@@ -42,7 +42,7 @@ class ServicePassthroughDelegateTests: XCTestCase {
         let _ = service
             .GET("/get")
             .response { data, response in
-                return .Empty
+                return nil
             }
             .updateUI { value in
             }
@@ -60,7 +60,8 @@ class ServicePassthroughDelegateTests: XCTestCase {
         let _ = service
             .GET("/get")
             .response { data, response in
-                return .Failure(MockError.SomethingWentHorriblyWrong)
+                throw MockError.SomethingWentHorriblyWrong
+                return nil
             }
             .resume()
         

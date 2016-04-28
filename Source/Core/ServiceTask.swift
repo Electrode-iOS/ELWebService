@@ -15,7 +15,7 @@ import Foundation
  via the `state` property.
 */
 @objc public final class ServiceTask: NSObject {
-    public typealias ResponseProcessingHandler = (NSData?, NSURLResponse?) -> ServiceTaskResult
+    public typealias ResponseProcessingHandler = (NSData?, NSURLResponse?) throws -> Any?
     
     /// A closure type alias for a success handler.
     public typealias UpdateUIHandler = (Any?) -> Void
@@ -44,17 +44,15 @@ import Foundation
     /// Session data task that refers the lifetime of the request.
     private var dataTask: DataTask?
     
-    /// Result of the service task
-    private var taskResult: ServiceTaskResult? {
+    /// Value result of the last handler called
+    private var handlerResult: Any?
+    
+    /// Error result of the last handler called
+    private var handlerError: ErrorType? {
         didSet {
-            // Use observer to watch for error result to send to passthrough
-            guard let result = taskResult else { return }
-            switch result {
-            case .Failure(let error):
-                if responseError == nil {
-                    passthroughDelegate?.serviceResultFailure(urlResponse, data: responseData, request: urlRequest, error: error)
-                }
-            case .Empty, .Value(_): return
+            // we know this is a service result failure when responseError is nil
+            if responseError == nil, let error = handlerError {
+                passthroughDelegate?.serviceResultFailure(urlResponse, data: responseData, request: urlRequest, error: error)
             }
         }
     }
@@ -65,7 +63,11 @@ import Foundation
     /// URL response
     private var urlResponse: NSURLResponse?
     
-    private var responseError: NSError?
+    private var responseError: NSError? {
+        didSet {
+            handlerError = responseError
+        }
+    }
     
     /// Type responsible for creating NSURLSessionDataTask objects
     private var session: Session?
@@ -178,11 +180,6 @@ extension ServiceTask {
         urlResponse = response
         responseData = data
         responseError = error
-        
-        if let responseError = responseError {
-            taskResult = ServiceTaskResult.Failure(responseError)
-        }
-        
         handlerQueue.suspended = false
     }
 }
@@ -199,14 +196,15 @@ extension ServiceTask {
     */
     public func response(handler: ResponseProcessingHandler) -> Self {
         handlerQueue.addOperationWithBlock {
-            if let taskResult = self.taskResult {
-                switch taskResult {
-                case .Failure(_): return // bail out to avoid next handler from running
-                case .Empty, .Value(_): break
-                }
+            guard self.handlerError == nil else {
+                return
             }
             
-            self.taskResult = handler(self.responseData, self.urlResponse)
+            do {
+                self.handlerResult = try handler(self.responseData, self.urlResponse)
+            } catch let error {
+                self.handlerError = error
+            }
         }
 
         return self
@@ -225,22 +223,14 @@ extension ServiceTask {
     */
     public func updateUI(handler: UpdateUIHandler) -> Self {
         handlerQueue.addOperationWithBlock {
-            if let taskResult = self.taskResult {
-                switch taskResult {
-                case .Value(let value):
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.passthroughDelegate?.updateUIBegin(self.urlResponse)
-                        handler(value)
-                        self.passthroughDelegate?.updateUIEnd(self.urlResponse)
-                    }
-                case .Empty:
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.passthroughDelegate?.updateUIBegin(self.urlResponse)
-                        handler(nil)
-                        self.passthroughDelegate?.updateUIEnd(self.urlResponse)
-                    }
-                case .Failure(_): break
-                }
+            guard self.handlerError == nil else {
+                return
+            }
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                self.passthroughDelegate?.updateUIBegin(self.urlResponse)
+                handler(self.handlerResult)
+                self.passthroughDelegate?.updateUIEnd(self.urlResponse)
             }
         }
         
@@ -252,7 +242,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for handling the response as JSON.
-    public typealias JSONHandler = (AnyObject, NSURLResponse?) -> ServiceTaskResult
+    public typealias JSONHandler = (AnyObject, NSURLResponse?) throws -> Any?
     
     /**
      Add a response handler to serialize the response body as a JSON object. The
@@ -264,15 +254,11 @@ extension ServiceTask {
     public func responseJSON(handler: JSONHandler) -> Self {
         return response { data, response in
             guard let data = data else {
-                return .Failure(ServiceTaskError.JSONSerializationFailedNilResponseBody)
+                throw ServiceTaskError.JSONSerializationFailedNilResponseBody
             }
             
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
-                return handler(json, response)
-            } catch let error {
-                return .Failure(error)
-            }
+            let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+            return try handler(json, response)
         }
     }
 }
@@ -288,11 +274,8 @@ extension ServiceTask {
     */
     public func responseError(handler: ErrorHandler) -> Self {
         handlerQueue.addOperationWithBlock {
-            if let taskResult = self.taskResult {
-                switch taskResult {
-                case .Failure(let error): handler(error)
-                case .Empty, .Value(_): break
-                }
+            if let error = self.handlerError {
+                handler(error)
             }
         }
         
@@ -308,13 +291,9 @@ extension ServiceTask {
     */
     public func updateErrorUI(handler: ErrorHandler) -> Self {
         handlerQueue.addOperationWithBlock {
-            if let taskResult = self.taskResult {
-                switch taskResult {
-                case .Failure(let error):
-                    dispatch_async(dispatch_get_main_queue()) {
-                        handler(error)
-                    }
-                case .Empty, .Value(_): break
+            if let error = self.handlerError {
+                dispatch_async(dispatch_get_main_queue()) {
+                    handler(error)
                 }
             }
         }

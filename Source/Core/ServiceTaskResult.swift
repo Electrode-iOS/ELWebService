@@ -58,4 +58,12 @@ extension ServiceTaskResult {
     private init(error: NSError) {
         self.error = error
     }
+    
+    internal func valueOrError() throws -> Any? {
+        if let error = error {
+            throw error
+        } else {
+            return value
+        }
+    }
 }

@@ -17,9 +17,9 @@ extension ServiceTask {
                 if let json = self.jsonObject(json, forKey: "brews"),
                     let jsonArray = json as? [AnyObject],
                     let decodedArray = ModelDecoder<Brew>.decodeArray(jsonArray) {
-                        return .Value(decodedArray)
+                        return decodedArray
                 } else {
-                    return .Failure(ServiceTaskDecodeError.FailedToDecodeJSONArray)
+                    throw ServiceTaskDecodeError.FailedToDecodeJSONArray
                 }
             }
             .updateUI { value in
