@@ -1,3 +1,7 @@
+# [3.0.2](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.0.2)
+
+- Removed the `SessionDataTaskDataSource` deprecation warnings that were declared with the `@available` attribute. The `@available` attribute was causing warnings to surface in Xcode projects that contained the ELWebService Xcode project as a subproject even when the deprecated API was not being called from the parent project. Due to Walmart's internal workflow being dependant on including ELWebService as a subproject, a decision was made to remove the `@avaiable` deprecation warnings in a patch release.
+
 # [3.0.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.0.1)
 
 - Resolved Swift 3 deprecation warnings.
