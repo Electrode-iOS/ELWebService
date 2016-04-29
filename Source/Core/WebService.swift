@@ -20,7 +20,6 @@ import Foundation
      Type responsible for creating a `NSURLSessionDataTask` based on a
      `NSURLRequest`.
     */
-    @available(*, deprecated, message="Use the Session protocol instead.")
     public var dataTaskSource: SessionDataTaskDataSource? {
         set {
             guard let newValue = newValue else { return }
@@ -200,8 +199,6 @@ extension WebService: Session {
 // MARK: - Legacy NSURLSessionDataTask API
 
 extension WebService: SessionDataTaskDataSource {
-    // legacy. remove in v3.0.0
-    @available(*, deprecated, message="Use dataTask(request:completion:) instead.")
     @objc public func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
         return dataTask(request: request, completion: completionHandler) as! NSURLSessionDataTask
     }
