@@ -132,9 +132,7 @@ extension ServiceTask {
     */
     @objc public func updateUIObjC(handler: (AnyObject?) -> Void) -> Self {
         return updateUI { value in
-            if let value = value as? AnyObject {
-                handler(value)
-            }
+            handler(value as! AnyObject?)
         }
     }
     
