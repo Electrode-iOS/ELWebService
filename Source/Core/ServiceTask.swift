@@ -227,7 +227,9 @@ extension ServiceTask {
      */
     public func transform(handler: ResultTransformer) -> Self {
         handlerQueue.addOperationWithBlock {
-            let taskResult = self.taskResult ?? .Empty
+            guard let taskResult = self.taskResult else {
+                return
+            }
 
             switch taskResult {
             case .Failure(_):
