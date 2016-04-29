@@ -320,10 +320,30 @@ extension ServiceTaskTests {
 // MARK: - Transform
 
 extension ServiceTaskTests {
+    func test_transform_closureNotCalledIfAddedBeforeResponseHandler() {
+        let done = expectationWithDescription("done")
+
+        successfulTask()
+            .transform { _ in
+                XCTFail("Did not expect transform closure to be called")
+                return .Empty
+            }
+            .response { _, _ in
+                done.fulfill()
+                return .Empty
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
     func test_transform_closureCalled() {
         let closureCalled = expectationWithDescription("transform closure called")
 
         successfulTask()
+            .response { _, _ in
+                return .Empty
+            }
             .transform { _ in
                 closureCalled.fulfill()
                 return .Empty
@@ -337,6 +357,9 @@ extension ServiceTaskTests {
         let done = expectationWithDescription("done")
 
         errorTask()
+            .response { _, _ in
+                return .Empty
+            }
             .transform { _ in
                 XCTFail("Did not expect transform closure to be called")
                 return .Empty
@@ -355,6 +378,9 @@ extension ServiceTaskTests {
         var closure1CalledFirst = false
 
         successfulTask()
+            .response { _, _ in
+                return .Empty
+            }
             .transform { _ in
                 closure1CalledFirst = true
                 closure1Called.fulfill()
@@ -374,16 +400,9 @@ extension ServiceTaskTests {
         let closure1Called = expectationWithDescription("transform closure 1 called")
         let closure2Called = expectationWithDescription("transform closure 2 called")
         let closure3Called = expectationWithDescription("transform closure 3 called")
-        let closure4Called = expectationWithDescription("transform closure 4 called")
         let done = expectationWithDescription("done")
 
         successfulTask()
-            .transform { value in
-                XCTAssertNil(value, "Expected initial value to be nil")
-
-                closure1Called.fulfill()
-                return .Value("transform 1 value")
-            }
             .response { _, _ in
                 return .Value("response value")
             }
@@ -394,28 +413,28 @@ extension ServiceTaskTests {
                     XCTFail("Expected to receive result of previous handler")
                 }
 
-                closure2Called.fulfill()
-                return .Value("transform 2 value")
+                closure1Called.fulfill()
+                return .Value("transform 1 value")
             }
             .transform { value in
                 if let value = value as? String {
-                    XCTAssertEqual(value, "transform 2 value", "Expected to receive result of previous handler")
+                    XCTAssertEqual(value, "transform 1 value", "Expected to receive result of previous handler")
                 } else {
                     XCTFail("Expected to receive result of previous handler")
                 }
 
-                closure3Called.fulfill()
+                closure2Called.fulfill()
                 return .Empty
             }
             .transform { value in
                 XCTAssertNil(value, "Expected .Empty result to propagate as nil")
 
-                closure4Called.fulfill()
-                return .Value("transform 4 value")
+                closure3Called.fulfill()
+                return .Value("transform 3 value")
             }
             .updateUI { value in
                 if let value = value as? String {
-                    XCTAssertEqual(value, "transform 4 value", "Expected to receive result of previous handler")
+                    XCTAssertEqual(value, "transform 3 value", "Expected to receive result of previous handler")
                 } else {
                     XCTFail("Expected to receive result of previous handler")
                 }
@@ -448,6 +467,9 @@ extension ServiceTaskTests {
         let done = expectationWithDescription("done")
 
         successfulTask()
+            .response { _, _ in
+                return .Empty
+            }
             .recover { error in
                 XCTFail("Did not expect recover closure to be called")
                 return .Failure(error)
@@ -544,6 +566,9 @@ extension ServiceTaskTests {
         }
 
         successfulTask()
+            .response { _, _ in
+                return .Empty
+            }
             .transform { _ in
                 closure1Called.fulfill()
                 return .Failure(ServiceTaskTestError.Oops)
