@@ -67,12 +67,6 @@ extension ServiceTask {
 // MARK: - Obj-C Interop for Response Handler API
 
 extension ServiceTask {
-    public enum ObjCBridgeError: ErrorType {
-        /// An error indicating an objc handler should have been called, but the
-        /// value was neither `nil`, nor an object.
-        case NonObjectValue
-    }
-    
     /// Response handler type for Obj-C
     typealias ObjCResponseHandler = (NSData?, NSURLResponse?) -> ObjCHandlerResult?
 
@@ -121,11 +115,7 @@ extension ServiceTask {
      */
     @objc public func transformObjC(handler: (AnyObject?) -> ObjCHandlerResult?) -> Self {
         return transform { value in
-            guard let value = value as? AnyObject? else {
-                return .Failure(ObjCBridgeError.NonObjectValue)
-            }
-
-            return ServiceTaskResult(objCHandlerResult: handler(value))
+            return ServiceTaskResult(objCHandlerResult: handler(value as! AnyObject?))
         }
     }
 
