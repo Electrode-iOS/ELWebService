@@ -5,6 +5,7 @@
 - [Sending Requests](#sending-requests)
 - [Handling Responses](handling-responses)
 - [Handling JSON](#handling-json)
+- [Composing Response Handlers](#composing-response-handlers)
 - [Updating UI](#updating-ui)
 - [Request Parameters](#request-parameters)
 - [Request Encoding](#request-encoding)
@@ -107,9 +108,9 @@ service
     .resume()
 ```
 
-### Composing Response Closures
+## Composing Response Handlers
 
-At times, it can be useful to process the response using multiple closures. Additional processing closures are added using the `transform()` method.
+At times, it can be useful to process the response using multiple handlers. Additional processing handlers are added using the `transform()` method.
 
 ```
 service
@@ -132,7 +133,7 @@ service
     .resume()
 ```
 
-Processing closures are only called when there is a value to process, not when there is an error. If an earlier closure returns a `.Failure` result, then the closures that follow are not invoked.
+Processing handlers are only called when there is a value to process, not when there is an error. If an earlier handler returns a `.Failure` result, then the handlers that follow are not invoked.
 
 ```
 service
@@ -148,7 +149,7 @@ service
 
 Closures that _are_ called when there is an error can be added using the `recover()` method.
 
-A recovery closure can return a value (`.Empty` or `.Value`) to indicate that it succeeded in recovering. Or, it can return an error (`.Failure`) to indicate that it could not recover.
+A recovery handler can return a value (`.Empty` or `.Value`) to indicate that it succeeded in recovering. Or, it can return an error (`.Failure`) to indicate that it could not recover.
 
 ```
 service
