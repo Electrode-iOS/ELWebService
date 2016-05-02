@@ -107,20 +107,86 @@ service
     .resume()
 ```
 
+### Composing Response Closures
+
+At times, it can be useful to process the response using multiple closures. Additional processing closures are added using the `transform()` method.
+
+```
+service
+    .GET("/brewers")
+    .response { data, response in
+        let intermediateValue: (Int, Int)
+
+        // process response to create intermediate value
+
+        return .Value(intermediateValue)
+    }
+    .transform { _intermediateValue in
+        let intermediateValue = _intermediateValue as! (Int, Int)
+        let finalValue: Int
+
+        // process intermediate value to create final value
+
+        return .Value(finalValue)
+    }
+    .resume()
+```
+
+Processing closures are only called when there is a value to process, not when there is an error. If an earlier closure returns a `.Failure` result, then the closures that follow are not invoked.
+
+```
+service
+    .GET("/brewers")
+    .response { data, response in
+        return .Failure(Error.Nope)
+    }
+    .transform { value in
+        // closure is **not** called
+    }
+    .resume()
+```
+
+Closures that _are_ called when there is an error can be added using the `recover()` method.
+
+A recovery closure can return a value (`.Empty` or `.Value`) to indicate that it succeeded in recovering. Or, it can return an error (`.Failure`) to indicate that it could not recover.
+
+```
+service
+    .GET("/brewers")
+    .response { data, response in
+        return .Failure(MyError.Nope)
+    }
+    .recover { error in
+        if recoverGracefully(error) {
+            // recovery succeeds:
+            return .Value("It's all good")
+        }
+
+        // recovery fails:
+        return .Failure(error)
+    }
+    .transform { value in
+        // closure **is** called _if_ recovery succeeds
+    }
+    .resume()
+```
+
+Any number of processing closures can be added. Closures are called in the order that they are added, with the result of one closure becoming the input to the next. Control switches between transform and recovery closures as values and errors are returned.
+
 ## Updating UI
 
-All response and error handlers that are registered with the `response()`, `responseJSON()`, and `responseError()` methods will run on a background queue. If you're updating UI with a response or error you'll need to make sure your updates happen on the main thread. ELWebService provides `updateUI()` and `updateErrorUI()` methods for registering handlers that will be dispatched to the main queue.
+All response and error handlers that are registered with the `response()`, `responseJSON()`, `responseError()`, `transform()` and `recover()` methods will run on a background queue. If you're updating UI with a response or error you'll need to make sure your updates happen on the main thread. ELWebService provides `updateUI()` and `updateErrorUI()` methods for registering handlers that will be dispatched to the main queue.
 
 ```
 service
     .GET("/brewers")
     .responseJSON { json, response in
-      if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
-          return .Value(models)
-      } else {
-        // any value conforming to ErrorType
-        return .Failure(JSONDecoderError.FailedToDecodeBrewer)
-      }
+        if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+            return .Value(models)
+        } else {
+            // any value conforming to ErrorType
+            return .Failure(JSONDecoderError.FailedToDecodeBrewer)
+        }
     }
     .updateUI { value in
         // this closure will be dispatched to the main queue via `updateUI()`
@@ -134,7 +200,7 @@ service
 
 ## Request Parameters
 
-Parameterized data that is structured as a dictinoary type of `[String: AnyObject]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
+Parameterized data that is structured as a dictionary type of `[String: AnyObject]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
 
 ```
 service
@@ -233,7 +299,7 @@ Finally the `updateUI()` handler will be run if all previous response handlers d
 service
     .GET("/brewers")
     .response { data, response in
-        // filter reseponses that do not respond with status 200
+        // filter responses that do not have status 200
 
         if let httpResponse = response as? NSHTTPURLResponse
             where httpResponse.statusCode != 200 {
