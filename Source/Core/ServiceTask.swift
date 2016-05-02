@@ -190,6 +190,9 @@ extension ServiceTask {
 // MARK: - Response API
 
 extension ServiceTask {
+    /// A closure type alias for a result transformation handler.
+    public typealias ResultTransformer = Any? -> ServiceTaskResult
+
     /**
      Add a response handler to be called on background thread after a successful
      response has been received.
@@ -212,6 +215,37 @@ extension ServiceTask {
         return self
     }
     
+    /**
+     Add a response handler to transform a (non-error) result produced by an earlier
+     response handler.
+
+     The handler can return any type of service task result, `.Empty`, `.Value` or
+     `.Failure`. The result is propagated to later response handlers.
+
+     - parameter handler: Transformation handler to execute.
+     - returns: Self instance to support chaining.
+     */
+    public func transform(handler: ResultTransformer) -> Self {
+        handlerQueue.addOperationWithBlock {
+            guard let taskResult = self.taskResult else {
+                return
+            }
+
+            switch taskResult {
+            case .Failure(_):
+                return // bail out; do not run this handler
+
+            case .Empty:
+                self.taskResult = handler(nil)
+
+            case .Value(let value):
+                self.taskResult = handler(value)
+            }
+        }
+        
+        return self
+    }
+
     /**
      Add a handler that runs on the main thread and is responsible for updating 
      the UI with a given value. The handler is only called if a previous response 
@@ -280,6 +314,9 @@ extension ServiceTask {
 // MARK: - Error Handling
 
 extension ServiceTask {
+    /// A closure type alias for an error-recovery handler.
+    public typealias ErrorRecoveryHandler = ErrorType -> ServiceTaskResult
+
     /**
     Add a response handler to be called if a request results in an error.
     
@@ -316,6 +353,35 @@ extension ServiceTask {
                     }
                 case .Empty, .Value(_): break
                 }
+            }
+        }
+        
+        return self
+    }
+
+    /**
+     Add a response handler to recover from an error produced by an earlier response
+     handler.
+     
+     The handler can return either a `.Value` or `.Empty`, indicating it was able to
+     recover from the error, or an `.Failure`, indicating that it was not able to
+     recover. The result is propagated to later response handlers.
+     
+     - parameter handler: Recovery handler to execute when an error occurs.
+     - returns: Self instance to support chaining.
+    */
+    public func recover(handler: ErrorRecoveryHandler) -> Self {
+        handlerQueue.addOperationWithBlock {
+            guard let taskResult = self.taskResult else {
+                return
+            }
+
+            switch taskResult {
+            case .Failure(let error):
+                self.taskResult = handler(error)
+
+            case .Empty, .Value(_):
+                return // bail out; do not run this handler
             }
         }
         

@@ -1,3 +1,12 @@
+# [3.1.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.1.0)
+
+- Force-downcast `updateUIObjC` handler's value to avoid silent failure. Fixes [#34](https://github.com/Electrode-iOS/ELWebService/issues/34).
+- Introduced `transform()` and `recover()` response handler API. See the [Composing Response Handlers](https://github.com/Electrode-iOS/ELWebService/blob/master/docs/Programming-Guide.md#composing-response-handlers) section of programming guide for more info on how to use the new API.
+
+# [3.0.2](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.0.2)
+
+- Removed the `SessionDataTaskDataSource` deprecation warnings that were declared with the `@available` attribute. The `@available` attribute was causing warnings to surface in Xcode projects that contained the ELWebService Xcode project as a subproject even when the deprecated API was not being called from the parent project. Due to Walmart's internal workflow being dependant on including ELWebService as a subproject, a decision was made to remove the `@avaiable` deprecation warnings in a patch release.
+
 # [3.0.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.0.1)
 
 - Resolved Swift 3 deprecation warnings.
