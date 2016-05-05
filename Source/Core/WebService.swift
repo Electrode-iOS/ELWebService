@@ -62,9 +62,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded as
-    a query string for `GET` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -77,9 +74,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded and
-    is set as the HTTP body for `POST` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -92,9 +86,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded and
-    is set as the HTTP body for `PUT` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -107,9 +98,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded and
-    is set as the HTTP body for `DELETE` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -122,9 +110,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded as
-    a query string for `HEAD` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
