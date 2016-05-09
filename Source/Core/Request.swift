@@ -65,9 +65,15 @@ public struct Request {
          - returns: A NSURL value with query string parameters encoded.
         */
         public func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL? {
-            let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false)
-            components?.appendQueryItems(parameters.queryItems)
-            return components?.URL
+            switch self {
+            case .Percent:
+                let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false)
+                components?.appendQueryItems(parameters.queryItems)
+                return components?.URL
+            case .JSON:
+                assertionFailure("Cannot encode URL parameters using JSON encoding")
+                return nil // <-- unreachable
+            }
         }
         
         /**
