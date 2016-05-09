@@ -160,4 +160,35 @@ class RequestTests: XCTestCase {
         XCTAssertEqual(components.count, 1)
         XCTAssertEqual(encodedBody, testData)
     }
+
+    // MARK: - Where do parameters go?
+
+    func test_urlRequestValue_parametersInURL() {
+        test_urlRequestValue_parametersInURL(.GET)
+        test_urlRequestValue_parametersInURL(.HEAD)
+        test_urlRequestValue_parametersInURL(.DELETE)
+    }
+
+    func test_urlRequestValue_parametersInURL(method: Request.Method) {
+        var request = Request(method, url: "http://httpbin.org/")
+        request.parameters = ["x" : "1"]
+
+        let query = request.urlRequestValue.URL!.query!
+
+        XCTAssertEqual(query, "x=1")
+    }
+
+    func test_urlRequestValue_parametersInBody() {
+        test_urlRequestValue_parametersInBody(.PUT)
+        test_urlRequestValue_parametersInBody(.POST)
+    }
+
+    func test_urlRequestValue_parametersInBody(method: Request.Method) {
+        var request = Request(method, url: "http://httpbin.org/")
+        request.parameters = ["x" : "1"]
+
+        let body = NSString(data: request.urlRequestValue.HTTPBody!, encoding: NSUTF8StringEncoding)
+
+        XCTAssertEqual(body, "x=1")
+    }
 }

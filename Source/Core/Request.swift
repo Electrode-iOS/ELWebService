@@ -31,6 +31,21 @@ public struct Request {
         case POST = "POST"
         case PUT = "PUT"
         case DELETE = "DELETE"
+
+        /**
+         Whether requests using this method should encode parameters in the URL, instead of the body.
+
+         `GET`, `HEAD` and `DELETE` requests encode parameters in the URL, `PUT` and `POST` encode
+         them in the body.
+         */
+        func encodesParametersInURL() -> Bool {
+            switch self {
+            case .GET, .HEAD, .DELETE:
+                return true
+            default:
+                return false
+            }
+        }
     }
     
     // MARK: Parameter Encodings
@@ -50,9 +65,15 @@ public struct Request {
          - returns: A NSURL value with query string parameters encoded.
         */
         public func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL? {
-            let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false)
-            components?.appendQueryItems(parameters.queryItems)
-            return components?.URL
+            switch self {
+            case .Percent:
+                let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false)
+                components?.appendQueryItems(parameters.queryItems)
+                return components?.URL
+            case .JSON:
+                assertionFailure("Cannot encode URL parameters using JSON encoding")
+                return nil // <-- unreachable
+            }
         }
         
         /**
@@ -166,13 +187,12 @@ extension Request: URLRequestEncodable {
         }
         
         if parameters.count > 0 {
-            switch method {
-            case .GET, .DELETE:
+            if method.encodesParametersInURL() {
                 if let url = urlRequest.URL,
                     encodedURL = parameterEncoding.encodeURL(url, parameters: parameters) {
                         urlRequest.URL = encodedURL
                 }
-            default:
+            } else {
                 if let data = parameterEncoding.encodeBody(parameters) {
                     urlRequest.HTTPBody = data
                     
