@@ -31,6 +31,21 @@ public struct Request {
         case POST = "POST"
         case PUT = "PUT"
         case DELETE = "DELETE"
+
+        /**
+         Whether requests using this method should encode parameters in the URL, instead of the body.
+
+         `GET`, `HEAD` and `DELETE` requests encode parameters in the URL, `PUT` and `POST` encode
+         them in the body.
+         */
+        func encodesParametersInURL() -> Bool {
+            switch self {
+            case .GET, .HEAD, .DELETE:
+                return true
+            default:
+                return false
+            }
+        }
     }
     
     // MARK: Parameter Encodings
@@ -166,13 +181,12 @@ extension Request: URLRequestEncodable {
         }
         
         if parameters.count > 0 {
-            switch method {
-            case .GET, .HEAD, .DELETE:
+            if method.encodesParametersInURL() {
                 if let url = urlRequest.URL,
                     encodedURL = parameterEncoding.encodeURL(url, parameters: parameters) {
                         urlRequest.URL = encodedURL
                 }
-            default:
+            } else {
                 if let data = parameterEncoding.encodeBody(parameters) {
                     urlRequest.HTTPBody = data
                     
