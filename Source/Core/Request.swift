@@ -167,7 +167,7 @@ extension Request: URLRequestEncodable {
         
         if parameters.count > 0 {
             switch method {
-            case .GET, .HEAD:
+            case .GET, .HEAD, .DELETE:
                 if let url = urlRequest.URL,
                     encodedURL = parameterEncoding.encodeURL(url, parameters: parameters) {
                         urlRequest.URL = encodedURL
