@@ -262,13 +262,13 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Value(let value):
-                    dispatch_async(dispatch_get_main_queue()) {
+                    dispatch_sync(dispatch_get_main_queue()) {
                         self.passthroughDelegate?.updateUIBegin(self.urlResponse)
                         handler(value)
                         self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                     }
                 case .Empty:
-                    dispatch_async(dispatch_get_main_queue()) {
+                    dispatch_sync(dispatch_get_main_queue()) {
                         self.passthroughDelegate?.updateUIBegin(self.urlResponse)
                         handler(nil)
                         self.passthroughDelegate?.updateUIEnd(self.urlResponse)
@@ -348,7 +348,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .Failure(let error):
-                    dispatch_async(dispatch_get_main_queue()) {
+                    dispatch_sync(dispatch_get_main_queue()) {
                         handler(error)
                     }
                 case .Empty, .Value(_): break
