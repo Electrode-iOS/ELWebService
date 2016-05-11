@@ -25,6 +25,21 @@ public struct Request {
         case POST = "POST"
         case PUT = "PUT"
         case DELETE = "DELETE"
+
+        /**
+         Whether requests using this method should encode parameters in the URL, instead of the body.
+
+         `GET`, `HEAD` and `DELETE` requests encode parameters in the URL, `PUT` and `POST` encode
+         them in the body.
+         */
+        func encodesParametersInURL() -> Bool {
+            switch self {
+            case .GET, .HEAD, .DELETE:
+                return true
+            default:
+                return false
+            }
+        }
     }
     
     // MARK: Parameter Encodings
@@ -45,7 +60,14 @@ public struct Request {
         */
         // TODO: remove this function in 4.0.0
         public func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL? {
-            return url.URLByAppendingQueryItems(parameters.queryItems)
+            switch self {
+            case .Percent:
+                return url.URLByAppendingQueryItems(parameters.queryItems)
+            
+            case .JSON:
+                assertionFailure("Cannot encode URL parameters using JSON encoding")
+                return nil // <-- unreachable
+            }
         }
         
         /**
@@ -163,7 +185,6 @@ extension Request: URLRequestEncodable {
      - returns: A NSURLRequest encoded based on the Request data.
     */
     public var urlRequestValue: NSURLRequest {
-
         let urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
         urlRequest.HTTPMethod = method.rawValue
         urlRequest.cachePolicy = cachePolicy
@@ -173,13 +194,11 @@ extension Request: URLRequestEncodable {
         }
         
         if parameters.count > 0 {
-            switch method {
-            case .GET, .DELETE:
+            if method.encodesParametersInURL() {
                 if let encodedURL = urlRequest.URL?.URLByAppendingQueryItems(parameters.queryItems) {
                     urlRequest.URL = encodedURL
                 }
-   
-            default:
+            } else {
                 if let data = parameterEncoding.encodeBody(parameters) {
                     urlRequest.HTTPBody = data
                     
