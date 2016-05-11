@@ -128,7 +128,11 @@ class RequestTests: XCTestCase {
     }
     
     func test_formParameters_setsFormEncodedHeaderField() {
+        var request = Request(.POST, url: "http://httpbin.org/")
+        request.formParameters = ["percentEncoded" : "this needs percent encoded"]
         
+        XCTAssertNotNil(request.contentType)
+        XCTAssertEqual(request.contentType!, Request.ContentType.formEncoded)
     }
     
     func test_formParameters_encodesDataInRequestBody() {
