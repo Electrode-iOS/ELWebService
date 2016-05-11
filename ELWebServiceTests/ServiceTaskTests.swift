@@ -95,6 +95,28 @@ class ServiceTaskTests: XCTestCase {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
+    
+    func test_updateUI_blocksHandlerChainExecution() {
+        let expectation = expectationWithDescription("response handler is called")
+        var updateUIExecuted = false
+        
+        successfulTask()
+            .response { _, _ in
+                return .Value(true)
+            }
+            .updateUI { _ in
+                sleep(1)
+                updateUIExecuted = true
+            }
+            .response { _, _ in
+                XCTAssertTrue(updateUIExecuted, "Expected updateUI handler to block and complete execution before response handler is executed")
+                expectation.fulfill()
+                return .Empty
+            }
+            .resume()
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
 }
 
 // MARK: - JSON
@@ -309,6 +331,24 @@ extension ServiceTaskTests {
         
         task.updateErrorUI { error in
                 XCTAssertTrue(NSThread.isMainThread(), "updateErrorUI handler should be running on the main thread")
+                expectation.fulfill()
+            }
+            .resume()
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
+    func test_updateErrorUI_blocksHandlerChainExecution() {
+        let expectation = expectationWithDescription("response handler is called")
+        var updateErrorUIExecuted = false
+        
+        errorTask()
+            .updateErrorUI { _ in
+                sleep(1)
+                updateErrorUIExecuted = true
+            }
+            .responseError { _ in
+                XCTAssertTrue(updateErrorUIExecuted, "Expected updateErrorUI handler to block and complete execution before response handler is executed")
                 expectation.fulfill()
             }
             .resume()
