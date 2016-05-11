@@ -614,7 +614,8 @@ extension ServiceTaskTests {
         XCTAssertNotNil(recordedURLRequest?.allHTTPHeaderFields)
         
         let deliveredHeaders = recordedURLRequest!.allHTTPHeaderFields!
-        RequestTests.assertRequestParametersNotEqual(deliveredHeaders, toOriginalParameters: request.headers)
+        
+        ELTestAssertRequestParametersEqual(deliveredHeaders, request.headers)
     }
     
     func test_setHeaderValue_encodesValuesInURLRequest() {
@@ -751,7 +752,7 @@ extension ServiceTaskTests {
         
         // test original parameters against encoded
         if let bodyJSON = bodyJSON as? [String : AnyObject] {
-            RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: json)
+            ELTestAssertRequestParametersEqual(bodyJSON, json)
         } else {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
@@ -803,7 +804,7 @@ extension WebServiceTests {
         
         // test original parameters against encoded
         if let bodyJSON = bodyJSON as? [String : AnyObject] {
-            RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: request.parameters)
+            ELTestAssertRequestParametersEqual(bodyJSON, request.parameters)
         } else {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
@@ -849,9 +850,9 @@ extension WebServiceTests {
         let bodyJSON = try? NSJSONSerialization.JSONObjectWithData(recordedURLRequest!.HTTPBody!, options: NSJSONReadingOptions())
         XCTAssertNotNil(bodyJSON, "JSON should not be nil")
         
-        // test original parameters against encoded
         if let bodyJSON = bodyJSON as? [String : AnyObject] {
-            RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: request.parameters)
+            // test original parameters against encoded
+            ELTestAssertRequestParametersEqual(bodyJSON, request.parameters)
         } else {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
