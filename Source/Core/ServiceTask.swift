@@ -148,13 +148,15 @@ extension ServiceTask {
     }
     
     /// Sets the key/value pairs that will be encoded as the query in the URL.
-    public func setQueryParameters(parameters: [String: AnyObject]) {
+    public func setQueryParameters(parameters: [String: AnyObject]) -> Self {
         request.queryParameters = parameters
+        return self
     }
     
     /// Sets the key/value pairs that are encoded as form data in the request body.
-    public func setFormParameters(parameters: [String: AnyObject]) {
+    public func setFormParameters(parameters: [String: AnyObject]) -> Self {
         request.formParameters = parameters
+        return self
     }
 }
 
