@@ -271,22 +271,20 @@ extension ServiceTask {
     */
     public func updateUI(handler: UpdateUIHandler) -> Self {
         handlerQueue.addOperationWithBlock {
-            if let taskResult = self.taskResult {
-                switch taskResult {
-                case .Value(let value):
-                    dispatch_sync(dispatch_get_main_queue()) {
-                        self.passthroughDelegate?.updateUIBegin(self.urlResponse)
-                        handler(value)
-                        self.passthroughDelegate?.updateUIEnd(self.urlResponse)
-                    }
-                case .Empty:
-                    dispatch_sync(dispatch_get_main_queue()) {
-                        self.passthroughDelegate?.updateUIBegin(self.urlResponse)
-                        handler(nil)
-                        self.passthroughDelegate?.updateUIEnd(self.urlResponse)
-                    }
-                case .Failure(_): break
+            guard let taskResult = self.taskResult else {
+                return
+            }
+            
+            do {
+                let value = try taskResult.value()
+                
+                dispatch_sync(dispatch_get_main_queue()) {
+                    self.passthroughDelegate?.updateUIBegin(self.urlResponse)
+                    handler(value)
+                    self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                 }
+            } catch _ {
+                return
             }
         }
         
@@ -310,15 +308,11 @@ extension ServiceTask {
     public func responseJSON(handler: JSONHandler) -> Self {
         return response { data, response in
             guard let data = data else {
-                return .Failure(ServiceTaskError.JSONSerializationFailedNilResponseBody)
+                throw ServiceTaskError.JSONSerializationFailedNilResponseBody
             }
             
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
-                return try handler(json, response)
-            } catch let error {
-                return .Failure(error)
-            }
+            let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
+            return try handler(json, response)
         }
     }
 }
