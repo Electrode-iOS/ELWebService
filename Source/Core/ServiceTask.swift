@@ -203,7 +203,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for a result transformation handler.
-    public typealias ResultTransformer = Any? -> ServiceTaskResult
+    public typealias ResultTransformer = (Any?) throws -> ServiceTaskResult
 
     /**
      Add a response handler to be called on background thread after a successful
@@ -246,16 +246,12 @@ extension ServiceTask {
             guard let taskResult = self.taskResult else {
                 return
             }
-
-            switch taskResult {
-            case .Failure(_):
-                return // bail out; do not run this handler
-
-            case .Empty:
-                self.taskResult = handler(nil)
-
-            case .Value(let value):
-                self.taskResult = handler(value)
+            
+            do {
+                let resultValue = try taskResult.value()
+                self.taskResult = try handler(resultValue)
+            } catch let error {
+                self.taskResult = .Failure(error)
             }
         }
         
@@ -331,7 +327,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for an error-recovery handler.
-    public typealias ErrorRecoveryHandler = ErrorType -> ServiceTaskResult
+    public typealias ErrorRecoveryHandler = (ErrorType) throws -> ServiceTaskResult
 
     /**
     Add a response handler to be called if a request results in an error.
@@ -394,7 +390,11 @@ extension ServiceTask {
 
             switch taskResult {
             case .Failure(let error):
-                self.taskResult = handler(error)
+                do {
+                    self.taskResult = try handler(error)
+                } catch let error {
+                    self.taskResult = .Failure(error)
+                }
 
             case .Empty, .Value(_):
                 return // bail out; do not run this handler
