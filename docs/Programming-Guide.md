@@ -201,6 +201,31 @@ service
 
 ## Request Parameters
 
+### Query Parameters
+
+Query parameters are percent-encoded and appended as a query string of the request URL. The code below sends a request with the URL "/brewers?state=new%20york".
+
+```
+service
+    .GET("/brewers")
+    .setQueryParameters(["state" : "new york"])
+```
+
+### Form Parameters
+
+Form parameters are sent as percent-encoded data in the request body. Setting form parameters will automatically set the Content-Type header to `"application/x-www-form-urlencoded"`.
+
+```
+service
+    .POST("/brewers")
+    .setFormParameters(["name": "Trashboat Brewing"])
+```
+
+
+### Legacy Request Parameter API (deprecated)
+
+**NOTE: The `setParameters(parameters:)`, `setParameters(parameters:encoding:)`, and `Request.ParameterEncoding` APIs are deprecated as of v3.2.0 and will be removed in v4.0.0. Use `setQueryParameters()`, `setFormParameters()`, and `setJSON()` instead.**
+
 Parameterized data that is structured as a dictionary type of `[String: AnyObject]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
 
 ```
@@ -229,7 +254,9 @@ service
 
 Now the parameters are JSON encoded in the body of the request.
 
-### Parameter Encodings
+### Legacy Parameter Encodings API (deprecated)
+
+**NOTE: The `Request.ParameterEncoding` APIs are deprecated as of v3.2.0 and will be removed in v4.0.0. Use `setQueryParameters()`, `setFormParameters()`, and `setJSON()` instead.**
 
 The `setParameters()` method accepts an optional second parameter named `encoding` that allows you to specify how the request parameters will be encoded in the HTTP request. A value of `.JSON` will serialize the `parameters` data as JSON in the HTTP body and set the Content-Type HTTP header to "application/json".
 

@@ -8,12 +8,6 @@
 
 import Foundation
 
-/// Defines an interface for encoding parameters in a HTTP request.
-protocol ParameterEncoder {
-    func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL?
-    func encodeBody(parameters: [String : AnyObject]) -> NSData?
-}
-
 /// Defines an interface for encoding a `NSURLRequest`.
 public protocol URLRequestEncodable {
     var urlRequestValue: NSURLRequest {get}
@@ -51,7 +45,7 @@ public struct Request {
     // MARK: Parameter Encodings
     
     /// A `ParameterEncoding` value defines how to encode request parameters
-    public enum ParameterEncoding: ParameterEncoder {
+    public enum ParameterEncoding {
         /// Encode parameters with percent encoding
         case Percent
         /// Encode parameters as JSON
@@ -64,12 +58,12 @@ public struct Request {
          - parameter parameters: Query parameters to be encoded as a query string.
          - returns: A NSURL value with query string parameters encoded.
         */
+        // TODO: remove this function in 4.0.0
         public func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL? {
             switch self {
             case .Percent:
-                let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false)
-                components?.appendQueryItems(parameters.queryItems)
-                return components?.URL
+                return url.URLByAppendingQueryItems(parameters.queryItems)
+            
             case .JSON:
                 assertionFailure("Cannot encode URL parameters using JSON encoding")
                 return nil // <-- unreachable
@@ -122,8 +116,22 @@ public struct Request {
      encoded and are appended as a query string or set as the request body 
      depending on the HTTP request method.
     */
+    // TODO: remove `parameters` in 4.0.0
     public var parameters = [String : AnyObject]()
     
+    /// The key/value pairs that will be encoded as the query in the URL.
+    public var queryParameters: [String : AnyObject]?
+    
+    /// The key/value pairs that are encoded as form data in the request body.
+    public var formParameters: [String : AnyObject]? {
+        didSet {
+            if let formData = formParameters?.percentEncodedData {
+                body = formData
+                contentType = ContentType.formEncoded
+            }
+        }
+    }
+
     /**
      The HTTP header fields of the request. Each key/value pair represents a 
      HTTP header field value using the key as the field name.
@@ -177,7 +185,6 @@ extension Request: URLRequestEncodable {
      - returns: A NSURLRequest encoded based on the Request data.
     */
     public var urlRequestValue: NSURLRequest {
-
         let urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
         urlRequest.HTTPMethod = method.rawValue
         urlRequest.cachePolicy = cachePolicy
@@ -188,9 +195,8 @@ extension Request: URLRequestEncodable {
         
         if parameters.count > 0 {
             if method.encodesParametersInURL() {
-                if let url = urlRequest.URL,
-                    encodedURL = parameterEncoding.encodeURL(url, parameters: parameters) {
-                        urlRequest.URL = encodedURL
+                if let encodedURL = urlRequest.URL?.URLByAppendingQueryItems(parameters.queryItems) {
+                    urlRequest.URL = encodedURL
                 }
             } else {
                 if let data = parameterEncoding.encodeBody(parameters) {
@@ -207,7 +213,13 @@ extension Request: URLRequestEncodable {
         if let body = body {
             urlRequest.HTTPBody = body
         }
-
+        
+        // queryParameters property overwrite and previously encoded query values
+        if let queryParameters = queryParameters,
+            let encodedURL = urlRequest.URL?.URLByAppendingQueryItems(queryParameters.queryItems) {
+            urlRequest.URL = encodedURL
+        }
+        
         return urlRequest.copy() as! NSURLRequest
     }
 }
@@ -237,6 +249,18 @@ extension Dictionary {
         }
         
         return items
+    }
+    
+    var percentEncodedData: NSData? {
+        return percentEncodedQueryString?.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+    }
+}
+
+extension NSURL {
+    func URLByAppendingQueryItems(newItems: [NSURLQueryItem]) -> NSURL? {
+        let components = NSURLComponents(URL: self, resolvingAgainstBaseURL: false)
+        components?.appendQueryItems(newItems)
+        return components?.URL
     }
 }
 

@@ -87,7 +87,7 @@ class ParameterEncodingTests: XCTestCase {
         
         // test original parameters against encoded
         if let json = json as? [String : AnyObject] {
-            RequestTests.assertRequestParametersNotEqual(json, toOriginalParameters: parameters)
+            ELTestAssertRequestParametersEqual(json, parameters)
         } else {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
