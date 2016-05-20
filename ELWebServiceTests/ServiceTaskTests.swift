@@ -536,11 +536,20 @@ extension ServiceTaskTests {
         let closure1Called = expectationWithDescription("recover closure 1 callled")
         let closure2Called = expectationWithDescription("recover closure 2 callled")
         var closure1CalledFirst = false
-
+        let firstRecoveryShouldFail = true
+        struct RecoveryFailure: ErrorType {
+        }
+        
         errorTask()
             .recover { error in
                 closure1CalledFirst = true
                 closure1Called.fulfill()
+                
+                guard !firstRecoveryShouldFail else {
+                    // must throw an error because returning nil means the recovery was successful
+                    throw RecoveryFailure()
+                }
+                
                 return nil
             }
             .recover { error in
