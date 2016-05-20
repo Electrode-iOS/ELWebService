@@ -105,12 +105,14 @@ public class MockSession: Session {
         requestSent(request)
         
         let (data, response, error) = stubbedResponse(request: request)
+        let task = MockDataTask()
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            task.state = .Completed
             completion(data, response, error)
         }
         
-        return MockDataTask()
+        return task
     }
     
     public func requestSent(request: URLRequestEncodable) {
