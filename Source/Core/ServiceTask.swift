@@ -237,6 +237,10 @@ extension ServiceTask {
      */
     public func transform(handler: ResultTransformer) -> Self {
         handlerQueue.addOperationWithBlock {
+            guard self.handlerError == nil && self.state == .Completed else {
+                return
+            }
+            
             do {
                 self.handlerResult = try handler(self.handlerResult)
             } catch let error {
