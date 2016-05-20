@@ -16,6 +16,14 @@ public enum ServiceTaskResult {
     case Value(Any)
     /// Defines a task resulting in an error
     case Failure(ErrorType)
+    
+    func value() throws -> Any? {
+        switch self {
+        case .Failure(let error): throw error
+        case .Empty: return nil
+        case .Value(let value): return value
+        }
+    }
 }
 
 // MARK: - Objective-C Interop

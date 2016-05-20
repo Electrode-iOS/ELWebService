@@ -102,6 +102,45 @@ extension ServiceTask {
     }
     
     /**
+     Add a response handler to transform a (non-error) result produced by an earlier
+     response handler.
+
+     This method is designed to be called from Obj-C. Please use
+     `transform(handler: ResultTransformer)` when calling from Swift.
+
+     The handler can return any type of service task result, `.Empty`, `.Value` or
+     `.Failure`. The result is propagated to later response handlers.
+
+     - parameter handler: Transformation handler to execute.
+     - returns: Self instance to support chaining.
+     */
+    @objc public func transformObjC(handler: (AnyObject?) -> ObjCHandlerResult?) -> Self {
+        return transform { value in
+            return ServiceTaskResult(objCHandlerResult: handler(value as! AnyObject?))
+        }
+    }
+
+    /**
+     Add a response handler to recover from an error produced by an earlier response
+     handler.
+     
+     This method is designed to be called from Obj-C. Please use
+     `recover(handler: ErrorRecoveryHandler)` when calling from Swift.
+
+     The handler can return either a `.Value` or `.Empty`, indicating it was able to
+     recover from the error, or an `.Failure`, indicating that it was not able to
+     recover. The result is propagated to later response handlers.
+
+     - parameter handler: Recovery handler to execute when an error occurs.
+     - returns: Self instance to support chaining.
+     */
+    @objc public func recoverObjC(handler: (NSError) -> ObjCHandlerResult?) -> Self {
+        return recover { error in
+            return ServiceTaskResult(objCHandlerResult: handler(error as NSError))
+        }
+    }
+
+    /**
      Add a response handler to be called if a request results in an error.
      
      This method is designed to be called from Obj-C. Please use 
@@ -132,9 +171,7 @@ extension ServiceTask {
     */
     @objc public func updateUIObjC(handler: (AnyObject?) -> Void) -> Self {
         return updateUI { value in
-            if let value = value as? AnyObject {
-                handler(value)
-            }
+            handler(value as! AnyObject?)
         }
     }
     

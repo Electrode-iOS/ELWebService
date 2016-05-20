@@ -148,6 +148,18 @@ extension ServiceTask {
         request.parameterEncoding = encoding
         return self
     }
+    
+    /// Sets the key/value pairs that will be encoded as the query in the URL.
+    public func setQueryParameters(parameters: [String: AnyObject]) -> Self {
+        request.queryParameters = parameters
+        return self
+    }
+    
+    /// Sets the key/value pairs that are encoded as form data in the request body.
+    public func setFormParameters(parameters: [String: AnyObject]) -> Self {
+        request.formParameters = parameters
+        return self
+    }
 }
 
 // MARK: - NSURLSesssionDataTask
@@ -187,6 +199,9 @@ extension ServiceTask {
 // MARK: - Response API
 
 extension ServiceTask {
+    /// A closure type alias for a result transformation handler.
+    public typealias ResultTransformer = (Any?) throws -> Any?
+
     /**
      Add a response handler to be called on background thread after a successful
      response has been received.
@@ -211,6 +226,28 @@ extension ServiceTask {
     }
     
     /**
+     Add a response handler to transform a (non-error) result produced by an earlier
+     response handler.
+
+     The handler can return any type of service task result, `.Empty`, `.Value` or
+     `.Failure`. The result is propagated to later response handlers.
+
+     - parameter handler: Transformation handler to execute.
+     - returns: Self instance to support chaining.
+     */
+    public func transform(handler: ResultTransformer) -> Self {
+        handlerQueue.addOperationWithBlock {
+            do {
+                self.handlerResult = try handler(self.handlerResult)
+            } catch let error {
+                self.handlerError = error
+            }
+        }
+        
+        return self
+    }
+
+    /**
      Add a handler that runs on the main thread and is responsible for updating 
      the UI with a given value. The handler is only called if a previous response 
      handler in the chain does **not** return a `.Failure` value.
@@ -227,7 +264,7 @@ extension ServiceTask {
                 return
             }
             
-            dispatch_async(dispatch_get_main_queue()) {
+            dispatch_sync(dispatch_get_main_queue()) {
                 self.passthroughDelegate?.updateUIBegin(self.urlResponse)
                 handler(self.handlerResult)
                 self.passthroughDelegate?.updateUIEnd(self.urlResponse)
@@ -266,6 +303,9 @@ extension ServiceTask {
 // MARK: - Error Handling
 
 extension ServiceTask {
+    /// A closure type alias for an error-recovery handler.
+    public typealias ErrorRecoveryHandler = (ErrorType) throws -> Any?
+
     /**
     Add a response handler to be called if a request results in an error.
     
@@ -292,9 +332,36 @@ extension ServiceTask {
     public func updateErrorUI(handler: ErrorHandler) -> Self {
         handlerQueue.addOperationWithBlock {
             if let error = self.handlerError {
-                dispatch_async(dispatch_get_main_queue()) {
+                dispatch_sync(dispatch_get_main_queue()) {
                     handler(error)
                 }
+            }
+        }
+        
+        return self
+    }
+
+    /**
+     Add a response handler to recover from an error produced by an earlier response
+     handler.
+     
+     The handler can return either a `.Value` or `.Empty`, indicating it was able to
+     recover from the error, or an `.Failure`, indicating that it was not able to
+     recover. The result is propagated to later response handlers.
+     
+     - parameter handler: Recovery handler to execute when an error occurs.
+     - returns: Self instance to support chaining.
+    */
+    public func recover(handler: ErrorRecoveryHandler) -> Self {
+        handlerQueue.addOperationWithBlock {
+            guard let error = self.handlerError else {
+                return
+            }
+            
+            do {
+                self.handlerResult = try handler(error)
+            } catch let error {
+                self.handlerError = error
             }
         }
         

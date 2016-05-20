@@ -1,6 +1,6 @@
 # ELWebService [![Build Status](https://travis-ci.org/Electrode-iOS/ELWebService.svg?branch=master)](https://travis-ci.org/Electrode-iOS/ELWebService) [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-ELWebService (previously named Swallow) simplifies interaction with HTTP web services by providing a concise API for encoding `NSURLRequest` objects and processing `NSURLResponse` and `NSData` response objects. See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
+ELWebService (previously named Swallow) simplifies interaction with HTTP web services by providing an API for building `NSURLRequest` objects and processing `NSURLResponse` and `NSData` response objects. See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
 
 ## Requirements
 
@@ -13,7 +13,7 @@ ELWebService requires Swift 2.2 and Xcode 7.3.
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "Electrode-iOS/ELWebService" ~> 3.0.1
+github "Electrode-iOS/ELWebService" ~> 3.2.0
 ```
 
 ### Manual
@@ -24,7 +24,6 @@ Install manually by adding `ELWebService.xcodeproj` to your project and configur
 
 Below is a quick overview of how to get started using ELWebService. See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for detailed usage information.
 
-
 ### Sending HTTP Requests
 
 `WebService` provides an API for making a HTTP request and processing the response data.
@@ -34,7 +33,7 @@ let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 
 service
   .GET("/brewers")
-  .setParameters(["state" : "New York"])
+  .setQueryParameters(["state" : "New York"])
   .response { (response: NSURLResponse?, data: NSData?) in
     // process response data
   }
@@ -48,7 +47,7 @@ let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 
 service
   .GET("/brewers")
-  .setParameters(["state" : "New York"])
+  .setQueryParameters(["state" : "New York"])
   .response { (response: NSURLResponse?, data: NSData?) in
     // process response data
   }
@@ -60,7 +59,7 @@ service
 
 The error handler will only be called after a request results in an error. If an error occurs all other response handlers will not be called. This pattern allows you to cleanly separate the logic for handling success and failure cases.
 
-### JSON
+### Handling JSON responses
 
 Use the `responseJSON()` method to serialize a successful response as a JSON value of type `AnyObject`.
 
@@ -69,25 +68,17 @@ let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 
 service
   .GET("/brewers")
-  .setParameters(["state" : "New York"])
+  .setQueryParameters(["state" : "New York"])
   .responseJSON { (json: AnyObject, response: NSURLResponse?) in
     // process response as JSON
   }
   .resume()
 ```
 
-### Request Parameters
 
-Request parameters are percent encoded and appended as a query string of the request URL for `GET` and `HEAD` requests. For all other request methods, parameters are sent as the request body and are encoded based on the `parameterEncoding` endpoint option.
+### Sending URL Query Parameters
 
-##### Parameter Encodings
-
-- `.Percent` - Encode parameters as a percent encoded query string.
-- `.JSON` - Encode parameters as a JSON object.
-
-##### Sending Parameters
-
-Send a `GET` request with query parameters.
+Send a `GET` request with URL query parameters.
 
 ```
 let service = WebService(baseURLString: "http://httpbin.org")
@@ -95,20 +86,20 @@ let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"
 
 service
     .GET("/get")
-    .setParameters(parameters)
+    .setQueryParameters(parameters)
     .resume()
 ```
 
 HTTP
-
 
 ```
 GET /get?percentEncoded=this%20needs%20percent%20encoded&foo=bar HTTP/1.1
 
 ```
 
+### Sending Form Data
 
-Send a `POST` request with body parameters.
+Send a `POST` request with form parameter data in the request body.
 
 ```
 let service = WebService(baseURLString: "http://httpbin.org")
@@ -116,7 +107,7 @@ let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"
 
 service
     .POST("/post")
-    .setParameters(parameters)
+    .setFormParameters(parameters)
     .resume()
 ```
 
@@ -124,10 +115,13 @@ HTTP
 
 ```
 POST /post HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
 Content-Length: 55
 
 percentEncoded=this%20needs%20percent%20encoded&foo=bar
 ```
+
+### Sending JSON
 
 Send a `POST` request with JSON encoded parameters.
 
@@ -136,7 +130,7 @@ let service = WebService(baseURLString: "http://httpbin.org")
 
 service
     .POST("/post")
-    .setParameters(["foo" : "bar", "number" : 42], encoding: .JSON)
+    .setJSON(["foo" : "bar", "number" : 42])
     .resume()
 ```
 
@@ -150,35 +144,11 @@ Content-Length: 25
 {"number":42,"foo":"bar"}
 ```
 
-Alternatively you can specify the explicit JSON payload to send as the request body.
-
-```
-let service = WebService(baseURLString: "http://httpbin.org")
-
-service
-    .POST("/post")
-    .setJSON(["hmm": ["foo" : "bar", "number" : 42]])
-    .resume()
-```
-
-HTTP
-
-```
-POST /post HTTP/1.1
-Content-Type: application/json
-Content-Length: 25
-
-{"hmm":{"number":42,"foo":"bar"}}
-```
-
 ### Error Handling
-
 
 Error handlers are registered by providing a closure to run in the case the handler chain results in a failure.
 
 ```
-let service = WebService(baseURLString: "https://somehapi.herokuapp.com")
-
 service
     .GET("/brewers")
     .responseError { error in
@@ -187,20 +157,17 @@ service
     .resume()
 ```
 
-Sometimes your code may fail during processing a response and you will want to handle that failure in an error handler. For example, if you were parsing a JSON payload as an array of model types but the payload failed to be parsed as expected you can return a `.Failure` result with an associated value that conforms to Swift's `ErrorType` protocol. When returning a `.Failure` result all subsequent response handlers in the chain will not run and instead any registered error handlers will be called.
+Sometimes your code may fail during processing a response and you will want to handle that failure in an error handler. For example, if you were parsing a JSON payload as an array of model types but the payload failed to be parsed as expected you can use `throw` to propogate an error of type `ErrorType` to indicate the parsing failure. When throwing an error from a response handler, all subsequent response handlers in the chain will not run and instead any registered error handlers will be called. 
 
 ```
-let service = WebService(baseURLString: "https://somehapi.herokuapp.com")
-
 service
     .GET("/brewers")
     .responseJSON { json, response in
-        if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
-            return .Value(models)
-        } else {
-          // any value conforming to ErrorType
-          return .Failure(JSONDecoderError.FailedToDecodeBrewer)
-        }
+        guard let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+            throw JSONDecoderError.FailedToDecodeBrewer
+        } 
+
+        return .Value(models)
     }
     .responseError { error in
       // handle errors

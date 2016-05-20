@@ -17,6 +17,7 @@ class ServicePassthroughDelegateTests: XCTestCase {
         passthroughSpy.updateUIBeginExpectation = expectationWithDescription("updateUIBegin passthrough called")
         passthroughSpy.updateUIEndExpectation = expectationWithDescription("updateUIEnd passthrough called")
         let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
+        service.session = Responds200MockSession()
         
         let _ = service
             .GET("/get")
@@ -38,7 +39,8 @@ class ServicePassthroughDelegateTests: XCTestCase {
         passthroughSpy.updateUIBeginExpectation = expectationWithDescription("updateUIBegin passthrough called")
         passthroughSpy.updateUIEndExpectation = expectationWithDescription("updateUIEnd passthrough called")
         let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
-        
+        service.session = Responds200MockSession()
+
         let _ = service
             .GET("/get")
             .response { data, response in
@@ -56,11 +58,18 @@ class ServicePassthroughDelegateTests: XCTestCase {
         let passthroughSpy = ServicePassthroughDelegateSpy()
         passthroughSpy.serviceResultFailureExpecation = expectationWithDescription("serviceResultFailure passthrough called")
         let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
+        service.session = Responds200MockSession()
+        
+        
+        let shouldThrow = true
         
         let _ = service
             .GET("/get")
             .response { data, response in
-                throw MockError.SomethingWentHorriblyWrong
+                guard !shouldThrow else {
+                    throw MockError.SomethingWentHorriblyWrong
+                }
+                
                 return nil
             }
             .resume()
@@ -78,6 +87,13 @@ class ServicePassthroughDelegateTests: XCTestCase {
 }
 
 // MARK - Mocks
+
+class Responds200MockSession: MockSession {
+    override init() {
+        super.init()
+        addStub(MockResponse(statusCode: 200))
+    }
+}
 
 enum MockError: ErrorType {
     case SomethingWentHorriblyWrong

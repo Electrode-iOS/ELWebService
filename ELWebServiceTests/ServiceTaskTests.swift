@@ -100,6 +100,28 @@ class ServiceTaskTests: XCTestCase {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
+    
+    func test_updateUI_blocksHandlerChainExecution() {
+        let expectation = expectationWithDescription("response handler is called")
+        var updateUIExecuted = false
+        
+        successfulTask()
+            .response { _, _ in
+                return true
+            }
+            .updateUI { _ in
+                sleep(1)
+                updateUIExecuted = true
+            }
+            .response { _, _ in
+                XCTAssertTrue(updateUIExecuted, "Expected updateUI handler to block and complete execution before response handler is executed")
+                expectation.fulfill()
+                return nil
+            }
+            .resume()
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
 }
 
 // MARK: - JSON
@@ -325,6 +347,316 @@ extension ServiceTaskTests {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
+    
+    func test_updateErrorUI_blocksHandlerChainExecution() {
+        let expectation = expectationWithDescription("response handler is called")
+        var updateErrorUIExecuted = false
+        
+        errorTask()
+            .updateErrorUI { _ in
+                sleep(1)
+                updateErrorUIExecuted = true
+            }
+            .responseError { _ in
+                XCTAssertTrue(updateErrorUIExecuted, "Expected updateErrorUI handler to block and complete execution before response handler is executed")
+                expectation.fulfill()
+            }
+            .resume()
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+}
+
+// MARK: - Transform
+
+extension ServiceTaskTests {
+    func test_transform_closureNotCalledIfAddedBeforeResponseHandler() {
+        let done = expectationWithDescription("done")
+
+        successfulTask()
+            .transform { _ in
+                XCTFail("Did not expect transform closure to be called")
+                return nil
+            }
+            .response { _, _ in
+                done.fulfill()
+                return nil
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+    
+    func test_transform_closureCalled() {
+        let closureCalled = expectationWithDescription("transform closure called")
+
+        successfulTask()
+            .response { _, _ in
+                return nil
+            }
+            .transform { _ in
+                closureCalled.fulfill()
+                return nil
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+
+    func test_transform_closureNotCalledForError() {
+        let done = expectationWithDescription("done")
+
+        errorTask()
+            .response { _, _ in
+                return nil
+            }
+            .transform { _ in
+                XCTFail("Did not expect transform closure to be called")
+                return nil
+            }
+            .updateErrorUI { _ in
+                done.fulfill()
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+
+    func test_transform_ordering() {
+        let closure1Called = expectationWithDescription("transform closure 1 called")
+        let closure2Called = expectationWithDescription("transform closure 2 called")
+        var closure1CalledFirst = false
+
+        successfulTask()
+            .response { _, _ in
+                return nil
+            }
+            .transform { _ in
+                closure1CalledFirst = true
+                closure1Called.fulfill()
+                return nil
+            }
+            .transform { _ in
+                XCTAssertTrue(closure1CalledFirst, "Expected closure 1 to be called before closure 2")
+                closure2Called.fulfill()
+                return nil
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+
+    func test_transform_resultPropagation() {
+        let closure1Called = expectationWithDescription("transform closure 1 called")
+        let closure2Called = expectationWithDescription("transform closure 2 called")
+        let closure3Called = expectationWithDescription("transform closure 3 called")
+        let done = expectationWithDescription("done")
+
+        successfulTask()
+            .response { _, _ in
+                return "response value"
+            }
+            .transform { value in
+                if let value = value as? String {
+                    XCTAssertEqual(value, "response value", "Expected to receive result of response handler")
+                } else {
+                    XCTFail("Expected to receive result of previous handler")
+                }
+
+                closure1Called.fulfill()
+                return "transform 1 value"
+            }
+            .transform { value in
+                if let value = value as? String {
+                    XCTAssertEqual(value, "transform 1 value", "Expected to receive result of previous handler")
+                } else {
+                    XCTFail("Expected to receive result of previous handler")
+                }
+
+                closure2Called.fulfill()
+                return nil
+            }
+            .transform { value in
+                XCTAssertNil(value, "Expected nil result to propagate as nil")
+
+                closure3Called.fulfill()
+                return "transform 3 value"
+            }
+            .updateUI { value in
+                if let value = value as? String {
+                    XCTAssertEqual(value, "transform 3 value", "Expected to receive result of previous handler")
+                } else {
+                    XCTFail("Expected to receive result of previous handler")
+                }
+
+                done.fulfill()
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+}
+
+// MARK: - Recover
+
+extension ServiceTaskTests {
+    func test_recover_closureCalled() {
+        let closureCalled = expectationWithDescription("closure called")
+        
+        errorTask()
+            .recover { error in
+                closureCalled.fulfill()
+                return nil
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+
+    func test_recover_closureNotCalledForSuccess() {
+        let done = expectationWithDescription("done")
+
+        successfulTask()
+            .response { _, _ in
+                return nil
+            }
+            .recover { error in
+                XCTFail("Did not expect recover closure to be called")
+                return nil
+            }
+            .updateUI { _ in
+                done.fulfill()
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+
+    func test_recover_ordering() {
+        let closure1Called = expectationWithDescription("recover closure 1 callled")
+        let closure2Called = expectationWithDescription("recover closure 2 callled")
+        var closure1CalledFirst = false
+
+        errorTask()
+            .recover { error in
+                closure1CalledFirst = true
+                closure1Called.fulfill()
+                return nil
+            }
+            .recover { error in
+                XCTAssertTrue(closure1CalledFirst, "Expected closure 1 to be called before closure 2")
+                closure2Called.fulfill()
+                return nil
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+
+    func test_recover_resultPropagation() {
+        let closure1Called = expectationWithDescription("recover closure 1 callled")
+        let closure2Called = expectationWithDescription("recover closure 2 callled")
+        let closure3Called = expectationWithDescription("recover closure 3 callled")
+        let done = expectationWithDescription("done")
+        let shouldThrow = true
+        enum ServiceTaskTestError: ErrorType {
+            case Oops(detail: String)
+        }
+
+        errorTask()
+            .recover { error in
+                closure1Called.fulfill()
+                
+                guard !shouldThrow else {
+                    throw error
+                }
+                
+                return nil
+            }
+            .recover { error in
+                closure2Called.fulfill()
+                
+                guard !shouldThrow else {
+                    throw ServiceTaskTestError.Oops(detail: "closure 2 error")
+                }
+                
+                return nil
+            }
+            .recover { error in
+                if let error = error as? ServiceTaskTestError {
+                    switch error {
+                    case .Oops(let detail):
+                        XCTAssertEqual(detail, "closure 2 error", "Expected to receive result of previous handler")
+                    }
+                } else {
+                    XCTFail("Expected to receive result of previous handler")
+                }
+
+                closure3Called.fulfill()
+                throw ServiceTaskTestError.Oops(detail: "closure 3 error")
+            }
+            .updateErrorUI { error in
+                if let error = error as? ServiceTaskTestError {
+                    switch error {
+                    case .Oops(let detail):
+                        XCTAssertEqual(detail, "closure 3 error", "Expected to receive result of previous handler")
+                    }
+                } else {
+                    XCTFail("Expected to receive result of previous handler")
+                }
+
+                done.fulfill()
+            }
+            .resume()
+        
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
+}
+
+// MARK: - Transform and Recover Control Flow
+
+extension ServiceTaskTests {
+    func test_transformAndRecover_controlFlow() {
+        let closure1Called = expectationWithDescription("recover closure 1 callled")
+        let closure3Called = expectationWithDescription("recover closure 3 callled")
+        let done = expectationWithDescription("done")
+
+        enum ServiceTaskTestError: ErrorType {
+            case Oops
+        }
+
+        successfulTask()
+            .response { _, _ in
+                return nil
+            }
+            .transform { _ in
+                closure1Called.fulfill()
+                
+                throw ServiceTaskTestError.Oops
+                return nil
+            }
+            .transform { _ in
+                XCTFail("Did not expect transform closure to be called after failure")
+                return nil
+            }
+            .recover { _ in
+                closure3Called.fulfill()
+                return "closure 3 value"
+            }
+            .recover { error in
+                XCTFail("Did not expect recover closure to be called after recovery")
+                return nil
+            }
+            .updateErrorUI { _ in
+                XCTFail("Did not expect update UI (error) closure to be called after recovery")
+            }
+            .updateUI { _ in
+                done.fulfill()
+            }
+            .resume()
+
+        waitForExpectationsWithTimeout(2, handler: nil)
+    }
 }
 
 // MARK: - Request API
@@ -344,7 +676,8 @@ extension ServiceTaskTests {
         XCTAssertNotNil(recordedURLRequest?.allHTTPHeaderFields)
         
         let deliveredHeaders = recordedURLRequest!.allHTTPHeaderFields!
-        RequestTests.assertRequestParametersNotEqual(deliveredHeaders, toOriginalParameters: request.headers)
+        
+        ELTestAssertRequestParametersEqual(deliveredHeaders, request.headers)
     }
     
     func test_setHeaderValue_encodesValuesInURLRequest() {
@@ -481,7 +814,7 @@ extension ServiceTaskTests {
         
         // test original parameters against encoded
         if let bodyJSON = bodyJSON as? [String : AnyObject] {
-            RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: json)
+            ELTestAssertRequestParametersEqual(bodyJSON, json)
         } else {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
@@ -533,7 +866,7 @@ extension WebServiceTests {
         
         // test original parameters against encoded
         if let bodyJSON = bodyJSON as? [String : AnyObject] {
-            RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: request.parameters)
+            ELTestAssertRequestParametersEqual(bodyJSON, request.parameters)
         } else {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
@@ -579,9 +912,9 @@ extension WebServiceTests {
         let bodyJSON = try? NSJSONSerialization.JSONObjectWithData(recordedURLRequest!.HTTPBody!, options: NSJSONReadingOptions())
         XCTAssertNotNil(bodyJSON, "JSON should not be nil")
         
-        // test original parameters against encoded
         if let bodyJSON = bodyJSON as? [String : AnyObject] {
-            RequestTests.assertRequestParametersNotEqual(bodyJSON, toOriginalParameters: request.parameters)
+            // test original parameters against encoded
+            ELTestAssertRequestParametersEqual(bodyJSON, request.parameters)
         } else {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }

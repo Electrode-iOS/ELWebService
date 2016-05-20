@@ -20,7 +20,6 @@ import Foundation
      Type responsible for creating a `NSURLSessionDataTask` based on a
      `NSURLRequest`.
     */
-    @available(*, deprecated, message="Use the Session protocol instead.")
     public var dataTaskSource: SessionDataTaskDataSource? {
         set {
             guard let newValue = newValue else { return }
@@ -63,9 +62,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded as
-    a query string for `GET` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -78,9 +74,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded and
-    is set as the HTTP body for `POST` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -93,9 +86,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded and
-    is set as the HTTP body for `PUT` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -108,9 +98,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded and
-    is set as the HTTP body for `DELETE` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -123,9 +110,6 @@ extension WebService {
     
     - parameter path: Request path. The value can be relative to the base URL string
     or absolute.
-    - parameter parameters: Optional request parameters. The data is URL encoded as
-    a query string for `HEAD` requests.
-    - parameter options: Endpoint options used to configure the HTTP request.
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
@@ -200,8 +184,6 @@ extension WebService: Session {
 // MARK: - Legacy NSURLSessionDataTask API
 
 extension WebService: SessionDataTaskDataSource {
-    // legacy. remove in v3.0.0
-    @available(*, deprecated, message="Use dataTask(request:completion:) instead.")
     @objc public func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
         return dataTask(request: request, completion: completionHandler) as! NSURLSessionDataTask
     }
