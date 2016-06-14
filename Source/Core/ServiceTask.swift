@@ -103,7 +103,7 @@ import Foundation
 
 extension ServiceTask {
     /// TODO: Needs docs
-    public func setParameters(_ parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
+    @discardableResult public func setParameters(_ parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
         request.parameterEncoding = encoding ?? .percent
         
@@ -111,50 +111,50 @@ extension ServiceTask {
     }
     
     /// TODO: Needs docs
-    public func setBody(_ data: Data) -> Self {
+    @discardableResult public func setBody(_ data: Data) -> Self {
         request.body = data
         return self
     }
     
     /// TODO: Needs docs
-    public func setJSON(_ json: AnyObject) -> Self {
+    @discardableResult public func setJSON(_ json: AnyObject) -> Self {
         request.contentType = Request.ContentType.json
         request.body = try? JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
         return self
     }
     
     /// TODO: Needs docs
-    public func setHeaders(_ headers: [String: String]) -> Self {
+    @discardableResult public func setHeaders(_ headers: [String: String]) -> Self {
         request.headers = headers
         return self
     }
     
     /// TODO: Needs docs
-    public func setHeaderValue(_ value: String, forName name: String) -> Self {
+    @discardableResult public func setHeaderValue(_ value: String, forName name: String) -> Self {
         request.headers[name] = value
         return self
     }
     
     /// TODO: Needs docs
-    public func setCachePolicy(_ cachePolicy: NSURLRequest.CachePolicy) -> Self {
+    @discardableResult public func setCachePolicy(_ cachePolicy: NSURLRequest.CachePolicy) -> Self {
         request.cachePolicy = cachePolicy
         return self
     }
     
     /// TODO: Needs docs
-    public func setParameterEncoding(_ encoding: Request.ParameterEncoding) -> Self {
+    @discardableResult public func setParameterEncoding(_ encoding: Request.ParameterEncoding) -> Self {
         request.parameterEncoding = encoding
         return self
     }
     
     /// Sets the key/value pairs that will be encoded as the query in the URL.
-    public func setQueryParameters(_ parameters: [String: AnyObject]) -> Self {
+    @discardableResult public func setQueryParameters(_ parameters: [String: AnyObject]) -> Self {
         request.queryParameters = parameters
         return self
     }
     
     /// Sets the key/value pairs that are encoded as form data in the request body.
-    public func setFormParameters(_ parameters: [String: AnyObject]) -> Self {
+    @discardableResult public func setFormParameters(_ parameters: [String: AnyObject]) -> Self {
         request.formParameters = parameters
         return self
     }
@@ -164,7 +164,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// Resume the underlying data task.
-    public func resume() -> Self {
+    @discardableResult public func resume() -> Self {
         if dataTask == nil {
             dataTask = session?.dataTask(request: urlRequest) { data, response, error in
                 self.handleResponse(response, data: data, error: error)

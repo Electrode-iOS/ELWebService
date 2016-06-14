@@ -20,8 +20,9 @@ extension ServiceTask {
      
      - parameter parameters: Request parameter values.
     */
-    @objc public func setJSONEncodedParametersObjC(_ parameters: [String: AnyObject]) -> Self {
-        setParameters(parameters, encoding: .json)
+    @discardableResult  @objc public func setJSONEncodedParametersObjC(_ parameters: [String: AnyObject]) -> Self {
+        // TODO: `let _ =` should not be needed here. @discardableResult does not appear to be resolving the unused Self warning
+        let _ = setParameters(parameters, encoding: .json)
         return self
     }
     
@@ -34,8 +35,9 @@ extension ServiceTask {
      
      - parameter parameters: Request parameter values.
     */
-    @objc public func setPercentEncodedParametersObjC(_ parameters: [String: AnyObject]) -> Self {
-        setParameters(parameters, encoding: .percent)
+    @discardableResult  @objc public func setPercentEncodedParametersObjC(_ parameters: [String: AnyObject]) -> Self {
+        // TODO: `let _ =` should not be needed here. @discardableResult does not appear to be resolving the unused Self warning
+        let _ = setParameters(parameters, encoding: .percent)
         return self
     }
         
@@ -46,8 +48,9 @@ extension ServiceTask {
      `setParameterEncoding(encoding: .JSON)` when calling
      from Swift.
     */
-    @objc public func setJSONParameterEncodingObjC() -> Self {
-        setParameterEncoding(.json)
+    @discardableResult  @objc public func setJSONParameterEncodingObjC() -> Self {
+        // TODO: `let _ =` should not be needed here. @discardableResult does not appear to be resolving the unused Self warning
+        let _ = setParameterEncoding(.json)
         return self
     }
     
@@ -58,8 +61,9 @@ extension ServiceTask {
      `setParameterEncoding(encoding: .Percent)` when calling
      from Swift.
     */
-    @objc public func setPercentParameterEncodingObjC() -> Self {
-        setParameterEncoding(.percent)
+    @discardableResult @objc public func setPercentParameterEncodingObjC() -> Self {
+        // TODO: `let _ =` should not be needed here. @discardableResult does not appear to be resolving the unused Self warning
+        let _ = setParameterEncoding(.percent)
         return self
     }
 }
