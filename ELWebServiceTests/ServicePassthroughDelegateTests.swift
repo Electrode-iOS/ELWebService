@@ -12,10 +12,10 @@ import XCTest
 class ServicePassthroughDelegateTests: XCTestCase {
     func test_passthroughDelegate_receivesEventsWhenResponseIsValid() {
         let passthroughSpy = ServicePassthroughDelegateSpy()
-        passthroughSpy.requestSentExpectation = expectationWithDescription("requestSent passthrough called")
-        passthroughSpy.responseReceivedExpectation = expectationWithDescription("responseReceived passthrough called")
-        passthroughSpy.updateUIBeginExpectation = expectationWithDescription("updateUIBegin passthrough called")
-        passthroughSpy.updateUIEndExpectation = expectationWithDescription("updateUIEnd passthrough called")
+        passthroughSpy.requestSentExpectation = expectation(withDescription: "requestSent passthrough called")
+        passthroughSpy.responseReceivedExpectation = expectation(withDescription: "responseReceived passthrough called")
+        passthroughSpy.updateUIBeginExpectation = expectation(withDescription: "updateUIBegin passthrough called")
+        passthroughSpy.updateUIEndExpectation = expectation(withDescription: "updateUIEnd passthrough called")
         let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
         service.session = Responds200MockSession()
         
@@ -29,51 +29,51 @@ class ServicePassthroughDelegateTests: XCTestCase {
             .resume()
         
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(withTimeout: 2, handler: nil)
     }
     
     func test_passthroughDelegate_receivesEventsWhenResponseHandlerReturnsEmpty() {
         let passthroughSpy = ServicePassthroughDelegateSpy()
-        passthroughSpy.requestSentExpectation = expectationWithDescription("requestSent passthrough called")
-        passthroughSpy.responseReceivedExpectation = expectationWithDescription("responseReceived passthrough called")
-        passthroughSpy.updateUIBeginExpectation = expectationWithDescription("updateUIBegin passthrough called")
-        passthroughSpy.updateUIEndExpectation = expectationWithDescription("updateUIEnd passthrough called")
+        passthroughSpy.requestSentExpectation = expectation(withDescription: "requestSent passthrough called")
+        passthroughSpy.responseReceivedExpectation = expectation(withDescription: "responseReceived passthrough called")
+        passthroughSpy.updateUIBeginExpectation = expectation(withDescription: "updateUIBegin passthrough called")
+        passthroughSpy.updateUIEndExpectation = expectation(withDescription: "updateUIEnd passthrough called")
         let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
         service.session = Responds200MockSession()
 
         let _ = service
             .GET("/get")
             .response { data, response in
-                return .Empty
+                return .empty
             }
             .updateUI { value in
             }
             .resume()
         
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(withTimeout: 2, handler: nil)
     }
     
     func test_passthroughDelegate_receivesFailureEventWhenResponseHandlerReturnsFailure() {
         let passthroughSpy = ServicePassthroughDelegateSpy()
-        passthroughSpy.serviceResultFailureExpecation = expectationWithDescription("serviceResultFailure passthrough called")
+        passthroughSpy.serviceResultFailureExpecation = expectation(withDescription: "serviceResultFailure passthrough called")
         let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
         service.session = Responds200MockSession()
 
         let _ = service
             .GET("/get")
             .response { data, response in
-                return .Failure(MockError.SomethingWentHorriblyWrong)
+                return .failure(MockError.somethingWentHorriblyWrong)
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(withTimeout: 2, handler: nil)
     }
     
     func test_passthroughDelegate_modifiedRequestReturnsNil() {
         let passthroughSpy = ServicePassthroughDelegateSpy()
         
-        let result = passthroughSpy.modifiedRequest(NSURLRequest())
+        let result = passthroughSpy.modifiedRequest(URLRequest(url: URL(string: "")!))
         
         XCTAssertNil(result)
     }
@@ -88,8 +88,8 @@ class Responds200MockSession: MockSession {
     }
 }
 
-enum MockError: ErrorType {
-    case SomethingWentHorriblyWrong
+enum MockError: ErrorProtocol {
+    case somethingWentHorriblyWrong
 }
 
 class ServicePassthroughDelegateSpy: ServicePassthroughDelegate {
@@ -99,23 +99,23 @@ class ServicePassthroughDelegateSpy: ServicePassthroughDelegate {
     var updateUIEndExpectation: XCTestExpectation?
     var serviceResultFailureExpecation: XCTestExpectation?
     
-    func requestSent(request: NSURLRequest) {
+    func requestSent(_ request: URLRequest) {
         requestSentExpectation?.fulfill()
     }
     
-    func responseReceived(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: NSError?) {
+    func responseReceived(_ response: URLResponse?, data: Data?, request: URLRequest?, error: NSError?) {
         responseReceivedExpectation?.fulfill()
     }
     
-    func updateUIBegin(response: NSURLResponse?) {
+    func updateUIBegin(_ response: URLResponse?) {
         updateUIBeginExpectation?.fulfill()
     }
     
-    func updateUIEnd(response: NSURLResponse?) {
+    func updateUIEnd(_ response: URLResponse?) {
         updateUIEndExpectation?.fulfill()
     }
     
-    func serviceResultFailure(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: ErrorType) {
+    func serviceResultFailure(_ response: URLResponse?, data: Data?, request: URLRequest?, error: ErrorProtocol) {
         serviceResultFailureExpecation?.fulfill()
     }
 }

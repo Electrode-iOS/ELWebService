@@ -20,8 +20,8 @@ extension ServiceTask {
      
      - parameter parameters: Request parameter values.
     */
-    @objc public func setJSONEncodedParametersObjC(parameters: [String: AnyObject]) -> Self {
-        setParameters(parameters, encoding: .JSON)
+    @objc public func setJSONEncodedParametersObjC(_ parameters: [String: AnyObject]) -> Self {
+        setParameters(parameters, encoding: .json)
         return self
     }
     
@@ -34,8 +34,8 @@ extension ServiceTask {
      
      - parameter parameters: Request parameter values.
     */
-    @objc public func setPercentEncodedParametersObjC(parameters: [String: AnyObject]) -> Self {
-        setParameters(parameters, encoding: .Percent)
+    @objc public func setPercentEncodedParametersObjC(_ parameters: [String: AnyObject]) -> Self {
+        setParameters(parameters, encoding: .percent)
         return self
     }
         
@@ -47,7 +47,7 @@ extension ServiceTask {
      from Swift.
     */
     @objc public func setJSONParameterEncodingObjC() -> Self {
-        setParameterEncoding(.JSON)
+        setParameterEncoding(.json)
         return self
     }
     
@@ -59,7 +59,7 @@ extension ServiceTask {
      from Swift.
     */
     @objc public func setPercentParameterEncodingObjC() -> Self {
-        setParameterEncoding(.Percent)
+        setParameterEncoding(.percent)
         return self
     }
 }
@@ -69,7 +69,7 @@ extension ServiceTask {
 extension ServiceTask {
     
     /// Response handler type for Obj-C
-    typealias ObjCResponseHandler = (NSData?, NSURLResponse?) -> ObjCHandlerResult?
+    typealias ObjCResponseHandler = (Data?, URLResponse?) -> ObjCHandlerResult?
 
     /**
      Add a response handler to be called on a background thread after a successful
@@ -80,7 +80,7 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
      */
-    @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self {
+    @objc public func responseObjC(_ handler: (Data?, URLResponse?) -> ObjCHandlerResult?) -> Self {
         return response { data, response in
             return ServiceTaskResult(objCHandlerResult: handler(data, response))
         }
@@ -95,7 +95,7 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
      */
-    @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self {
+    @objc public func responseJSONObjC(_ handler: (AnyObject, URLResponse?) -> ObjCHandlerResult?) -> Self {
         return responseJSON { json, response in
             return ServiceTaskResult(objCHandlerResult: handler(json, response))
         }
@@ -114,7 +114,7 @@ extension ServiceTask {
      - parameter handler: Transformation handler to execute.
      - returns: Self instance to support chaining.
      */
-    @objc public func transformObjC(handler: (AnyObject?) -> ObjCHandlerResult?) -> Self {
+    @objc public func transformObjC(_ handler: (AnyObject?) -> ObjCHandlerResult?) -> Self {
         return transform { value in
             return ServiceTaskResult(objCHandlerResult: handler(value as! AnyObject?))
         }
@@ -134,7 +134,7 @@ extension ServiceTask {
      - parameter handler: Recovery handler to execute when an error occurs.
      - returns: Self instance to support chaining.
      */
-    @objc public func recoverObjC(handler: (NSError) -> ObjCHandlerResult?) -> Self {
+    @objc public func recoverObjC(_ handler: (NSError) -> ObjCHandlerResult?) -> Self {
         return recover { error in
             return ServiceTaskResult(objCHandlerResult: handler(error as NSError))
         }
@@ -149,7 +149,7 @@ extension ServiceTask {
      - parameter handler: Error handler to execute when an error occurs.
      - returns: Self instance to support chaining.
     */
-    @objc public func responseErrorObjC(handler: (NSError) -> Void) -> Self {
+    @objc public func responseErrorObjC(_ handler: (NSError) -> Void) -> Self {
         return responseError { error in
             handler(error as NSError)
         }
@@ -169,7 +169,7 @@ extension ServiceTask {
      - parameter handler: The closure to execute as the updateUI handler.
      - returns: Self instance to support chaining.
     */
-    @objc public func updateUIObjC(handler: (AnyObject?) -> Void) -> Self {
+    @objc public func updateUIObjC(_ handler: (AnyObject?) -> Void) -> Self {
         return updateUI { value in
             handler(value as! AnyObject?)
         }
@@ -185,7 +185,7 @@ extension ServiceTask {
      - parameter handler: Error handler to execute when an error occurs.
      - returns: Self instance to support chaining.
     */
-    @objc public func updateErrorUIObjC(handler: (NSError) -> Void) -> Self {
+    @objc public func updateErrorUIObjC(_ handler: (NSError) -> Void) -> Self {
         return updateErrorUI { error in
             handler(error as NSError)
         }

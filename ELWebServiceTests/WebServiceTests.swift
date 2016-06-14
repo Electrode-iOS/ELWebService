@@ -25,7 +25,7 @@ class WebServiceTests: XCTestCase {
         let recordedRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedRequest)
         
-        let url = recordedRequest?.URL
+        let url = recordedRequest?.url
         XCTAssertNotNil(url)
         
         let absoluteString = url!.absoluteString
@@ -43,7 +43,7 @@ class WebServiceTests: XCTestCase {
         let recordedRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedRequest)
         
-        let method = recordedRequest?.HTTPMethod
+        let method = recordedRequest?.httpMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "GET")
@@ -60,7 +60,7 @@ class WebServiceTests: XCTestCase {
         let recordedRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedRequest)
         
-        let method = recordedRequest?.HTTPMethod
+        let method = recordedRequest?.httpMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "POST")
@@ -77,7 +77,7 @@ class WebServiceTests: XCTestCase {
         let recordedRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedRequest)
         
-        let method = recordedRequest?.HTTPMethod
+        let method = recordedRequest?.httpMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "DELETE")
@@ -94,7 +94,7 @@ class WebServiceTests: XCTestCase {
         let recordedRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedRequest)
         
-        let method = recordedRequest?.HTTPMethod
+        let method = recordedRequest?.httpMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "HEAD")
@@ -111,7 +111,7 @@ class WebServiceTests: XCTestCase {
         let recordedRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedRequest)
         
-        let method = recordedRequest?.HTTPMethod
+        let method = recordedRequest?.httpMethod
         XCTAssertNotNil(method)
         
         XCTAssertEqual(method!, "PUT")
@@ -144,11 +144,11 @@ extension WebServiceTests {
     // TODO: legacy test, remove after dataTaskWithRequest API is removed
     func test_dataTaskWithRequest_returnsSuspendedDataTask() {
         let service = WebService(baseURLString: "http://httpbin.org/")
-        let request = NSURLRequest(URL: NSURL(string: "http://httpbin.org/")!)
+        let request = URLRequest(url: URL(string: "http://httpbin.org/")!)
         
         let task = service.dataTaskWithRequest(request) { data, response, error in }
         
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Suspended)
+        XCTAssertEqual(task.state, URLSessionTask.State.suspended)
     }
 }
 
@@ -157,28 +157,28 @@ extension WebServiceTests {
 extension WebServiceTests {
     // TODO: legacy test, remove after dataTaskSource API is removed
     func test_dataTaskSource_setterSetsSession() {
-        let urlSession = NSURLSession.sharedSession()
+        let urlSession = URLSession.shared()
         let service = WebService(baseURLString: "http://httpbin.org/")
         service.dataTaskSource = urlSession
         
-        XCTAssertTrue(service.session is NSURLSession)
-        XCTAssertTrue(service.session as! NSURLSession === urlSession)
+        XCTAssertTrue(service.session is URLSession)
+        XCTAssertTrue(service.session as! URLSession === urlSession)
     }
     
     // TODO: legacy test, remove after dataTaskSource API is removed
     func test_dataTaskSource_returnsDataTask() {
         final class MockDataTaskSource: SessionDataTaskDataSource {
-            func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
-                return NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: completionHandler)
+            func dataTaskWithRequest(_ request: URLRequest, completionHandler: (Data?, URLResponse?, NSError?) -> Void) -> URLSessionDataTask {
+                return URLSession.shared().dataTask(with: request, completionHandler: completionHandler)
             }
         }
         let dataTaskSource = MockDataTaskSource()
-        let request = NSURLRequest(URL: NSURL(string: "http://httpbin.org/")!)
+        let request = URLRequest(url: URL(string: "http://httpbin.org/")!)
         
         let task = dataTaskSource.dataTask(request: request) { data, response, error in }
         
-        XCTAssertTrue(task is NSURLSessionDataTask)
-        XCTAssertEqual((task as! NSURLSessionDataTask).state, NSURLSessionTaskState.Suspended)
+        XCTAssertTrue(task is URLSessionDataTask)
+        XCTAssertEqual((task as! URLSessionDataTask).state, URLSessionTask.State.suspended)
     }
 }
 

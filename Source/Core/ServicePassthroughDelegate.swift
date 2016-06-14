@@ -11,25 +11,25 @@ import Foundation
 /// Defines a delegate interface for hooking into service request/response events.
 public protocol ServicePassthroughDelegate: class {
     /// Called before a request is to be sent
-    func requestSent(request: NSURLRequest)
+    func requestSent(_ request: URLRequest)
     
     /// Called after a NSURLSessionDataTask has completed
-    func responseReceived(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: NSError?)
+    func responseReceived(_ response: URLResponse?, data: Data?, request: URLRequest?, error: NSError?)
     
     /// Called before an updateUI handler is invoked
-    func updateUIBegin(response: NSURLResponse?)
+    func updateUIBegin(_ response: URLResponse?)
     
     /// Called after an updateUI handler has been invoked
-    func updateUIEnd(response: NSURLResponse?)
+    func updateUIEnd(_ response: URLResponse?)
     
     /// Called when a ServiceTask handler returns a .Failure(error) result
-    func serviceResultFailure(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: ErrorType)
+    func serviceResultFailure(_ response: URLResponse?, data: Data?, request: URLRequest?, error: ErrorProtocol)
     
-    func modifiedRequest(request: NSURLRequest) -> NSURLRequest?
+    func modifiedRequest(_ request: URLRequest) -> URLRequest?
 }
 
 extension ServicePassthroughDelegate {
-    func modifiedRequest(request: NSURLRequest) -> NSURLRequest? {
+    func modifiedRequest(_ request: URLRequest) -> URLRequest? {
         return nil
     }
 }

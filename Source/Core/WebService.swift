@@ -29,7 +29,7 @@ import Foundation
             return session as? SessionDataTaskDataSource
         }
     }
-    public var session: Session = NSURLSession.sharedSession()
+    public var session: Session = URLSession.shared()
     internal private(set) weak var passthroughDelegate: ServicePassthroughDelegate?
     
     // MARK: Initialization
@@ -65,7 +65,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func GET(path: String) -> ServiceTask {
+    public func GET(_ path: String) -> ServiceTask {
         return request(.GET, path: path)
     }
 
@@ -77,7 +77,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func POST(path: String) -> ServiceTask {
+    public func POST(_ path: String) -> ServiceTask {
         return request(.POST, path: path)
     }
     
@@ -89,7 +89,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func PUT(path: String) -> ServiceTask {
+    public func PUT(_ path: String) -> ServiceTask {
         return request(.PUT, path: path)
     }
     
@@ -101,7 +101,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func DELETE(path: String) -> ServiceTask {
+    public func DELETE(_ path: String) -> ServiceTask {
         return request(.DELETE, path: path)
     }
     
@@ -113,7 +113,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func HEAD(path: String) -> ServiceTask {
+    public func HEAD(_ path: String) -> ServiceTask {
         return request(.HEAD, path: path)
     }
     
@@ -129,12 +129,12 @@ extension WebService {
      - returns: A ServiceTask instance that refers to the lifetime of processing
      a given request.
      */
-    func request(method: Request.Method, path: String) -> ServiceTask {
+    func request(_ method: Request.Method, path: String) -> ServiceTask {
         return serviceTask(request: Request(method, url: absoluteURLString(path)))
     }
     
     /// Create a service task to fulfill a given request.
-    func serviceTask(request request: Request) -> ServiceTask {
+    func serviceTask(request: Request) -> ServiceTask {
         let task = ServiceTask(request: request, session: self)
         task.passthroughDelegate = passthroughDelegate
         return task
@@ -144,9 +144,9 @@ extension WebService {
 // MARK: - Session API
 
 extension WebService: Session {
-    typealias TaskHandler = (NSData?, NSURLResponse?, NSError?) -> Void
+    typealias TaskHandler = (Data?, URLResponse?, NSError?) -> Void
     
-    public func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
+    public func dataTask(request: URLRequestEncodable, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
         // legacy support. only use dataTaskSource when defined
         // TODO: remove legacy call in 3.0.0
         if let dataTaskSource = dataTaskSource {
@@ -156,14 +156,14 @@ extension WebService: Session {
         return dataTask(session: session, request: request, completion: completion)
     }
     
-    func dataTask(session session: Session, request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
+    func dataTask(session: Session, request: URLRequestEncodable, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
         let urlRequest = canonicalRequest(request: request).urlRequestValue
         
         passthroughDelegate?.requestSent(urlRequest)
         return session.dataTask(request: urlRequest, completion: onTaskCompletion(urlRequest, completionHandler: completion))
     }
     
-    func canonicalRequest(request request: URLRequestEncodable) -> URLRequestEncodable {
+    func canonicalRequest(request: URLRequestEncodable) -> URLRequestEncodable {
         let urlRequest = request.urlRequestValue
         
         if let modifiedRequest = passthroughDelegate?.modifiedRequest(urlRequest) {
@@ -173,7 +173,7 @@ extension WebService: Session {
         return urlRequest
     }
     
-    func onTaskCompletion(request: URLRequestEncodable, completionHandler: TaskHandler) -> TaskHandler {
+    func onTaskCompletion(_ request: URLRequestEncodable, completionHandler: TaskHandler) -> TaskHandler {
         return { data, response, error in
             self.passthroughDelegate?.responseReceived(response, data: data, request: request.urlRequestValue, error: error)
             completionHandler(data, response, error)
@@ -184,8 +184,8 @@ extension WebService: Session {
 // MARK: - Legacy NSURLSessionDataTask API
 
 extension WebService: SessionDataTaskDataSource {
-    @objc public func dataTaskWithRequest(request: NSURLRequest, completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void) -> NSURLSessionDataTask {
-        return dataTask(request: request, completion: completionHandler) as! NSURLSessionDataTask
+    @objc public func dataTaskWithRequest(_ request: URLRequest, completionHandler: (Data?, URLResponse?, NSError?) -> Void) -> URLSessionDataTask {
+        return dataTask(request: request, completion: completionHandler) as! URLSessionDataTask
     }
 }
 
@@ -198,7 +198,7 @@ extension WebService {
      - parameter string: URL string.
      - returns: An absoulte URL string relative to the value of `baseURLString`.
     */
-    public func absoluteURLString(string: String) -> String {
+    public func absoluteURLString(_ string: String) -> String {
         return constructURLString(string, relativeToURLString: baseURLString)
     }
     
@@ -209,8 +209,8 @@ extension WebService {
      - parameter relativeURLString: Value of relative URL string.
      - returns: An absolute URL string.
     */
-    func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
-        let relativeURL = NSURL(string: relativeURLString)
-        return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString
+    func constructURLString(_ string: String, relativeToURLString relativeURLString: String) -> String {
+        let relativeURL = URL(string: relativeURLString)
+        return URL(string: string, relativeTo: relativeURL!)!.absoluteString!
     }
 }

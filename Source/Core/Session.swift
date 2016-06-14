@@ -11,23 +11,23 @@ import Foundation
 // MARK: - Session
 
 public protocol Session {
-    func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask
+    func dataTask(request: URLRequestEncodable, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask
 }
 
-extension NSURLSession: Session {
-    public func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
-        return dataTaskWithRequest(request.urlRequestValue, completionHandler: completion) as DataTask
+extension URLSession: Session {
+    public func dataTask(request: URLRequestEncodable, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
+        return self.dataTask(request: request.urlRequestValue, completion: completion) as DataTask
     }
 }
 
 // MARK: - Data Task
 
 public protocol DataTask {
-    var state: NSURLSessionTaskState { get }
+    var state: URLSessionTask.State { get }
     
     func suspend()
     func resume()
     func cancel()
 }
 
-extension NSURLSessionDataTask: DataTask {}
+extension URLSessionDataTask: DataTask {}

@@ -11,16 +11,16 @@ import Foundation
 /// Represents the result of a service task.
 public enum ServiceTaskResult {
     /// Defines an empty task result
-    case Empty
+    case empty
     /// Defines a task result as a value
     case Value(Any)
     /// Defines a task resulting in an error
-    case Failure(ErrorType)
+    case failure(ErrorProtocol)
     
     func value() throws -> Any? {
         switch self {
-        case .Failure(let error): throw error
-        case .Empty: return nil
+        case .failure(let error): throw error
+        case .empty: return nil
         case .Value(let value): return value
         }
     }
@@ -32,11 +32,11 @@ extension ServiceTaskResult {
     /// Initialize a service task result value from an Obj-C result
     init(objCHandlerResult result: ObjCHandlerResult?) {
         if let error = result?.error {
-            self = .Failure(error)
+            self = .failure(error)
         } else if let value = result?.value {
             self = .Value(value)
         } else {
-            self = .Empty
+            self = .empty
         }
     }
 }
@@ -49,11 +49,11 @@ extension ServiceTaskResult {
     /// The resulting error
     private(set) var error: NSError?
     
-    public class func resultWithValue(value: AnyObject) -> ObjCHandlerResult {
+    public class func resultWithValue(_ value: AnyObject) -> ObjCHandlerResult {
         return ObjCHandlerResult(value: value)
     }
     
-    public class func resultWithError(error: NSError) -> ObjCHandlerResult {
+    public class func resultWithError(_ error: NSError) -> ObjCHandlerResult {
         return ObjCHandlerResult(error: error)
     }
     
