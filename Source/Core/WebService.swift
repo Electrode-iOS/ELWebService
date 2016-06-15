@@ -211,6 +211,6 @@ extension WebService {
     */
     func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
         let relativeURL = NSURL(string: relativeURLString)
-        return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString
+        return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString!
     }
 }

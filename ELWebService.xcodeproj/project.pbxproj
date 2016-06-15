@@ -221,9 +221,11 @@
 				TargetAttributes = {
 					17088ED01C5010EA007ADE1B = {
 						CreatedOnToolsVersion = 7.2;
+						LastSwiftMigration = 0800;
 					};
 					179C5C5D1AB079980047169F = {
 						CreatedOnToolsVersion = 6.3;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -317,6 +319,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 2.3;
 			};
 			name = Debug;
 		};
@@ -329,6 +332,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.electrode.ELWebServiceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
+				SWIFT_VERSION = 2.3;
 			};
 			name = Release;
 		};
@@ -438,6 +442,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 2.3;
 			};
 			name = Debug;
 		};
@@ -457,6 +462,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 2.3;
 			};
 			name = Release;
 		};
@@ -526,6 +532,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 2.3;
 			};
 			name = QADeployment;
 		};
@@ -539,6 +546,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 2.3;
 			};
 			name = QADeployment;
 		};
