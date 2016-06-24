@@ -235,8 +235,8 @@ extension Request: URLRequestEncodable {
         
         if parameters.count > 0 {
             if method.encodesParametersInURL() {
-                if let encodedURL = urlRequest.URL?.URLByAppendingQueryItems(parameters.queryItems) {
-                    urlRequest.URL = encodedURL
+                if let url = urlRequest.URL {
+                    urlRequest.URL = parameterEncoding.encodeURL(url, parameters: parameters)
                 }
             } else {
                 if let data = parameterEncoding.encodeBody(parameters) {
@@ -255,9 +255,10 @@ extension Request: URLRequestEncodable {
         }
         
         // queryParameters property overwrite and previously encoded query values
-        if let queryParameters = queryParameters,
-            let encodedURL = urlRequest.URL?.URLByAppendingQueryItems(queryParameters.queryItems) {
-            urlRequest.URL = encodedURL
+        if let queryParameters = queryParameters {
+            if let url = urlRequest.URL {
+                urlRequest.URL = parameterEncoding.encodeURL(url, parameters: queryParameters)
+            }
         }
         
         return urlRequest.copy() as! NSURLRequest
@@ -272,15 +273,15 @@ extension NSURLRequest: URLRequestEncodable {
 
 // MARK: - Query String
 
-extension Dictionary {
+public extension Dictionary {
     /// Return an encoded query string using the elements in the dictionary.
-    var percentEncodedQueryString: String? {
+    public var percentEncodedQueryString: String? {
         let components = NSURLComponents(string: "")
         components?.queryItems = queryItems
         return components?.URL?.query
     }
     
-    var queryItems: [NSURLQueryItem] {
+    public var queryItems: [NSURLQueryItem] {
         var items = [NSURLQueryItem]()
         
         for (name, value) in self {
@@ -291,7 +292,7 @@ extension Dictionary {
         return items
     }
     
-    var percentEncodedData: NSData? {
+    public var percentEncodedData: NSData? {
         return percentEncodedQueryString?.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
     }
 }
