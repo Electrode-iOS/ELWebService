@@ -44,6 +44,10 @@ import Foundation
         return self.request.urlRequestValue as URLRequest
     }()
     
+    public var url: URL? {
+        return urlRequest.url
+    }
+    
     /// Dispatch queue that queues up and dispatches handler blocks
     fileprivate let handlerQueue: OperationQueue
     

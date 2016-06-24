@@ -59,6 +59,32 @@ class ParameterEncodingTests: XCTestCase {
         XCTAssertEqual(components[1], "1")
     }
     
+    func test_encodeURL_custom() {
+        let url = URL(string: "http://httpbin.org/get")!
+        let parameters = ["key" : "part1+part2:part3"]
+        let encoding = Request.ParameterEncoding.custom(transformer: .URL({
+            (url: URL, parameters: [String : Any]) -> URL? in
+            guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+                return nil
+            }
+            components.queryItems = parameters.queryItems
+            guard let encodedQueryString = components.url?.query else {
+                return nil
+            }
+            let characterSet = CharacterSet(charactersIn: "+:").inverted
+            components.percentEncodedQuery = encodedQueryString.addingPercentEncoding(withAllowedCharacters: characterSet)
+            return components.url
+        }))
+        
+        let encodedURL = encoding.encodeURL(url, parameters: parameters)
+        
+        XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
+        XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
+        
+        let stringValue = encodedURL!.query!
+        XCTAssertEqual(stringValue, "key=part1%2Bpart2%3Apart3")
+    }
+    
     // MARK: encodeBody
 
     func test_encodeBody_percentEncodesWithSpacesInStrings() {
@@ -103,5 +129,31 @@ class ParameterEncodingTests: XCTestCase {
         } else {
             XCTFail("Failed to cast JSON as [String : Any]")
         }
+    }
+    
+    func test_encodeBody_custom() {
+        let parameters = ["key" : "part1+part2:part3"]
+        let encoding = Request.ParameterEncoding.custom(transformer: .body({
+            (parameters: [String : Any]) -> Data? in
+            let url = URL(string: "http://httpbin.org/get")!
+            guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+                return nil
+            }
+            components.queryItems = parameters.queryItems
+            guard let encodedQueryString = components.url?.query else {
+                return nil
+            }
+            let characterSet = CharacterSet(charactersIn: "+:").inverted
+            guard let percentEncodedQuery = encodedQueryString.addingPercentEncoding(withAllowedCharacters: characterSet) else {
+                return nil
+            }
+            return percentEncodedQuery.data(using: String.Encoding.utf8)
+        }, contentType: "sample"))
+        let encodedData = encoding.encodeBody(parameters)
+        
+        XCTAssertNotNil(encodedData, "Encoded body should be non-nil")
+        
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        XCTAssertEqual(stringValue, "key=part1%2Bpart2%3Apart3")
     }
 }
