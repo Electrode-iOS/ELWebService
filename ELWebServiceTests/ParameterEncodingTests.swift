@@ -43,22 +43,49 @@ class ParameterEncodingTests: XCTestCase {
         let components = stringValue.componentsSeparatedByString("=")
         XCTAssertEqual(components[1], "500")
     }
-    
+
     func test_encodeURL_percentEncodesWithBoolValue() {
         let url = NSURL(string: "http://httpbin.org/get")!
         let parameters = ["boolValue" : true]
         let encoding = Request.ParameterEncoding.Percent
-        
+
         let encodedURL = encoding.encodeURL(url, parameters: parameters)
-        
+
         XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
         XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
-        
+
         let stringValue = encodedURL!.query!
         let components = stringValue.componentsSeparatedByString("=")
         XCTAssertEqual(components[1], "1")
     }
-    
+
+    func test_encodeURL_custom() {
+        let url = NSURL(string: "http://httpbin.org/get")!
+        let parameters = ["key" : "part1+part2:part3"]
+        let encoding = Request.ParameterEncoding.Custom(transformer: .URL({
+            (url: NSURL, parameters: [String : AnyObject]) -> NSURL? in
+            guard let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false) else {
+                return nil
+            }
+            components.queryItems = parameters.queryItems
+            guard let encodedQueryString = components.URL?.query else {
+                return nil
+            }
+            let characterSet = NSMutableCharacterSet(charactersInString: "+:")
+            characterSet.invert()
+            components.percentEncodedQuery = encodedQueryString.stringByAddingPercentEncodingWithAllowedCharacters(characterSet)
+            return components.URL
+        }))
+
+        let encodedURL = encoding.encodeURL(url, parameters: parameters)
+
+        XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
+        XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
+
+        let stringValue = encodedURL!.query!
+        XCTAssertEqual(stringValue, "key=part1%2Bpart2%3Apart3")
+    }
+
     // MARK: encodeBody
 
     func test_encodeBody_percentEncodesWithSpacesInStrings() {
@@ -92,4 +119,29 @@ class ParameterEncodingTests: XCTestCase {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
     }
+
+    func test_encodeBody_custom() {
+        let parameters = ["key" : "part1+part2:part3"]
+        let encoding = Request.ParameterEncoding.Custom(transformer: .Body({
+            (parameters: [String : AnyObject]) -> NSData? in
+            guard let components = NSURLComponents(URL: nil, resolvingAgainstBaseURL: false) else {
+                return nil
+            }
+            components.queryItems = parameters.queryItems
+            guard let encodedQueryString = components.URL?.query else {
+                return nil
+            }
+            let characterSet = NSMutableCharacterSet(charactersInString: "+:")
+            characterSet.invert()
+            components.percentEncodedQuery = encodedQueryString.stringByAddingPercentEncodingWithAllowedCharacters(characterSet)
+            return components.URL
+        }))
+        let encodedData = encoding.encodeBody(parameters)
+
+        XCTAssertNotNil(encodedData, "Encoded body should be non-nil")
+
+        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
+        XCTAssertEqual(stringValue, "key=part1%2Bpart2%3Apart3")
+    }
+
 }
