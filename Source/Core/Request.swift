@@ -67,6 +67,8 @@ public struct Request {
         */
         // TODO: remove this function in 4.0.0
         public func encodeURL(url: NSURL, parameters: [String : AnyObject]) -> NSURL? {
+            print("DBG: encodeURL(\(url), parameters: \(parameters))")
+
             switch self {
             case .Percent:
                 return url.URLByAppendingQueryItems(parameters.queryItems)
@@ -78,7 +80,12 @@ public struct Request {
             case .Custom(let transformer):
                 switch transformer {
                 case .URL(let converter):
-                    return converter(url: url, parameters: parameters)
+                    print("DBG: converter=\(converter)")
+                    print("DBG: url=\(url)")
+                    print("DBG: parameters=\(parameters)")
+                    let result = converter(url: url, parameters: parameters)
+                    print("DBG: result=\(result)")
+                    return result
                 case .Body:
                     assertionFailure("Cannot custom encode URL parameters using ParameterEncodingTransformer.Body")
                     return nil // <-- unreachable
