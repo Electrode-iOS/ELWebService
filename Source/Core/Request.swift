@@ -43,13 +43,20 @@ public struct Request {
     }
     
     // MARK: Parameter Encodings
-    
+
+    public enum ParameterEncodingTransformer {
+        case URL((url: NSURL, parameters: [String : AnyObject]) -> NSURL?)
+        case Body((parameters: [String : AnyObject]) -> NSData?, contentType: String)
+    }
+
     /// A `ParameterEncoding` value defines how to encode request parameters
     public enum ParameterEncoding {
         /// Encode parameters with percent encoding
         case Percent
         /// Encode parameters as JSON
         case JSON
+        /// Custom encoding
+        case Custom(transformer: ParameterEncodingTransformer)
         
         /**
          Encode query parameters in an existing URL.
@@ -67,7 +74,17 @@ public struct Request {
             case .JSON:
                 assertionFailure("Cannot encode URL parameters using JSON encoding")
                 return nil // <-- unreachable
+
+            case .Custom(let transformer):
+                switch transformer {
+                case .URL(let converter):
+                    return converter(url: url, parameters: parameters)
+                case .Body:
+                    assertionFailure("Cannot custom encode URL parameters using ParameterEncodingTransformer.Body")
+                    return nil // <-- unreachable
+                }
             }
+
         }
         
         /**
@@ -82,6 +99,15 @@ public struct Request {
                 return parameters.percentEncodedQueryString?.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             case .JSON:
                 return try? NSJSONSerialization.dataWithJSONObject(parameters, options: NSJSONWritingOptions())
+
+            case .Custom(let transformer):
+                switch transformer {
+                case .URL:
+                    assertionFailure("Cannot custom encode Body using ParameterEncodingTransformer.URL")
+                    return nil // <-- unreachable
+                case .Body(let converter, _):
+                    return converter(parameters: parameters)
+                }
             }
         }
     }
@@ -144,8 +170,15 @@ public struct Request {
     /// The type of parameter encoding to use when encoding request parameters.
     public var parameterEncoding = ParameterEncoding.Percent {
         didSet {
-            if parameterEncoding == .JSON {
+            switch parameterEncoding {
+            case .Percent:
+                break // nothing to see here, move along
+            case .JSON:
                 contentType = ContentType.json
+            case .Custom(let transformer):
+                if case let .Body(_, customContentType) = transformer {
+                    contentType = customContentType
+                }
             }
         }
     }

@@ -93,12 +93,24 @@ class RequestTests: XCTestCase {
 
     func test_settingParameterEncodingToJSON_setsContentTypeToJSON() {
         var request = Request(.GET, url: "http://httpbin.org/")
-        
+
         request.parameterEncoding = .JSON
-        
+
         XCTAssertEqual(request.contentType, Request.ContentType.json)
     }
-    
+
+    func test_settingParameterEncodingToCustom_setsContentTypeToSample() {
+        var request = Request(.GET, url: "http://httpbin.org/")
+
+        let expectedContentType = "sample"
+        request.parameterEncoding = .Custom(transformer: .Body({
+            (_) -> NSData? in
+            return nil
+            }, contentType: expectedContentType))
+
+        XCTAssertEqual(request.contentType, expectedContentType)
+    }
+
     func test_setBody_overwritesExistingBodyData() {
         var request = Request(.POST, url: "http://httpbin.org/")
         let parameters = ["percentEncoded" : "this needs percent encoded"]
