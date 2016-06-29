@@ -1,4 +1,8 @@
-# ELWebService [![Build Status](https://travis-ci.org/Electrode-iOS/ELWebService.svg?branch=master)](https://travis-ci.org/Electrode-iOS/ELWebService) [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+# ELWebService 
+
+[![Version](https://img.shields.io/badge/version-v3.2.0-blue.svg)](https://github.com/Electrode-iOS/ELWebService/releases/latest)
+[![Build Status](https://travis-ci.org/Electrode-iOS/ELWebService.svg?branch=master)](https://travis-ci.org/Electrode-iOS/ELWebService) 
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 ELWebService (previously named Swallow) simplifies interaction with HTTP web services by providing an API for building `NSURLRequest` objects and processing `NSURLResponse` and `NSData` response objects. See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
 
