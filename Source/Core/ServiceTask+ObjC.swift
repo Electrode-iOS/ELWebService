@@ -8,66 +8,6 @@
 
 import Foundation
 
-// MARK: - Obj-C Interop for Request API
-
-extension ServiceTask {
-    /**
-     Set request parameter values and configure them to be JSON-encoded.
-     
-     This method is designed to only be called from Obj-C. Please use
-     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
-     when calling from Swift.
-     
-     - parameter parameters: Request parameter values.
-    */
-    @discardableResult  @objc public func setJSONEncodedParametersObjC(_ parameters: [String: AnyObject]) -> Self {
-        // TODO: `let _ =` should not be needed here. @discardableResult does not appear to be resolving the unused Self warning
-        let _ = setParameters(parameters, encoding: .json)
-        return self
-    }
-    
-    /**
-     Set request parameter values and configure them to be Percent-encoded.
-     
-     This method is designed to be called from Obj-C only. Please use
-     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
-     when calling from Swift.
-     
-     - parameter parameters: Request parameter values.
-    */
-    @discardableResult  @objc public func setPercentEncodedParametersObjC(_ parameters: [String: AnyObject]) -> Self {
-        // TODO: `let _ =` should not be needed here. @discardableResult does not appear to be resolving the unused Self warning
-        let _ = setParameters(parameters, encoding: .percent)
-        return self
-    }
-        
-    /**
-     Configure the request parameters to be JSON-encoded.
-    
-     This method is designed to be called from Obj-C only. Please use
-     `setParameterEncoding(encoding: .JSON)` when calling
-     from Swift.
-    */
-    @discardableResult  @objc public func setJSONParameterEncodingObjC() -> Self {
-        // TODO: `let _ =` should not be needed here. @discardableResult does not appear to be resolving the unused Self warning
-        let _ = setParameterEncoding(.json)
-        return self
-    }
-    
-    /**
-     Configure the request parameters to be Percent-encoded.
-     
-     This method is designed to be called from Obj-C only. Please use
-     `setParameterEncoding(encoding: .Percent)` when calling
-     from Swift.
-    */
-    @discardableResult @objc public func setPercentParameterEncodingObjC() -> Self {
-        // TODO: `let _ =` should not be needed here. @discardableResult does not appear to be resolving the unused Self warning
-        let _ = setParameterEncoding(.percent)
-        return self
-    }
-}
-
 // MARK: - Obj-C Interop for Response Handler API
 
 extension ServiceTask {

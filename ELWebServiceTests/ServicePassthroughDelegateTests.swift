@@ -9,6 +9,8 @@
 import XCTest
 @testable import ELWebService
 
+private let baseURL = URL(string: "http://httpbin.org/")!
+
 class ServicePassthroughDelegateTests: XCTestCase {
     func test_passthroughDelegate_receivesEventsWhenResponseIsValid() {
         let passthroughSpy = ServicePassthroughDelegateSpy()
@@ -16,7 +18,7 @@ class ServicePassthroughDelegateTests: XCTestCase {
         passthroughSpy.responseReceivedExpectation = expectation(withDescription: "responseReceived passthrough called")
         passthroughSpy.updateUIBeginExpectation = expectation(withDescription: "updateUIBegin passthrough called")
         passthroughSpy.updateUIEndExpectation = expectation(withDescription: "updateUIEnd passthrough called")
-        let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
+        let service = WebService(baseURL: baseURL, passthroughDelegate: passthroughSpy)
         service.session = Responds200MockSession()
         
         let _ = service
@@ -38,7 +40,7 @@ class ServicePassthroughDelegateTests: XCTestCase {
         passthroughSpy.responseReceivedExpectation = expectation(withDescription: "responseReceived passthrough called")
         passthroughSpy.updateUIBeginExpectation = expectation(withDescription: "updateUIBegin passthrough called")
         passthroughSpy.updateUIEndExpectation = expectation(withDescription: "updateUIEnd passthrough called")
-        let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
+        let service = WebService(baseURL: baseURL, passthroughDelegate: passthroughSpy)
         service.session = Responds200MockSession()
 
         let _ = service
@@ -57,7 +59,7 @@ class ServicePassthroughDelegateTests: XCTestCase {
     func test_passthroughDelegate_receivesFailureEventWhenResponseHandlerReturnsFailure() {
         let passthroughSpy = ServicePassthroughDelegateSpy()
         passthroughSpy.serviceResultFailureExpecation = expectation(withDescription: "serviceResultFailure passthrough called")
-        let service = WebService(baseURLString: "http://httpbin.org/", passthroughDelegate: passthroughSpy)
+        let service = WebService(baseURL: baseURL, passthroughDelegate: passthroughSpy)
         service.session = Responds200MockSession()
 
         let _ = service

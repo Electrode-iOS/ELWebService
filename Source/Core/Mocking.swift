@@ -17,7 +17,7 @@ public protocol MockableDataTaskResult {
      - parameter request: The request that the data task result is responding to.
      - returns: Data that will be passed to the completion handler of the task.
     */
-    func dataTaskResult(_ request: URLRequestEncodable) -> (Data?, URLResponse?, NSError?)
+    func dataTaskResult(_ request: URLRequestConvertible) -> (Data?, URLResponse?, NSError?)
 }
 
 // MARK: - MockResponse
@@ -63,8 +63,8 @@ public struct MockResponse {
 
 extension MockResponse: MockableDataTaskResult {
     /// Creates a data task result from the mock response data
-    public func dataTaskResult(_ request: URLRequestEncodable) -> (Data?, URLResponse?, NSError?) {
-        guard let responseURL = url ?? request.urlRequestValue.url else {
+    public func dataTaskResult(_ request: URLRequestConvertible) -> (Data?, URLResponse?, NSError?) {
+        guard let responseURL = url ?? request.urlRequest.url else {
             return (nil, nil, Error.invalidURL as NSError)
         }
         
@@ -75,7 +75,7 @@ extension MockResponse: MockableDataTaskResult {
 
 extension URLResponse: MockableDataTaskResult {
     /// Creates a data task result with NSURLResponse instance as the response parameter
-    public func dataTaskResult(_ request: URLRequestEncodable) -> (Data?, URLResponse?, NSError?) {
+    public func dataTaskResult(_ request: URLRequestConvertible) -> (Data?, URLResponse?, NSError?) {
         return (nil, self, nil)
     }
 }
@@ -84,7 +84,7 @@ extension URLResponse: MockableDataTaskResult {
 
 extension NSError: MockableDataTaskResult {
     /// Creates a data task result with NSError instance as the error parameter
-    public func dataTaskResult(_ request: URLRequestEncodable) -> (Data?, URLResponse?, NSError?) {
+    public func dataTaskResult(_ request: URLRequestConvertible) -> (Data?, URLResponse?, NSError?) {
         return (nil, nil, self)
     }
 }
@@ -93,7 +93,7 @@ extension NSError: MockableDataTaskResult {
 
 /// Implements the `Session` protocol and provides an API for adding mocked responses as stubs.
 public class MockSession: Session {
-    typealias Stub = (MockableDataTaskResult, (URLRequestEncodable) -> (Bool))
+    typealias Stub = (MockableDataTaskResult, (URLRequestConvertible) -> (Bool))
     lazy var stubs = [Stub]()
     
     public init() {
@@ -101,7 +101,7 @@ public class MockSession: Session {
     }
     
     /// Creates a data task for a given request and calls the completion handler on a background queue.
-    public func dataTask(request: URLRequestEncodable, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
+    public func dataTask(request: URLRequestConvertible, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
         requestSent(request)
         
         let (data, response, error) = stubbedResponse(request: request)
@@ -113,7 +113,7 @@ public class MockSession: Session {
         return MockDataTask()
     }
     
-    public func requestSent(_ request: URLRequestEncodable) {
+    public func requestSent(_ request: URLRequestConvertible) {
         
     }
     
@@ -127,7 +127,7 @@ public class MockSession: Session {
      - parameter requestMatcher: A matcher closure that determines if the mocked 
      response is used as a response stub for a given request.
     */
-    public func addStub(_ response: MockableDataTaskResult, requestMatcher: (URLRequestEncodable) -> (Bool)) {
+    public func addStub(_ response: MockableDataTaskResult, requestMatcher: (URLRequestConvertible) -> (Bool)) {
         stubs.append((response, requestMatcher))
     }
 
@@ -147,7 +147,7 @@ public class MockSession: Session {
      
      - parameter request: The request that needs a stubbed response.
      */
-    public func stubbedResponse(request: URLRequestEncodable) -> (Data?, URLResponse?, NSError?) {
+    public func stubbedResponse(request: URLRequestConvertible) -> (Data?, URLResponse?, NSError?) {
         for (response, matcher) in stubs.reversed() where matcher(request) {
             return response.dataTaskResult(request)
         }
@@ -161,9 +161,9 @@ public class MockSession: Session {
 /// A MockableSession that records all of the requests that are sent during its lifetime.
 public class RequestRecordingSession: MockSession {
     /// The requests that were sent during the lifetime of the session.
-    public private(set) var recordedRequests = [URLRequestEncodable]()
+    public private(set) var recordedRequests = [URLRequestConvertible]()
     
-    public override func requestSent(_ request: URLRequestEncodable) {
+    public override func requestSent(_ request: URLRequestConvertible) {
         recordedRequests.append(request)
     }
 }

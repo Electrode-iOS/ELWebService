@@ -31,7 +31,7 @@
 
 - (void)test_responseObjC_handlerGetsCalled {
     XCTestExpectation *expectation = [self expectationWithDescription:@"response handler is called"];
-    WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
+    WebService *service = [[WebService alloc] initWithBaseURL:[NSURL URLWithString:@"foo"]];
     ServiceTask *task = [service GET:@"bar"];
     [task responseObjC:^ObjCHandlerResult *(NSData *data, NSURLResponse *response) {
         [expectation fulfill];
@@ -45,7 +45,7 @@
 
 - (void)test_updateUIObjC_receivesHandlerResult {
     XCTestExpectation *expectation = [self expectationWithDescription:@"updateUI handler is called"];
-    WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
+    WebService *service = [[WebService alloc] initWithBaseURL:[NSURL URLWithString:@"foo"]];
     ServiceTask *task = [service GET:@"bar"];
     NSString *mockValue = @"12345";
     [task responseObjC:^ObjCHandlerResult *(NSData *data, NSURLResponse *response) {
@@ -65,7 +65,7 @@
 
 - (void)test_updateUIObjC_calledWhenHandlerResultIsNil {
     XCTestExpectation *expectation = [self expectationWithDescription:@"updateUI handler is called"];
-    WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
+    WebService *service = [[WebService alloc] initWithBaseURL:[NSURL URLWithString:@"foo"]];
     ServiceTask *task = [service GET:@"bar"];
     [task responseObjC:^ObjCHandlerResult *(NSData *data, NSURLResponse *response) {
         return nil;
@@ -82,7 +82,7 @@
 
 - (void)test_responseJSONObjC_receivesHandlerResult {
     XCTestExpectation *expectation = [self expectationWithDescription:@"updateUI handler is called"];
-    WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
+    WebService *service = [[WebService alloc] initWithBaseURL:[NSURL URLWithString:@"foo"]];
     ServiceTask *task = [service GET:@"bar"];
     [task responseJSONObjC:^ObjCHandlerResult *(id json, NSURLResponse *response) {
         NSDictionary *dictionary = json;
@@ -101,7 +101,7 @@
 
 - (void)test_responseError_calledWhenReturningErrorFromResponseHandler {
     XCTestExpectation *expectation = [self expectationWithDescription:@"error handler is called"];
-    WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
+    WebService *service = [[WebService alloc] initWithBaseURL:[NSURL URLWithString:@"foo"]];
     ServiceTask *task = [service GET:@"bar"];
     NSError *mockError = [[NSError alloc] initWithDomain:@"domain" code:500 userInfo:nil];
     [task responseObjC:^ObjCHandlerResult *(NSData *data, NSURLResponse *response) {
@@ -121,7 +121,7 @@
 
 - (void)test_updateErrorUI_calledWhenReturningErrorFromResponseHandler {
     XCTestExpectation *expectation = [self expectationWithDescription:@"error handler is called"];
-    WebService *service = [[WebService alloc] initWithBaseURLString:@"foo"];
+    WebService *service = [[WebService alloc] initWithBaseURL:[NSURL URLWithString:@"foo"]];
     ServiceTask *task = [service GET:@"bar"];
     NSError *mockError = [[NSError alloc] initWithDomain:@"domain" code:500 userInfo:nil];
     [task responseObjC:^ObjCHandlerResult *(NSData *data, NSURLResponse *response) {

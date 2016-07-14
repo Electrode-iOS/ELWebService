@@ -43,8 +43,8 @@ class MockingTests: XCTestCase {
 
 extension MockingTests {
     func test_mockSession_matchesStubWhenMatcherReturnsTrue() {
-        struct StubRequest: URLRequestEncodable {
-            var urlRequestValue: URLRequest {
+        struct StubRequest: URLRequestConvertible {
+            var urlRequest: URLRequest {
                 return URLRequest(url: URL(string: "")!)
             }
         }
@@ -63,8 +63,8 @@ extension MockingTests {
     }
     
     func test_mockSession_failsToMatchStubWhenMatcherReturnsFalse() {
-        struct StubRequest: URLRequestEncodable {
-            var urlRequestValue: URLRequest {
+        struct StubRequest: URLRequestConvertible {
+            var urlRequest: URLRequest {
                 return URLRequest(url: URL(string: "")!)
             }
         }
@@ -91,24 +91,25 @@ extension MockingTests {
         XCTAssertNotNil(response.data)
         XCTAssertEqual(data, response.data)
     }
-    
-    func test_mockResponse_returnsErrorResultWhenRequestURLIsInvalid() {
-        struct InvalidURLRequestEncodable: URLRequestEncodable {
-            var urlRequestValue: URLRequest {
-                var url = URL(string: "    ")!
-                return URLRequest(url: url)
-            }
-        }
-        
-        let data = Data()
-        let mockedResponse = MockResponse(statusCode: 200, data: data)
-        
-        let (responseData, httpResponse, error) = mockedResponse.dataTaskResult(InvalidURLRequestEncodable())
-        
-        XCTAssertNil(httpResponse)
-        XCTAssertNil(responseData)
-        XCTAssertNotNil(error)
-    }
+
+    // no way to test this now that URLRequest cannot be created w/o an URL
+//    func test_mockResponse_returnsErrorResultWhenRequestURLIsInvalid() {
+//        struct InvalidURLRequestConvertible: URLRequestConvertible {
+//            var urlRequest: URLRequest {
+//                var url = URL(string: "    ")!
+//                return URLRequest(url: url)
+//            }
+//        }
+//        
+//        let data = Data()
+//        let mockedResponse = MockResponse(statusCode: 200, data: data)
+//        
+//        let (responseData, httpResponse, error) = mockedResponse.dataTaskResult(InvalidURLRequestConvertible())
+//        
+//        XCTAssertNil(httpResponse)
+//        XCTAssertNil(responseData)
+//        XCTAssertNotNil(error)
+//    }
 }
 
 extension MockingTests {

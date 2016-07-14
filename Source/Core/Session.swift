@@ -11,12 +11,12 @@ import Foundation
 // MARK: - Session
 
 public protocol Session {
-    func dataTask(request: URLRequestEncodable, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask
+    func dataTask(request: URLRequestConvertible, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask
 }
 
 extension URLSession: Session {
-    public func dataTask(request: URLRequestEncodable, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
-        return self.dataTask(request: request.urlRequestValue, completion: completion) as DataTask
+    public func dataTask(request: URLRequestConvertible, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
+        return dataTask(with: request.urlRequest, completionHandler: completion) as DataTask
     }
 }
 

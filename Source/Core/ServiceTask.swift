@@ -8,6 +8,10 @@
 
 import Foundation
 
+protocol ServiceTaskDelegate: class {
+    
+}
+
 /**
  A lightweight wrapper around `NSURLSessionDataTask` that provides a chainable
  API for processing the result of a data task. A `ServiceTask` instance can be
@@ -23,6 +27,8 @@ import Foundation
     /// A closure type alias for an error handler.
     public typealias ErrorHandler = (ErrorProtocol) -> Void
     
+    weak var delegate: ServiceTaskDelegate?
+    
     /// State of the service task.
     public var state: URLSessionTask.State {
         if let state = dataTask?.state {
@@ -32,11 +38,7 @@ import Foundation
         return .suspended
     }
     
-    private var request: Request
-    
-    private var urlRequest: URLRequest {
-        return request.urlRequestValue as URLRequest
-    }
+    private var request: URLRequestConvertible
     
     /// Dispatch queue that queues up and dispatches handler blocks
     private let handlerQueue: OperationQueue
@@ -52,7 +54,7 @@ import Foundation
             switch result {
             case .failure(let error):
                 if responseError == nil {
-                    passthroughDelegate?.serviceResultFailure(urlResponse, data: responseData, request: urlRequest, error: error)
+                    passthroughDelegate?.serviceResultFailure(urlResponse, data: responseData, request: request.urlRequest, error: error)
                 }
             case .empty, .Value(_): return
             }
@@ -83,7 +85,7 @@ import Foundation
      - parameter dataTaskSource: Object responsible for creating a
        NSURLSessionDataTask used to send the NSURLRequset.
     */
-    init(request: Request, session: Session) {
+    init(request: URLRequestConvertible, session: Session) {
         self.request = request
         self.session = session
         self.handlerQueue = {
@@ -99,74 +101,13 @@ import Foundation
     }
 }
 
-// MARK: - Request API
-
-extension ServiceTask {
-    /// TODO: Needs docs
-    @discardableResult public func setParameters(_ parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
-        request.parameters = parameters
-        request.parameterEncoding = encoding ?? .percent
-        
-        return self
-    }
-    
-    /// TODO: Needs docs
-    @discardableResult public func setBody(_ data: Data) -> Self {
-        request.body = data
-        return self
-    }
-    
-    /// TODO: Needs docs
-    @discardableResult public func setJSON(_ json: AnyObject) -> Self {
-        request.contentType = Request.ContentType.json
-        request.body = try? JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
-        return self
-    }
-    
-    /// TODO: Needs docs
-    @discardableResult public func setHeaders(_ headers: [String: String]) -> Self {
-        request.headers = headers
-        return self
-    }
-    
-    /// TODO: Needs docs
-    @discardableResult public func setHeaderValue(_ value: String, forName name: String) -> Self {
-        request.headers[name] = value
-        return self
-    }
-    
-    /// TODO: Needs docs
-    @discardableResult public func setCachePolicy(_ cachePolicy: NSURLRequest.CachePolicy) -> Self {
-        request.cachePolicy = cachePolicy
-        return self
-    }
-    
-    /// TODO: Needs docs
-    @discardableResult public func setParameterEncoding(_ encoding: Request.ParameterEncoding) -> Self {
-        request.parameterEncoding = encoding
-        return self
-    }
-    
-    /// Sets the key/value pairs that will be encoded as the query in the URL.
-    @discardableResult public func setQueryParameters(_ parameters: [String: AnyObject]) -> Self {
-        request.queryParameters = parameters
-        return self
-    }
-    
-    /// Sets the key/value pairs that are encoded as form data in the request body.
-    @discardableResult public func setFormParameters(_ parameters: [String: AnyObject]) -> Self {
-        request.formParameters = parameters
-        return self
-    }
-}
-
 // MARK: - NSURLSesssionDataTask
 
 extension ServiceTask {
     /// Resume the underlying data task.
     @discardableResult public func resume() -> Self {
         if dataTask == nil {
-            dataTask = session?.dataTask(request: urlRequest) { data, response, error in
+            dataTask = session?.dataTask(request: request.urlRequest) { data, response, error in
                 self.handleResponse(response, data: data, error: error)
             }
         }

@@ -8,116 +8,70 @@
 
 import Foundation
 
-/// Defines an interface for encoding a `NSURLRequest`.
-public protocol URLRequestEncodable {
-    var urlRequestValue: URLRequest {get}
+public protocol URLRequestConvertible {
+    var urlRequest: URLRequest {get}
+}
+
+public protocol ServiceRequestProtocol: URLRequestConvertible {
+    var url: URL {get}
+    var method: ServiceRequest.Method {get}
+    var body: Data? {get}
+}
+
+extension ServiceRequestProtocol {
+    var method: ServiceRequest.Method {
+        return .get
+    }
+    
+    var body: Data? {
+        return nil
+    }
+}
+
+public protocol ParameterizedServiceRequest {
+    var queryParameters: [String : AnyObject]? {get}
+    var formParameters: [String : AnyObject]? {get}
 }
 
 /**
  Encapsulates the data required to send an HTTP request.
 */
-public struct Request {
-    
-    /// The `Method` enum defines the supported HTTP methods.
+public struct ServiceRequest: ServiceRequestProtocol, ParameterizedServiceRequest {
+    /// Defines the supported HTTP methods.
     public enum Method: String {
-        case GET = "GET"
-        case HEAD = "HEAD"
-        case POST = "POST"
-        case PUT = "PUT"
-        case DELETE = "DELETE"
-
-        /**
-         Whether requests using this method should encode parameters in the URL, instead of the body.
-
-         `GET`, `HEAD` and `DELETE` requests encode parameters in the URL, `PUT` and `POST` encode
-         them in the body.
-         */
-        func encodesParametersInURL() -> Bool {
-            switch self {
-            case .GET, .HEAD, .DELETE:
-                return true
-            default:
-                return false
-            }
-        }
+        case get = "GET"
+        case head = "HEAD"
+        case post = "POST"
+        case put = "PUT"
+        case delete = "DELETE"
     }
     
-    // MARK: Parameter Encodings
-    
-    /// A `ParameterEncoding` value defines how to encode request parameters
-    public enum ParameterEncoding {
-        /// Encode parameters with percent encoding
-        case percent
-        /// Encode parameters as JSON
-        case json
-        
-        /**
-         Encode query parameters in an existing URL.
-        
-         - parameter url: Query string will be appended to this NSURL value.
-         - parameter parameters: Query parameters to be encoded as a query string.
-         - returns: A NSURL value with query string parameters encoded.
-        */
-        // TODO: remove this function in 4.0.0
-        public func encodeURL(_ url: URL, parameters: [String : AnyObject]) -> URL? {
-            switch self {
-            case .percent:
-                return url.URLByAppendingQueryItems(parameters.queryItems)
-            
-            case .json:
-                assertionFailure("Cannot encode URL parameters using JSON encoding")
-                return nil // <-- unreachable
-            }
-        }
-        
-        /**
-         Encode query parameters into a NSData value for request body.
-        
-         - parameter parameters: Query parameters to be encoded as HTTP body.
-         - returns: NSData value with containing encoded parameters.
-        */
-        public func encodeBody(_ parameters: [String : AnyObject]) -> Data? {
-            switch self {
-            case .percent:
-                return parameters.percentEncodedQueryString?.data(using: String.Encoding.utf8, allowLossyConversion: false)
-            case .json:
-                return try? JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions())
-            }
-        }
-    }
     
     /// A group of static constants for referencing HTTP header field names.
-    public struct Headers {
-        public static let userAgent = "User-Agent"
-        public static let contentType = "Content-Type"
-        public static let contentLength = "Content-Length"
-        public static let accept = "Accept"
-        public static let cacheControl = "Cache-Control"
+    public enum Headers: String {
+        case userAgent = "User-Agent"
+        case contentType = "Content-Type"
+        case contentLength = "Content-Length"
+        case accept = "Accept"
+        case cacheControl = "Cache-Control"
     }
     
-    /// A group of static constants for referencing supported HTTP 
+    /// A group of static constants for referencing supported HTTP
     /// `Content-Type` header values.
-    public struct ContentType {
-        public static let formEncoded = "application/x-www-form-urlencoded"
-        public static let json = "application/json"
+    public enum ContentType: String {
+        case formEncoded = "application/x-www-form-urlencoded"
+        case json = "application/json"
+
     }
-        
+    
     /// The HTTP method of the request.
-    public let method: Method
+    public let method: ServiceRequest.Method
     
     /// The URL string of the HTTP request.
-    public let url: String
+    public let url: URL
     
     /// The body of the HTTP request.
     public var body: Data?
-    
-    /**
-     The parameters to encode in the HTTP request. Request parameters are percent
-     encoded and are appended as a query string or set as the request body 
-     depending on the HTTP request method.
-    */
-    // TODO: remove `parameters` in 4.0.0
-    public var parameters = [String : AnyObject]()
     
     /// The key/value pairs that will be encoded as the query in the URL.
     public var queryParameters: [String : AnyObject]?
@@ -127,7 +81,7 @@ public struct Request {
         didSet {
             if let formData = formParameters?.percentEncodedData {
                 body = formData
-                contentType = ContentType.formEncoded
+                contentType = ContentType.formEncoded.rawValue
             }
         }
     }
@@ -136,30 +90,18 @@ public struct Request {
      The HTTP header fields of the request. Each key/value pair represents a 
      HTTP header field value using the key as the field name.
     */
-    internal(set) var headers = [String : String]()
-    
-    /// The cache policy of the request. See NSURLRequestCachePolicy.
-    internal(set) var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
-    
-    /// The type of parameter encoding to use when encoding request parameters.
-    public var parameterEncoding = ParameterEncoding.percent {
-        didSet {
-            if parameterEncoding == .json {
-                contentType = ContentType.json
-            }
-        }
-    }
+    public var headers = [String : String]()
     
     /// The HTTP `Content-Type` header field value of the request.
-    internal(set) var contentType: String? {
-        set { headers[Headers.contentType] = newValue }
-        get { return headers[Headers.contentType] }
+    public var contentType: String? {
+        set { headers[Headers.contentType.rawValue] = newValue }
+        get { return headers[Headers.contentType.rawValue] }
     }
     
     /// The HTTP `User-Agent` header field value of the request.
-    internal(set) var userAgent: String? {
-        set { headers[Headers.userAgent] = newValue }
-        get { return headers[Headers.userAgent] }
+    public var userAgent: String? {
+        set { headers[Headers.userAgent.rawValue] = newValue }
+        get { return headers[Headers.userAgent.rawValue] }
     }
     
     // MARK: Initialization
@@ -170,43 +112,31 @@ public struct Request {
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
     */
-    init(_ method: Method, url: String) {
+    public init(_ method: ServiceRequest.Method, url: URL) {
         self.method = method
         self.url = url
     }
+    
+    public init?(_ method: ServiceRequest.Method, urlString: String) {
+        guard let url = URL(string: urlString)
+        else { return nil }
+        
+        self.init(method, url: url)
+    }
 }
 
-// MARK: - URLRequestEncodable
-
-extension Request: URLRequestEncodable {
+extension ServiceRequest {
     /**
      Encode a NSURLRequest based on the value of Request.
      
      - returns: A NSURLRequest encoded based on the Request data.
     */
-    public var urlRequestValue: URLRequest {
-        let urlRequest = NSMutableURLRequest(url: URL(string: url)!)
+    public var urlRequest: URLRequest {
+        let urlRequest = NSMutableURLRequest(url: url)
         urlRequest.httpMethod = method.rawValue
-        urlRequest.cachePolicy = cachePolicy
         
         for (name, value) in headers {
             urlRequest.addValue(value, forHTTPHeaderField: name)
-        }
-        
-        if parameters.count > 0 {
-            if method.encodesParametersInURL() {
-                if let encodedURL = urlRequest.url?.URLByAppendingQueryItems(parameters.queryItems) {
-                    urlRequest.url = encodedURL
-                }
-            } else {
-                if let data = parameterEncoding.encodeBody(parameters) {
-                    urlRequest.httpBody = data
-                    
-                    if urlRequest.value(forHTTPHeaderField: Headers.contentType) == nil {
-                        urlRequest.setValue(ContentType.formEncoded, forHTTPHeaderField: Headers.contentType)
-                    }
-                }
-            }
         }
         
         // body property value overwrites any previously encoded body value
@@ -224,8 +154,8 @@ extension Request: URLRequestEncodable {
     }
 }
 
-extension URLRequest: URLRequestEncodable {
-    public var urlRequestValue: URLRequest {
+extension URLRequest: URLRequestConvertible {
+    public var urlRequest: URLRequest {
         return self
     }
 }
