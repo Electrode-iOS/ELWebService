@@ -15,7 +15,7 @@ public enum ServiceTaskResult {
     /// Defines a task result as a value
     case Value(Any)
     /// Defines a task resulting in an error
-    case failure(ErrorProtocol)
+    case failure(Error)
     
     func value() throws -> Any? {
         switch self {

@@ -24,7 +24,7 @@ public protocol MockableDataTaskResult {
 
 /// Encapsulates the meta and body data of a response.
 public struct MockResponse {
-    enum Error: ErrorProtocol {
+    enum Error: Swift.Error {
         case invalidURL
     }
     
@@ -105,8 +105,8 @@ public class MockSession: Session {
         requestSent(request)
         
         let (data, response, error) = stubbedResponse(request: request)
-        
-        DispatchQueue.global(attributes: DispatchQueue.GlobalAttributes.qosDefault).async {
+            
+        DispatchQueue.global(qos: .default).async {
             completion(data, response, error)
         }
         

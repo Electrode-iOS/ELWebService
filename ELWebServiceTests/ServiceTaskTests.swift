@@ -22,26 +22,26 @@ class ServiceTaskTests: XCTestCase {
     // MARK: Tests
     
     func test_updateUI_runsOnTheMainThread() {
-        let expectation = self.expectation(withDescription: "updateUI handler is called")
+        let expectation = self.expectation(description: "updateUI handler is called")
         
         let _ = successfulTask().response { data, response in
                 return .empty
             }
             .updateUI { value in
-                XCTAssertTrue(Thread.isMainThread())
+                XCTAssertTrue(Thread.isMainThread)
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateUI_isNotCalledWhenResponseHandlerReturnsFailure() {
-        enum ResponseError: ErrorProtocol {
+        enum ResponseError: Error {
             case iveMadeAHugeMistake
         }
         
-        let expectation = self.expectation(withDescription: "responseError handler is called")
+        let expectation = self.expectation(description: "responseError handler is called")
         let task = successfulTask()
         
         task
@@ -56,11 +56,11 @@ class ServiceTaskTests: XCTestCase {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateUI_receivesResponseHandlerValue() {
-        let expectation = self.expectation(withDescription: "updateUI handler is called")
+        let expectation = self.expectation(description: "updateUI handler is called")
         let task = successfulTask()
 
         task.response { data, response in
@@ -77,26 +77,26 @@ class ServiceTaskTests: XCTestCase {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_response_runsOnBackgroundThread() {
-        let expectation = self.expectation(withDescription: "response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         let task = successfulTask()
         
         task.response { data, response in
-                XCTAssertTrue(!Thread.isMainThread())
+                XCTAssertTrue(!Thread.isMainThread)
                 expectation.fulfill()
    
                 return .empty
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateUI_blocksHandlerChainExecution() {
-        let expectation = self.expectation(withDescription: "response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         var updateUIExecuted = false
         
         successfulTask()
@@ -114,7 +114,7 @@ class ServiceTaskTests: XCTestCase {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -122,7 +122,7 @@ class ServiceTaskTests: XCTestCase {
 
 extension ServiceTaskTests {
     func test_responseJSON_handlerIsCalledWhenJSONIsValid() {
-        let expectation = self.expectation(withDescription: "JSON response handler is called")
+        let expectation = self.expectation(description: "JSON response handler is called")
         let session = MockSession()
         
         session.addStub(MockResponse(statusCode: 200, json: ["foo": "bar"]))
@@ -134,11 +134,11 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseJSON_errorHandlerIsCalledWhenJSONIsInvalid() {
-        let expectation = self.expectation(withDescription: "Error handler is called")
+        let expectation = self.expectation(description: "Error handler is called")
         let session = MockSession()
         
 //        let badJSONData = NSString(string: "{}couldneverbeJSON-[][[42").data(using: String.Encoding.utf8)
@@ -158,11 +158,11 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseJSON_errorHandlerIsCalledWhenJSONIsNil() {
-        let expectation = self.expectation(withDescription: "Error handler is called")
+        let expectation = self.expectation(description: "Error handler is called")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 204))
         let task = ServiceTask(request: ServiceRequest(.get, urlString: "/json")!, session: session)
@@ -176,7 +176,7 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -186,7 +186,7 @@ extension ServiceTaskTests {
     // MARK: Stub
     
     func errorTask() -> ServiceTask {
-        enum TaskTestError: ErrorProtocol {
+        enum TaskTestError: Error {
             case requestFailed
         }
         
@@ -199,7 +199,7 @@ extension ServiceTaskTests {
     // MARK: Tests
     
     func test_responseError_handlerCalledWhenSessionReturnsError() {
-        let expectation = self.expectation(withDescription: "Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         let _ = task.responseError { error in
@@ -207,11 +207,11 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseError_responseHandlerIsNotCalled() {
-        let expectation = self.expectation(withDescription: "Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         let _ = task.response { data, response in
@@ -223,27 +223,27 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseError_runsOnBackgroundThread() {
-        let expectation = self.expectation(withDescription: "Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         task.responseError { error in
-                XCTAssertTrue(!Thread.isMainThread())
+                XCTAssertTrue(!Thread.isMainThread)
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseError_calledWhenResposneHandlerReturnsFailure() {
-        enum ResponseError: ErrorProtocol {
+        enum ResponseError: Error {
             case stubError
         }
-        let expectation = self.expectation(withDescription: "Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = successfulTask()
         
         let _ = task
@@ -259,11 +259,11 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseError_isNotCalledWhenReturningResultsInResponseHandlers() {
-        let expectation = self.expectation(withDescription: "response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 200))
         
@@ -285,11 +285,11 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
     
     func test_updateErrorUI_isNotCalledWhenReturningResultsInResponseHandlers() {
-        let expectation = self.expectation(withDescription: "response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 200))
         
@@ -311,11 +311,11 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
     
     func test_updateErrorUI_handlerCalledWhenSessionReturnsError() {
-        let expectation = self.expectation(withDescription: "Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         task.updateErrorUI { error in
@@ -323,24 +323,24 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateErrorUI_runsOnMainThread() {
-        let expectation = self.expectation(withDescription: "Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         task.updateErrorUI { error in
-                XCTAssertTrue(Thread.isMainThread(), "updateErrorUI handler should be running on the main thread")
+                XCTAssertTrue(Thread.isMainThread, "updateErrorUI handler should be running on the main thread")
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateErrorUI_blocksHandlerChainExecution() {
-        let expectation = self.expectation(withDescription: "response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         var updateErrorUIExecuted = false
         
         errorTask()
@@ -354,7 +354,7 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -362,7 +362,7 @@ extension ServiceTaskTests {
 
 extension ServiceTaskTests {
     func test_transform_closureNotCalledIfAddedBeforeResponseHandler() {
-        let done = expectation(withDescription: "done")
+        let done = expectation(description: "done")
 
         successfulTask()
             .transform { _ in
@@ -375,11 +375,11 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_transform_closureCalled() {
-        let closureCalled = expectation(withDescription: "transform closure called")
+        let closureCalled = expectation(description: "transform closure called")
 
         successfulTask()
             .response { _, _ in
@@ -391,11 +391,11 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_transform_closureNotCalledForError() {
-        let done = expectation(withDescription: "done")
+        let done = expectation(description: "done")
 
         errorTask()
             .response { _, _ in
@@ -410,12 +410,12 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_transform_ordering() {
-        let closure1Called = expectation(withDescription: "transform closure 1 called")
-        let closure2Called = expectation(withDescription: "transform closure 2 called")
+        let closure1Called = expectation(description: "transform closure 1 called")
+        let closure2Called = expectation(description: "transform closure 2 called")
         var closure1CalledFirst = false
 
         successfulTask()
@@ -434,14 +434,14 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_transform_resultPropagation() {
-        let closure1Called = expectation(withDescription: "transform closure 1 called")
-        let closure2Called = expectation(withDescription: "transform closure 2 called")
-        let closure3Called = expectation(withDescription: "transform closure 3 called")
-        let done = expectation(withDescription: "done")
+        let closure1Called = expectation(description: "transform closure 1 called")
+        let closure2Called = expectation(description: "transform closure 2 called")
+        let closure3Called = expectation(description: "transform closure 3 called")
+        let done = expectation(description: "done")
 
         successfulTask()
             .response { _, _ in
@@ -484,7 +484,7 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -492,7 +492,7 @@ extension ServiceTaskTests {
 
 extension ServiceTaskTests {
     func test_recover_closureCalled() {
-        let closureCalled = expectation(withDescription: "closure called")
+        let closureCalled = expectation(description: "closure called")
 
         errorTask()
             .recover { error in
@@ -501,11 +501,11 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_recover_closureNotCalledForSuccess() {
-        let done = expectation(withDescription: "done")
+        let done = expectation(description: "done")
 
         successfulTask()
             .response { _, _ in
@@ -520,12 +520,12 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_recover_ordering() {
-        let closure1Called = expectation(withDescription: "recover closure 1 callled")
-        let closure2Called = expectation(withDescription: "recover closure 2 callled")
+        let closure1Called = expectation(description: "recover closure 1 callled")
+        let closure2Called = expectation(description: "recover closure 2 callled")
         var closure1CalledFirst = false
 
         errorTask()
@@ -541,16 +541,16 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_recover_resultPropagation() {
-        let closure1Called = expectation(withDescription: "recover closure 1 callled")
-        let closure2Called = expectation(withDescription: "recover closure 2 callled")
-        let closure3Called = expectation(withDescription: "recover closure 3 callled")
-        let done = expectation(withDescription: "done")
+        let closure1Called = expectation(description: "recover closure 1 callled")
+        let closure2Called = expectation(description: "recover closure 2 callled")
+        let closure3Called = expectation(description: "recover closure 3 callled")
+        let done = expectation(description: "done")
 
-        enum ServiceTaskTestError: ErrorProtocol {
+        enum ServiceTaskTestError: Error {
             case oops(detail: String)
         }
 
@@ -590,7 +590,7 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -598,11 +598,11 @@ extension ServiceTaskTests {
 
 extension ServiceTaskTests {
     func test_transformAndRecover_controlFlow() {
-        let closure1Called = expectation(withDescription: "recover closure 1 callled")
-        let closure3Called = expectation(withDescription: "recover closure 3 callled")
-        let done = expectation(withDescription: "done")
+        let closure1Called = expectation(description: "recover closure 1 callled")
+        let closure3Called = expectation(description: "recover closure 3 callled")
+        let done = expectation(description: "done")
 
-        enum ServiceTaskTestError: ErrorProtocol {
+        enum ServiceTaskTestError: Error {
             case oops
         }
 
@@ -634,7 +634,7 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectations(withTimeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
