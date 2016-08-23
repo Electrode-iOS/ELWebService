@@ -38,16 +38,16 @@ protocol ServiceTaskDelegate: class {
         return .suspended
     }
     
-    private var request: URLRequestConvertible
+    fileprivate var request: URLRequestConvertible
     
     /// Dispatch queue that queues up and dispatches handler blocks
-    private let handlerQueue: OperationQueue
+    fileprivate let handlerQueue: OperationQueue
     
     /// Session data task that refers the lifetime of the request.
-    private var dataTask: DataTask?
+    fileprivate var dataTask: DataTask?
     
     /// Result of the service task
-    private var taskResult: ServiceTaskResult? {
+    fileprivate var taskResult: ServiceTaskResult? {
         didSet {
             // Use observer to watch for error result to send to passthrough
             guard let result = taskResult else { return }
@@ -62,15 +62,15 @@ protocol ServiceTaskDelegate: class {
     }
     
     /// Response body data
-    private var responseData: Data?
+    fileprivate var responseData: Data?
     
     /// URL response
-    private var urlResponse: URLResponse?
+    fileprivate var urlResponse: URLResponse?
     
-    private var responseError: NSError?
+    fileprivate var responseError: NSError?
     
     /// Type responsible for creating NSURLSessionDataTask objects
-    private var session: Session?
+    fileprivate var session: Session?
     
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
@@ -144,7 +144,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for a result transformation handler.
-    public typealias ResultTransformer = (Any?) throws -> ServiceTaskResult
+    public typealias ResultTransformer = @escaping (Any?) throws -> ServiceTaskResult
 
     /**
      Add a response handler to be called on background thread after a successful
@@ -237,7 +237,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for handling the response as JSON.
-    public typealias JSONHandler = (AnyObject, URLResponse?) throws -> ServiceTaskResult
+    public typealias JSONHandler = @escaping (Any, URLResponse?) throws -> ServiceTaskResult
     
     /**
      Add a response handler to serialize the response body as a JSON object. The

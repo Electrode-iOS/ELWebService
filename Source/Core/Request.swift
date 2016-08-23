@@ -29,8 +29,8 @@ extension ServiceRequestProtocol {
 }
 
 public protocol ParameterizedServiceRequest {
-    var queryParameters: [String : AnyObject]? {get}
-    var formParameters: [String : AnyObject]? {get}
+    var queryParameters: [String : Any]? {get}
+    var formParameters: [String : Any]? {get}
 }
 
 /**
@@ -74,10 +74,10 @@ public struct ServiceRequest: ServiceRequestProtocol, ParameterizedServiceReques
     public var body: Data?
     
     /// The key/value pairs that will be encoded as the query in the URL.
-    public var queryParameters: [String : AnyObject]?
+    public var queryParameters: [String : Any]?
     
     /// The key/value pairs that are encoded as form data in the request body.
-    public var formParameters: [String : AnyObject]? {
+    public var formParameters: [String : Any]? {
         didSet {
             if let formData = formParameters?.percentEncodedData {
                 body = formData

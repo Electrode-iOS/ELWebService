@@ -904,7 +904,7 @@ extension WebServiceTests {
 
 extension ServiceTaskTests {
     class NonRespondingSession: Session {
-        func dataTask(request: URLRequestConvertible, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
+        func dataTask(request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
             return MockDataTask()
         }
     }

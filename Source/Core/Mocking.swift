@@ -55,7 +55,7 @@ public struct MockResponse {
     }
     
     /// Create a mocked response with a  JSON object to use as the stubbed response body data.
-    public init(statusCode: Int, json: AnyObject) {
+    public init(statusCode: Int, json: Any) {
         self.init(statusCode: statusCode)
         self.data = try? JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
     }
@@ -101,7 +101,7 @@ public class MockSession: Session {
     }
     
     /// Creates a data task for a given request and calls the completion handler on a background queue.
-    public func dataTask(request: URLRequestConvertible, completion: (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
+    public func dataTask(request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
         requestSent(request)
         
         let (data, response, error) = stubbedResponse(request: request)
@@ -127,7 +127,7 @@ public class MockSession: Session {
      - parameter requestMatcher: A matcher closure that determines if the mocked 
      response is used as a response stub for a given request.
     */
-    public func addStub(_ response: MockableDataTaskResult, requestMatcher: (URLRequestConvertible) -> (Bool)) {
+    public func addStub(_ response: MockableDataTaskResult, requestMatcher: @escaping (URLRequestConvertible) -> (Bool)) {
         stubs.append((response, requestMatcher))
     }
 
