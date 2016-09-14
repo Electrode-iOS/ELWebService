@@ -13,6 +13,7 @@
 - [Building an API Client](#building-an-api-client)
 - [Objective-C Interoperability](#objective-c-interoperability)
 - [Mocking](#mocking)
+- [Logging](#logging)
 
 ## About ELWebService
 
@@ -732,6 +733,61 @@ Errors can also be used as stubs. When providing an error stub the data task res
 
 ```
 session.addStub(ResponseError.FailedToSendRequest as NSError)
+```
+
+## Logging
+
+There is no built-in support for logging network requests or responses. However, it is fairly easy to implement your own logger by leveraging `WebService`'s passthrough delegate support.
+
+There are two ways to "inject" a delegate:
+
+1. Provide a delegate to the web service as an initializer parameter:
+  ```swift
+  class RequestLogger: ServicePassthroughDelegate {
+      // delegate implementation…
+  }
+
+  let logger = RequestLogger()
+
+  let service = WebService(baseURLString: baseURLString, passthroughDelegate: logger)
+  ```
+  _Note: You **must** keep a strong reference to the delegate instance; the web service only maintains a weak reference._
+2. Extend `WebService` to act as a delegate data source:
+  ```swift
+  class RequestLogger: ServicePassthroughDelegate {
+      // delegate implementation…
+  }
+
+  let logger = RequestLogger()
+
+  extension WebService: ServicePassthroughDataSource {
+      public var servicePassthroughDelegate: ServicePassthroughDelegate { return logger }
+  }
+  ```
+  _Note: `WebService` will automatically use the `ServicePassthroughDataSource` protocol API if it has been extended to conform it._
+
+A delegate implementation that logs requests and responses might look like:
+
+```swift
+class RequestLogger: ServicePassthroughDelegate {
+    func requestSent(request: NSURLRequest) {
+        print("Sending request: \(request)")
+    }
+
+    func responseReceived(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: NSError?) {
+        if let response = response {
+            print("Received response: \(response)")
+
+            if let data = data, let body = NSString(data: data, encoding: NSUTF8StringEncoding) {
+                print("... body: \(body)")
+            }
+        } else if let error = error {
+            print("Received error: \(error)")
+        }
+    }
+
+    // other protocol methods…
+}
 ```
 
 ## More Information
