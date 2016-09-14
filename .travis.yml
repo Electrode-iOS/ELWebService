@@ -1,4 +1,4 @@
 language: objective-c
 osx_image: xcode8
 script:
-   - xctool -project ELWebService.xcodeproj -scheme ELWebService -sdk iphonesimulator build test
+   - xcodebuild -project ELWebService.xcodeproj -scheme ELWebService -sdk iphonesimulator test -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.0'
