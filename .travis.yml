@@ -1,4 +1,4 @@
 language: objective-c
 osx_image: xcode8
 script:
-   - xcodebuild -project ELWebService.xcodeproj -scheme ELWebService -sdk iphonesimulator test -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.0'
+   - xcodebuild -scheme ELWebService -sdk iphonesimulator test -destination 'OS=10.0,name=iPhone 7 Plus' CODE_SIGNING_REQUIRED=NO
