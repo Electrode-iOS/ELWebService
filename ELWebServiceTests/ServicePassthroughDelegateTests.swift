@@ -75,7 +75,7 @@ class ServicePassthroughDelegateTests: XCTestCase {
     func test_passthroughDelegate_modifiedRequestReturnsNil() {
         let passthroughSpy = ServicePassthroughDelegateSpy()
         
-        let result = passthroughSpy.modifiedRequest(URLRequest(url: URL(string: "")!))
+        let result = passthroughSpy.modifiedRequest(URLRequest(url: URL(string: "foo")!))
         
         XCTAssertNil(result)
     }

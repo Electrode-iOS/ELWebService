@@ -45,7 +45,7 @@ extension MockingTests {
     func test_mockSession_matchesStubWhenMatcherReturnsTrue() {
         struct StubRequest: URLRequestConvertible {
             var urlRequest: URLRequest {
-                return URLRequest(url: URL(string: "")!)
+                return URLRequest(url: URL(string: "foo")!)
             }
         }
         
@@ -65,7 +65,7 @@ extension MockingTests {
     func test_mockSession_failsToMatchStubWhenMatcherReturnsFalse() {
         struct StubRequest: URLRequestConvertible {
             var urlRequest: URLRequest {
-                return URLRequest(url: URL(string: "")!)
+                return URLRequest(url: URL(string: "foo")!)
             }
         }
         
