@@ -132,7 +132,7 @@ extension WebService {
 // MARK: - Session API
 
 extension WebService: Session {
-    typealias TaskHandler = @escaping (Data?, URLResponse?, NSError?) -> Void
+    typealias TaskHandler = (Data?, URLResponse?, NSError?) -> Void
     
     public func dataTask(request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
         return dataTask(session: session, request: request, completion: completion)
@@ -155,7 +155,7 @@ extension WebService: Session {
         return urlRequest
     }
     
-    func onTaskCompletion(_ request: URLRequestConvertible, completionHandler: TaskHandler) -> TaskHandler {
+    func onTaskCompletion(_ request: URLRequestConvertible, completionHandler: @escaping TaskHandler) -> TaskHandler {
         return { data, response, error in
             self.passthroughDelegate?.responseReceived(response, data: data, request: request.urlRequest, error: error)
             completionHandler(data, response, error)

@@ -144,7 +144,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for a result transformation handler.
-    public typealias ResultTransformer = @escaping (Any?) throws -> ServiceTaskResult
+    public typealias ResultTransformer = (Any?) throws -> ServiceTaskResult
 
     /**
      Add a response handler to be called on background thread after a successful
@@ -153,7 +153,7 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
     */
-    public func response(_ handler: ResponseProcessingHandler) -> Self {
+    public func response(_ handler: @escaping ResponseProcessingHandler) -> Self {
         handlerQueue.addOperation {
             if let taskResult = self.taskResult {
                 switch taskResult {
@@ -182,7 +182,7 @@ extension ServiceTask {
      - parameter handler: Transformation handler to execute.
      - returns: Self instance to support chaining.
      */
-    public func transform(_ handler: ResultTransformer) -> Self {
+    public func transform(_ handler: @escaping ResultTransformer) -> Self {
         handlerQueue.addOperation {
             guard let taskResult = self.taskResult else {
                 return
@@ -210,7 +210,7 @@ extension ServiceTask {
      - parameter handler: The closure to execute as the updateUI handler.
      - returns: Self instance to support chaining.
     */
-    public func updateUI(_ handler: UpdateUIHandler) -> Self {
+    public func updateUI(_ handler: @escaping UpdateUIHandler) -> Self {
         handlerQueue.addOperation {
             guard let taskResult = self.taskResult else {
                 return
@@ -237,7 +237,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for handling the response as JSON.
-    public typealias JSONHandler = @escaping (Any, URLResponse?) throws -> ServiceTaskResult
+    public typealias JSONHandler = (Any, URLResponse?) throws -> ServiceTaskResult
     
     /**
      Add a response handler to serialize the response body as a JSON object. The
@@ -246,7 +246,7 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
     */
-    public func responseJSON(_ handler: JSONHandler) -> Self {
+    public func responseJSON(_ handler: @escaping JSONHandler) -> Self {
         return response { data, response in
             guard let data = data else {
                 throw ServiceTaskError.jsonSerializationFailedNilResponseBody
@@ -270,7 +270,7 @@ extension ServiceTask {
     - parameter handler: Error handler to execute when an error occurs.
     - returns: Self instance to support chaining.
     */
-    public func responseError(_ handler: ErrorHandler) -> Self {
+    public func responseError(_ handler: @escaping ErrorHandler) -> Self {
         handlerQueue.addOperation {
             if let taskResult = self.taskResult {
                 switch taskResult {
@@ -290,7 +290,7 @@ extension ServiceTask {
      - parameter handler: Error handler to execute when an error occurs.
      - returns: Self instance to support chaining.
     */
-    public func updateErrorUI(_ handler: ErrorHandler) -> Self {
+    public func updateErrorUI(_ handler: @escaping ErrorHandler) -> Self {
         handlerQueue.addOperation {
             if let taskResult = self.taskResult {
                 switch taskResult {
@@ -317,7 +317,7 @@ extension ServiceTask {
      - parameter handler: Recovery handler to execute when an error occurs.
      - returns: Self instance to support chaining.
     */
-    public func recover(_ handler: ErrorRecoveryHandler) -> Self {
+    public func recover(_ handler: @escaping ErrorRecoveryHandler) -> Self {
         handlerQueue.addOperation {
             guard let taskResult = self.taskResult else {
                 return
