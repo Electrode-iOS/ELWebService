@@ -101,7 +101,7 @@ public class MockSession: Session {
     }
     
     /// Creates a data task for a given request and calls the completion handler on a background queue.
-    public func dataTask(request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
+    public func dataTask(request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
         requestSent(request)
         
         let (data, response, error) = stubbedResponse(request: request)

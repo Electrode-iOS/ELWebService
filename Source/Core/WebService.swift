@@ -53,7 +53,7 @@ extension WebService {
     a given request.
     */
     public func GET(_ path: String) -> ServiceTask {
-        return serviceTask(request: request(.get, path: path))
+        return task(request: request(.get, path))
     }
 
     /**
@@ -66,7 +66,7 @@ extension WebService {
     */
     public func POST(_ path: String) -> ServiceTask {
         
-        return serviceTask(request: request(.post, path: path))
+        return task(request: request(.post, path))
     }
     
     /**
@@ -78,7 +78,7 @@ extension WebService {
     a given request.
     */
     public func PUT(_ path: String) -> ServiceTask {
-        return serviceTask(request: request(.put, path: path))
+        return task(request: request(.put, path))
     }
     
     /**
@@ -90,7 +90,7 @@ extension WebService {
     a given request.
     */
     public func DELETE(_ path: String) -> ServiceTask {
-        return serviceTask(request: request(.delete, path: path))
+        return task(request: request(.delete, path))
     }
     
     /**
@@ -102,7 +102,7 @@ extension WebService {
     a given request.
     */
     public func HEAD(_ path: String) -> ServiceTask {
-        return serviceTask(request: request(.head, path: path))
+        return task(request: request(.head, path))
     }
     
     /**
@@ -117,12 +117,17 @@ extension WebService {
      - returns: A ServiceTask instance that refers to the lifetime of processing
      a given request.
      */
-    public func request(_ method: ServiceRequest.Method, path: String) -> ServiceRequest {
+    public func request(_ method: ServiceRequest.Method, _ path: String) -> ServiceRequest {
         return ServiceRequest(method, url: absoluteURL(string: path)!)
     }
     
-    /// Create a service task to fulfill a given request.
-    public func serviceTask(request: ServiceRequestProtocol) -> ServiceTask {
+    /**
+     Create a service task to fulfill a given request. The task will be suspended
+     so you must call resume() to send the request.
+     - returns: A suspended ServiceTask instance that refers to the lifetime of 
+     processing a request.
+    */
+    public func task(request: ServiceRequestProtocol) -> ServiceTask {
         let task = ServiceTask(request: request, session: self)
         task.passthroughDelegate = passthroughDelegate
         return task
@@ -132,13 +137,13 @@ extension WebService {
 // MARK: - Session API
 
 extension WebService: Session {
-    typealias TaskHandler = (Data?, URLResponse?, NSError?) -> Void
+    typealias TaskHandler = (Data?, URLResponse?, Error?) -> Void
     
-    public func dataTask(request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
+    public func dataTask(request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
         return dataTask(session: session, request: request, completion: completion)
     }
     
-    func dataTask(session: Session, request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, NSError?) -> Void) -> DataTask {
+    func dataTask(session: Session, request: URLRequestConvertible, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
         let urlRequest = canonicalRequest(request: request).urlRequest
         
         passthroughDelegate?.requestSent(urlRequest)

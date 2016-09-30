@@ -14,7 +14,7 @@ public protocol ServicePassthroughDelegate: class {
     func requestSent(_ request: URLRequest)
     
     /// Called after a NSURLSessionDataTask has completed
-    func responseReceived(_ response: URLResponse?, data: Data?, request: URLRequest?, error: NSError?)
+    func responseReceived(_ response: URLResponse?, data: Data?, request: URLRequest?, error: Error?)
     
     /// Called before an updateUI handler is invoked
     func updateUIBegin(_ response: URLResponse?)

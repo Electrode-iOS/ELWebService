@@ -56,7 +56,7 @@ protocol ServiceTaskDelegate: class {
                 if responseError == nil {
                     passthroughDelegate?.serviceResultFailure(urlResponse, data: responseData, request: request.urlRequest, error: error)
                 }
-            case .empty, .Value(_): return
+            case .empty, .value(_): return
             }
         }
     }
@@ -67,7 +67,7 @@ protocol ServiceTaskDelegate: class {
     /// URL response
     fileprivate var urlResponse: URLResponse?
     
-    fileprivate var responseError: NSError?
+    fileprivate var responseError: Error?
     
     /// Type responsible for creating NSURLSessionDataTask objects
     fileprivate var session: Session?
@@ -127,7 +127,7 @@ extension ServiceTask {
     }
     
     /// Handle the response and kick off the handler queue
-    internal func handleResponse(_ response: URLResponse?, data: Data?, error: NSError?) {
+    internal func handleResponse(_ response: URLResponse?, data: Data?, error: Error?) {
         urlResponse = response
         responseData = data
         responseError = error
@@ -158,7 +158,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .failure(_): return // bail out to avoid next handler from running
-                case .empty, .Value(_): break
+                case .empty, .value(_): break
                 }
             }
             
@@ -189,7 +189,7 @@ extension ServiceTask {
             }
             
             do {
-                let resultValue = try taskResult.value()
+                let resultValue = try taskResult.taskValue()
                 self.taskResult = try handler(resultValue)
             } catch let error {
                 self.taskResult = .failure(error)
@@ -217,7 +217,7 @@ extension ServiceTask {
             }
             
             do {
-                let value = try taskResult.value()
+                let value = try taskResult.taskValue()
                 
                 DispatchQueue.main.sync {
                     self.passthroughDelegate?.updateUIBegin(self.urlResponse)
@@ -241,20 +241,42 @@ extension ServiceTask {
     
     /**
      Add a response handler to serialize the response body as a JSON object. The
-     handler will be dispatched to a background thread.
+     handler will be dispatched to a background queue.
     
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
     */
     public func responseJSON(_ handler: @escaping JSONHandler) -> Self {
         return response { data, response in
-            guard let data = data else {
-                throw ServiceTaskError.jsonSerializationFailedNilResponseBody
-            }
-            
-            let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
+            let json = try ServiceTask.json(data: data)
             return try handler(json, response)
         }
+    }
+    
+    /**
+     Add a response handler to serialize the response body as a JSON dictionary. 
+     The handler will be dispatched to a background queue.
+     
+     - parameter handler: Response handler to execute upon receiving a response.
+     - returns: Self instance to support chaining.
+     */
+    public func responseJSON(_ handler: @escaping ([String: Any], URLResponse?) throws -> ServiceTaskResult) -> Self {
+        return response { data, response in
+            let json = try ServiceTask.json(data: data)
+            
+            guard let dictionary = json as? [String: Any] else {
+                throw ServiceTaskError.jsonSerializationFailedInvalidDictionary
+            }
+            
+            return try handler(dictionary, response)
+        }
+    }
+    
+    static func json(data: Data?) throws -> Any {
+        guard let data = data else {
+            throw ServiceTaskError.jsonSerializationFailedNilResponseBody
+        }
+        return try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
     }
 }
 
@@ -275,7 +297,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .failure(let error): handler(error)
-                case .empty, .Value(_): break
+                case .empty, .value(_): break
                 }
             }
         }
@@ -298,7 +320,7 @@ extension ServiceTask {
                     DispatchQueue.main.sync {
                         handler(error)
                     }
-                case .empty, .Value(_): break
+                case .empty, .value(_): break
                 }
             }
         }
@@ -331,7 +353,7 @@ extension ServiceTask {
                     self.taskResult = .failure(error)
                 }
 
-            case .empty, .Value(_):
+            case .empty, .value(_):
                 return // bail out; do not run this handler
             }
         }
@@ -346,4 +368,5 @@ extension ServiceTask {
 public enum ServiceTaskError: Error {
     /// Failed to serialize a response body as JSON due to the data being nil.
     case jsonSerializationFailedNilResponseBody
+    case jsonSerializationFailedInvalidDictionary
 }
