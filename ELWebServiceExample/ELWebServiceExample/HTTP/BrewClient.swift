@@ -10,5 +10,5 @@ import ELWebService
 
 final class BrewClient: BrewClientAPI {
     static let baseURL = "http://brewhapi.herokuapp.com/"
-    let webService = WebService(baseURLString: baseURL)
+    let service = WebService(baseURL: URL(string:baseURL)!)
 }

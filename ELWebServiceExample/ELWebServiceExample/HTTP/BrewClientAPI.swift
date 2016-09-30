@@ -10,25 +10,30 @@ import ELWebService
 
 /// Describes the brew client API
 protocol BrewClientAPI {
-    var webService: WebService { get }
+    var service: WebService { get }
     
-    func fetchBrewWithBrewID(brewID: String) -> ServiceTask
+    func fetchBrew(brewID: String) -> ServiceTask
     func fetchAllBrews() -> ServiceTask
-    func insertBrew(brew: Brew) -> ServiceTask
+    func insert(brew: Brew) -> ServiceTask
 }
 
 /// Implements the web services for the HTTP client methods
 extension BrewClientAPI {
-    
-    func fetchBrewWithBrewID(brewID: String) -> ServiceTask {
-        return webService.GET("/brews/\(brewID)")
+    func fetchBrew(brewID: String) -> ServiceTask {
+        return service.GET("/brews/\(brewID)")
     }
     
     func fetchAllBrews() -> ServiceTask {
-        return webService.GET("/brews")
+        return service.GET("/brews")
     }
     
-    func insertBrew(brew: Brew) -> ServiceTask {
-        return webService.POST("/brews").setFormParameters(brew.webServiceParameters)
+    func insertRequest(brew: Brew) -> ServiceRequest {
+        var request = service.request(.post, "/brews")
+        request.formParameters = brew.webServiceParameters
+        return request
+    }
+    
+    func insert(brew: Brew) -> ServiceTask {
+        return service.task(request: insertRequest(brew: brew))
     }
 }
