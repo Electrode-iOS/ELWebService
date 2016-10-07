@@ -13,6 +13,7 @@
 - [Building an API Client](#building-an-api-client)
 - [Objective-C Interoperability](#objective-c-interoperability)
 - [Mocking](#mocking)
+- [Logging](#logging)
 
 ## About ELWebService
 
@@ -201,6 +202,31 @@ service
 
 ## Request Parameters
 
+### Query Parameters
+
+Query parameters are percent-encoded and appended as a query string of the request URL. The code below sends a request with the URL "/brewers?state=new%20york".
+
+```
+service
+    .GET("/brewers")
+    .setQueryParameters(["state" : "new york"])
+```
+
+### Form Parameters
+
+Form parameters are sent as percent-encoded data in the request body. Setting form parameters will automatically set the Content-Type header to `"application/x-www-form-urlencoded"`.
+
+```
+service
+    .POST("/brewers")
+    .setFormParameters(["name": "Trashboat Brewing"])
+```
+
+
+### Legacy Request Parameter API (deprecated)
+
+**NOTE: The `setParameters(parameters:)`, `setParameters(parameters:encoding:)`, and `Request.ParameterEncoding` APIs are deprecated as of v3.2.0 and will be removed in v4.0.0. Use `setQueryParameters()`, `setFormParameters()`, and `setJSON()` instead.**
+
 Parameterized data that is structured as a dictionary type of `[String: AnyObject]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
 
 ```
@@ -229,7 +255,9 @@ service
 
 Now the parameters are JSON encoded in the body of the request.
 
-### Parameter Encodings
+### Legacy Parameter Encodings API (deprecated)
+
+**NOTE: The `Request.ParameterEncoding` APIs are deprecated as of v3.2.0 and will be removed in v4.0.0. Use `setQueryParameters()`, `setFormParameters()`, and `setJSON()` instead.**
 
 The `setParameters()` method accepts an optional second parameter named `encoding` that allows you to specify how the request parameters will be encoded in the HTTP request. A value of `.JSON` will serialize the `parameters` data as JSON in the HTTP body and set the Content-Type HTTP header to "application/json".
 
@@ -705,6 +733,61 @@ Errors can also be used as stubs. When providing an error stub the data task res
 
 ```
 session.addStub(ResponseError.FailedToSendRequest as NSError)
+```
+
+## Logging
+
+There is no built-in support for logging network requests or responses. However, it is fairly easy to implement your own logger by leveraging `WebService`'s passthrough delegate support.
+
+There are two ways to "inject" a delegate:
+
+1. Provide a delegate to the web service as an initializer parameter:
+  ```swift
+  class RequestLogger: ServicePassthroughDelegate {
+      // delegate implementation…
+  }
+
+  let logger = RequestLogger()
+
+  let service = WebService(baseURLString: baseURLString, passthroughDelegate: logger)
+  ```
+  _Note: You **must** keep a strong reference to the delegate instance; the web service only maintains a weak reference._
+2. Extend `WebService` to act as a delegate data source:
+  ```swift
+  class RequestLogger: ServicePassthroughDelegate {
+      // delegate implementation…
+  }
+
+  let logger = RequestLogger()
+
+  extension WebService: ServicePassthroughDataSource {
+      public var servicePassthroughDelegate: ServicePassthroughDelegate { return logger }
+  }
+  ```
+  _Note: `WebService` will automatically use the `ServicePassthroughDataSource` protocol API if it has been extended to conform it._
+
+A delegate implementation that logs requests and responses might look like:
+
+```swift
+class RequestLogger: ServicePassthroughDelegate {
+    func requestSent(request: NSURLRequest) {
+        print("Sending request: \(request)")
+    }
+
+    func responseReceived(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: NSError?) {
+        if let response = response {
+            print("Received response: \(response)")
+
+            if let data = data, let body = NSString(data: data, encoding: NSUTF8StringEncoding) {
+                print("... body: \(body)")
+            }
+        } else if let error = error {
+            print("Received error: \(error)")
+        }
+    }
+
+    // other protocol methods…
+}
 ```
 
 ## More Information

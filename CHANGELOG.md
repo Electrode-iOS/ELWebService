@@ -1,3 +1,58 @@
+# [3.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.3.0)
+
+- Added support for Xcode 8, Swift 2.3, and iOS SDK 10
+
+# [3.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.2.0)
+
+### Deprecations
+
+- Deprecated `ServiceTaskResult.Failure`. [Use `throw` to propagate errors instead](#throwing-errors).
+- Deprecated `setParameters(parameters:encoding:)` and `setParameterEncoding(encoding:)` methods of `ServiceTask`. [Use `setQueryParameters(parameters:)` and `setFormParameters(parameters:)` instead](#request-parameters).
+
+### New Features
+ 
+- Added `setQueryParameters(parameters:)` method to `ServiceTask` for setting key/value pairs in the URL query string. [Fixes #40](https://github.com/Electrode-iOS/ELWebService/issues/40).
+- Added `setFormParameters(parameters:)` method to `ServiceTask` for setting key/value pairs in the request body as form encoded data. [Fixes #40](https://github.com/Electrode-iOS/ELWebService/issues/40).
+- Response handler closures can throw errors to propagate errors instead of return `.Failure(error)`.
+
+### Fixes
+
+- Make `updateUI()` and `updateErrorUI` handlers block handler chain execution. [Fixes #38](https://github.com/Electrode-iOS/ELWebService/issues/38).
+
+##### Throwing Errors
+
+Previously, response handlers returned  a`.Failure(error)` value to indiciate that a handler failed.
+
+```
+.responseJSON { json, response in
+    if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+        return .Value(models)
+    } else {
+      // any value conforming to ErrorType
+      return .Failure(JSONDecoderError.FailedToDecodeBrewer)
+    }
+}
+```
+
+Response handlers should now use Swift's `throw` keyword to propagate errors.
+
+```
+.responseJSON { json, response in
+    guard let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+        throw JSONDecoderError.FailedToDecodeBrewer
+    } 
+
+    return .Value(models)
+}
+```
+
+##### Request Parameters
+
+GET, DELETE, or HEAD request that use `setParameters(parameters:encoding:)` to encode parameter data in the URL query string should move to using `setQueryParameters(parameters:)` to set parameter data instead.
+
+POST and PUT requests that use `setParameters(parameters:encoding:)` to send form data, _not JSON_, in the request body should instead use `setFormParameters(parameters:)`.
+
+
 # [3.1.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.1.0)
 
 - Force-downcast `updateUIObjC` handler's value to avoid silent failure. Fixes [#34](https://github.com/Electrode-iOS/ELWebService/issues/34).
