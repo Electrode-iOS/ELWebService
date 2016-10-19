@@ -7,7 +7,7 @@
 ### More flexible and simplified request building API
 
 - [Enable requests to be constructed independently from `ServiceTask`](https://github.com/Electrode-iOS/ELWebService/issues/45).
-- [Expose request API as a struct with properties that can be mutated directly]().
+- [Expose request API as a struct with properties that can be mutated directly](https://github.com/Electrode-iOS/ELWebService/issues/52).
 
 ### Reduce boilerplate needed for processing a response
 
