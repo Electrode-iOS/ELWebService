@@ -244,7 +244,17 @@ extension Dictionary {
         var items = [URLQueryItem]()
         
         for (name, value) in self {
-            let item = URLQueryItem(name: "\(name)", value: "\(value)")
+            var encodedValue = "\(value)"
+            
+            // With Swift 3 we moved from `AnyObject` to `Any` for parameter values
+            // and `Any` boolean values get stringified as "true" or "false" via
+            // CustomStringConvertible. This conditional maintains the previous
+            // behavior of encoding a boolean parameter value as "1" or "0".
+            if let boolValue = value as? Bool {
+                encodedValue = boolValue ? "1" : "0"
+            }
+            
+            let item = URLQueryItem(name: "\(name)", value: encodedValue)
             items.append(item)
         }
         
