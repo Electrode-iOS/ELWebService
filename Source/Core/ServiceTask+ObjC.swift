@@ -15,7 +15,7 @@ extension ServiceTask {
      Set request parameter values and configure them to be JSON-encoded.
      
      This method is designed to only be called from Obj-C. Please use
-     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     `setParameters(parameters: [String: Any], encoding: Request.ParameterEncoding)`
      when calling from Swift.
      
      - parameter parameters: Request parameter values.
@@ -29,7 +29,7 @@ extension ServiceTask {
      Set request parameter values and configure them to be Percent-encoded.
      
      This method is designed to be called from Obj-C only. Please use
-     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     `setParameters(parameters: [String: Any], encoding: Request.ParameterEncoding)`
      when calling from Swift.
      
      - parameter parameters: Request parameter values.
@@ -95,7 +95,7 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
      */
-    @objc public func responseJSONObjC(_ handler: @escaping (AnyObject, URLResponse?) -> ObjCHandlerResult?) -> Self {
+    @objc public func responseJSONObjC(_ handler: @escaping (Any, URLResponse?) -> ObjCHandlerResult?) -> Self {
         return responseJSON { json, response in
             return ServiceTaskResult(objCHandlerResult: handler(json, response))
         }
@@ -114,9 +114,9 @@ extension ServiceTask {
      - parameter handler: Transformation handler to execute.
      - returns: Self instance to support chaining.
      */
-    @objc public func transformObjC(_ handler: @escaping (AnyObject?) -> ObjCHandlerResult?) -> Self {
+    @objc public func transformObjC(_ handler: @escaping (Any?) -> ObjCHandlerResult?) -> Self {
         return transform { value in
-            return ServiceTaskResult(objCHandlerResult: handler(value as AnyObject?))
+            return ServiceTaskResult(objCHandlerResult: handler(value))
         }
     }
 
@@ -169,9 +169,9 @@ extension ServiceTask {
      - parameter handler: The closure to execute as the updateUI handler.
      - returns: Self instance to support chaining.
     */
-    @objc public func updateUIObjC(_ handler: @escaping (AnyObject?) -> Void) -> Self {
+    @objc public func updateUIObjC(_ handler: @escaping (Any?) -> Void) -> Self {
         return updateUI { value in
-            handler(value as AnyObject?)
+            handler(value)
         }
     }
     

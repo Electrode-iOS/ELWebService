@@ -77,7 +77,7 @@ class ParameterEncodingTests: XCTestCase {
     
     func test_encodeBody_encodesJSONParameters() {
         let encoding = Request.ParameterEncoding.json
-        let parameters: [String: AnyObject] = ["foo" : "bar" as AnyObject, "paramName" : "paramValue" as AnyObject, "number" : 42 as AnyObject]
+        let parameters: [String: Any] = ["foo" : "bar", "paramName" : "paramValue", "number" : 42]
         
         let data = encoding.encodeBody(parameters)
         XCTAssert(data != nil, "Encoded JSON data should not be nil")
@@ -86,10 +86,10 @@ class ParameterEncodingTests: XCTestCase {
         XCTAssertNotNil(json, "Serialized JSON should not be nil")
         
         // test original parameters against encoded
-        if let json = json as? [String : AnyObject] {
+        if let json = json as? [String : Any] {
             ELTestAssertRequestParametersEqual(json, parameters)
         } else {
-            XCTFail("Failed to cast JSON as [String : AnyObject]")
+            XCTFail("Failed to cast JSON as [String : Any]")
         }
     }
 }
