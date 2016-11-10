@@ -16,7 +16,7 @@ import Foundation
     /// Base URL of the web service.
     public let baseURLString: String
     
-    public var session: Session = URLSession.shared as! Session
+    public var session: Session = URLSession.shared
     internal fileprivate(set) weak var passthroughDelegate: ServicePassthroughDelegate?
     
     // MARK: Initialization
