@@ -18,7 +18,7 @@ class MockingTests: XCTestCase {
         
         task.suspend()
         
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Suspended)
+        XCTAssertEqual(task.state, URLSessionTask.State.suspended)
     }
     
     func test_mockDataTask_changesStateWhenCancelled() {
@@ -26,7 +26,7 @@ class MockingTests: XCTestCase {
         
         task.cancel()
         
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Canceling)
+        XCTAssertEqual(task.state, URLSessionTask.State.canceling)
     }
     
     
@@ -35,7 +35,7 @@ class MockingTests: XCTestCase {
         
         task.resume()
         
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Running)
+        XCTAssertEqual(task.state, URLSessionTask.State.running)
     }
 }
 
@@ -44,8 +44,11 @@ class MockingTests: XCTestCase {
 extension MockingTests {
     func test_mockSession_matchesStubWhenMatcherReturnsTrue() {
         struct StubRequest: URLRequestEncodable {
-            var urlRequestValue: NSURLRequest {
-                return NSURLRequest(URL: NSURL(string: "")!)
+            var urlRequestValue: URLRequest {
+                // using NSURLRequest because its API allows us to initialize an
+                // empty object to represent a bogus request which is the only
+                // way to test this code path
+                return URLRequest(url: URL(string: "https://github.com/")!)
             }
         }
         
@@ -55,7 +58,7 @@ extension MockingTests {
         
         let (_, urlResponse, error) = session.stubbedResponse(request: StubRequest())
         
-        let httpResponse = urlResponse as? NSHTTPURLResponse
+        let httpResponse = urlResponse as? HTTPURLResponse
         
         XCTAssertNotNil(httpResponse)
         XCTAssertEqual(httpResponse!.statusCode, 200)
@@ -64,8 +67,8 @@ extension MockingTests {
     
     func test_mockSession_failsToMatchStubWhenMatcherReturnsFalse() {
         struct StubRequest: URLRequestEncodable {
-            var urlRequestValue: NSURLRequest {
-                return NSURLRequest(URL: NSURL(string: "")!)
+            var urlRequestValue: URLRequest {
+                return URLRequest(url: URL(string: "")!)
             }
         }
         
@@ -85,7 +88,7 @@ extension MockingTests {
 
 extension MockingTests {
     func test_mockResponse_initializationWithData() {
-        let data = NSData()
+        let data = Data()
         let response = MockResponse(statusCode: 200, data: data)
         
         XCTAssertNotNil(response.data)
@@ -94,12 +97,15 @@ extension MockingTests {
     
     func test_mockResponse_returnsErrorResultWhenRequestURLIsInvalid() {
         struct InvalidURLRequestEncodable: URLRequestEncodable {
-            var urlRequestValue: NSURLRequest {
-                return NSURLRequest()
+            var urlRequestValue: URLRequest {
+                // using NSURLRequest because its API allows us to initialize an
+                // empty object to represent a bogus request which is the only
+                // way to test this code path
+                return NSURLRequest() as URLRequest
             }
         }
         
-        let data = NSData()
+        let data = Data()
         let mockedResponse = MockResponse(statusCode: 200, data: data)
         
         let (responseData, httpResponse, error) = mockedResponse.dataTaskResult(InvalidURLRequestEncodable())
@@ -112,9 +118,9 @@ extension MockingTests {
 
 extension MockingTests {
     func test_urlResponse_mockableDataTask() {
-        let url = NSURL(string: "/test_urlResponse_mockableDataTask")!
-        let response = NSURLResponse(URL: url, MIMEType: nil, expectedContentLength: 0, textEncodingName: nil)
-        let request = NSURLRequest(URL: url)
+        let url = URL(string: "/test_urlResponse_mockableDataTask")!
+        let response = URLResponse(url: url, mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
+        let request = URLRequest(url: url)
         
         let (_, urlResponse, _) = response.dataTaskResult(request)
         
@@ -123,10 +129,10 @@ extension MockingTests {
     
     func test_error_mockableDataTask() {
         let error = NSError(domain: "test", code: 500, userInfo: nil)
-        let request = NSURLRequest(URL: NSURL(string: "/test_error_mockableDataTask")!)
+        let request = URLRequest(url: URL(string: "/test_error_mockableDataTask")!)
         
         let (_, _, resultError) = error.dataTaskResult(request)
         
-        XCTAssertEqual(resultError, error)
+        XCTAssertEqual(resultError as! NSError, error)
     }
 }

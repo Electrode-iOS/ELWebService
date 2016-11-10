@@ -11,7 +11,7 @@ import Foundation
 
 extension ServiceTask {
     // expose internal handleResponse method to obj-c tests via injectResponse()
-    @objc public func injectResponse(response: NSURLResponse?, data: NSData?, error: NSError?) {
+    @objc public func injectResponse(_ response: URLResponse?, data: Data?, error: NSError?) {
         handleResponse(response, data: data, error: error)
     }
 }

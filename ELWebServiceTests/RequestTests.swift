@@ -17,10 +17,10 @@ class RequestTests: XCTestCase {
         
         let urlRequest = request.urlRequestValue
         
-        XCTAssertEqual(urlRequest.HTTPMethod!, request.method.rawValue)
+        XCTAssertEqual(urlRequest.httpMethod!, request.method.rawValue)
         
         for (name, value) in request.headers {
-            let resultingValue = urlRequest.valueForHTTPHeaderField(name)!
+            let resultingValue = urlRequest.value(forHTTPHeaderField: name)!
             XCTAssertEqual(value, resultingValue)
         }
     }
@@ -30,9 +30,9 @@ class RequestTests: XCTestCase {
         
         let urlRequest = request.urlRequestValue
         
-        let urlString = urlRequest.URL?.absoluteString
+        let urlString = urlRequest.url?.absoluteString
         XCTAssertNotNil(urlString)
-        XCTAssertFalse(urlString!.containsString("?"))
+        XCTAssertFalse(urlString!.contains("?"))
     }
     
     func test_headerProperties_setValuesInTheCorrectHeaderFields() {
@@ -66,27 +66,27 @@ class RequestTests: XCTestCase {
     func test_parameters_encodedInURLAsPercentEncoding() {
         var request = Request(.GET, url: "http://httpbin.org/get")
         let parameters = ["foo" : "bar", "paramName" : "paramValue", "percentEncoded" : "this needs percent encoded"]
-        request.parameters = parameters
-        request.parameterEncoding = .Percent
+        request.parameters = parameters as [String: Any]
+        request.parameterEncoding = .percent
         
         let urlRequest = request.urlRequestValue
         
-        ELTestAssertURLQueryEqual(url: urlRequest.URL!, parameters: parameters)
+        ELTestAssertURLQueryEqual(url: urlRequest.url!, parameters: parameters)
     }
     
     func test_parameters_encodedInBodyAsPercentEncoding() {
         var request = Request(.POST, url: "http://httpbin.org/")
         let parameters = ["percentEncoded" : "this needs percent encoded"]
         request.parameters = parameters
-        request.parameterEncoding = .Percent
+        request.parameterEncoding = .percent
         
         let urlRequest = request.urlRequestValue
         
-        let encodedData = urlRequest.HTTPBody
+        let encodedData = urlRequest.httpBody
         XCTAssertNotNil(encodedData)
         
-        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
-        let components = stringValue.componentsSeparatedByString("=")
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
@@ -94,7 +94,7 @@ class RequestTests: XCTestCase {
     func test_settingParameterEncodingToJSON_setsContentTypeToJSON() {
         var request = Request(.GET, url: "http://httpbin.org/")
         
-        request.parameterEncoding = .JSON
+        request.parameterEncoding = .json
         
         XCTAssertEqual(request.contentType, Request.ContentType.json)
     }
@@ -103,16 +103,16 @@ class RequestTests: XCTestCase {
         var request = Request(.POST, url: "http://httpbin.org/")
         let parameters = ["percentEncoded" : "this needs percent encoded"]
         request.parameters = parameters
-        request.parameterEncoding = .Percent
-        let testData = "newBody".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        request.parameterEncoding = .percent
+        let testData = "newBody".data(using: String.Encoding.utf8, allowLossyConversion: false)
         request.body = testData
         
         let urlRequest = request.urlRequestValue
     
-        let encodedBody = urlRequest.HTTPBody
+        let encodedBody = urlRequest.httpBody
         XCTAssertNotNil(encodedBody)
-        let stringValue = NSString(data: encodedBody!, encoding: NSUTF8StringEncoding)!
-        let components = stringValue.componentsSeparatedByString("=")
+        let stringValue = NSString(data: encodedBody!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components.count, 1)
         XCTAssertEqual(encodedBody, testData)
     }
@@ -124,7 +124,7 @@ class RequestTests: XCTestCase {
         
         let urlRequest = request.urlRequestValue
         
-        ELTestAssertURLQueryEqual(url: urlRequest.URL!, parameters: parameters)
+        ELTestAssertURLQueryEqual(url: urlRequest.url!, parameters: parameters)
     }
     
     func test_formParameters_setsFormEncodedHeaderField() {
@@ -143,8 +143,8 @@ class RequestTests: XCTestCase {
         let encodedData = request.body
         XCTAssertNotNil(encodedData)
         
-        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
-        let components = stringValue.componentsSeparatedByString("=")
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
 
@@ -157,11 +157,11 @@ class RequestTests: XCTestCase {
         
         let urlRequest = request.urlRequestValue
         
-        let encodedData = urlRequest.HTTPBody
+        let encodedData = urlRequest.httpBody
         XCTAssertNotNil(encodedData)
         
-        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
-        let components = stringValue.componentsSeparatedByString("=")
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
@@ -174,11 +174,11 @@ class RequestTests: XCTestCase {
         test_urlRequestValue_parametersInURL(.DELETE)
     }
     
-    func test_urlRequestValue_parametersInURL(method: Request.Method) {
+    func test_urlRequestValue_parametersInURL(_ method: Request.Method) {
         var request = Request(method, url: "http://httpbin.org/")
         request.parameters = ["x" : "1"]
         
-        let query = request.urlRequestValue.URL!.query!
+        let query = request.urlRequestValue.url!.query!
         
         XCTAssertEqual(query, "x=1")
     }
@@ -188,11 +188,11 @@ class RequestTests: XCTestCase {
         test_urlRequestValue_parametersInBody(.POST)
     }
     
-    func test_urlRequestValue_parametersInBody(method: Request.Method) {
+    func test_urlRequestValue_parametersInBody(_ method: Request.Method) {
         var request = Request(method, url: "http://httpbin.org/")
         request.parameters = ["x" : "1"]
         
-        let body = NSString(data: request.urlRequestValue.HTTPBody!, encoding: NSUTF8StringEncoding)
+        let body = NSString(data: request.urlRequestValue.httpBody!, encoding: String.Encoding.utf8.rawValue)
         
         XCTAssertEqual(body, "x=1")
     }
@@ -200,8 +200,8 @@ class RequestTests: XCTestCase {
 
 // MARK: - Assert Helpers
 
-func ELTestAssertURLQueryEqual(url url: NSURL, parameters: [String: String]) {
-    let components = NSURLComponents(URL: url, resolvingAgainstBaseURL: false)!
+func ELTestAssertURLQueryEqual(url: URL, parameters: [String: String]) {
+    let components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
 
     if let queryItems = components.queryItems {
         for item in queryItems {
@@ -216,9 +216,9 @@ func ELTestAssertURLQueryEqual(url url: NSURL, parameters: [String: String]) {
     XCTAssertEqual((components.queryItems!).count, parameters.keys.count)
 }
 
-func ELTestAssertRequestParametersEqual(parameters: [String: AnyObject], _ originalParameters: [String: AnyObject]) {
+func ELTestAssertRequestParametersEqual(_ parameters: [String: Any], _ originalParameters: [String: Any]) {
     for (name, originalValue) in originalParameters {
-        let comparisonValue: AnyObject? = parameters[name]
+        let comparisonValue: Any? = parameters[name]
         
         XCTAssert(comparisonValue != nil, "value should not be nil for key \(name)")
         
