@@ -22,15 +22,17 @@ struct Brew {
 
 extension Brew: ModelDecodable {
  
-    static func decode(json: AnyObject) -> Brew? {
-        guard let name = json["name"] as? String else { return nil }
-        guard let style = json["style"] as? String else { return nil }
-
+    static func decode(_ json: Any) -> Brew? {
+        guard let dictionary = json as? [String: Any],
+            let name = dictionary["name"] as? String,
+            let style = dictionary["style"] as? String
+            else {
+                return nil
+        }
         var brew = Brew(name: name, style: style)
         
-        if let breweryJSON = json["brewery"],
-            let wtf = breweryJSON {
-            brew.brewery = Brewery.decode(wtf)
+        if let breweryJSON = dictionary["brewery"] {
+            brew.brewery = Brewery.decode(breweryJSON)
         }
         
         return brew
@@ -39,8 +41,8 @@ extension Brew: ModelDecodable {
 
 extension Brew {
     
-    var webServiceParameters: [String: AnyObject] {
-        var params: [String: AnyObject] = ["name": name, "style": style]
+    var webServiceParameters: [String: Any] {
+        var params: [String: Any] = ["name": name, "style": style]
         
         if let brewery = brewery {
             if let location = brewery.location {

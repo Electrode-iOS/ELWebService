@@ -18,12 +18,16 @@ struct Brewery {
 }
 
 extension Brewery: ModelDecodable {
-    
-    static func decode(json: AnyObject) -> Brewery? {
-        guard let name = json["name"] as? String else { return nil }
+    static func decode(_ json: Any) -> Brewery? {
+        guard
+            let dictionary = json as? [String: Any],
+            let name = dictionary["name"] as? String
+            else {
+                return nil
+        }
         
         var brewery = Brewery(name: name)
-        brewery.location = json["location"] as? String
+        brewery.location = dictionary["location"] as? String
         return brewery
     }
 }

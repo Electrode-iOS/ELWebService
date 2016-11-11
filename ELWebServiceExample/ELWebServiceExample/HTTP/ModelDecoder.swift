@@ -9,15 +9,15 @@
 import Foundation
 
 protocol ModelDecodable {
-    static func decode(json: AnyObject) -> Self?
+    static func decode(_ json: Any) -> Self?
 }
 
 struct ModelDecoder<T: ModelDecodable> {
-    static func decode(json: AnyObject) -> T? {
+    static func decode(_ json: Any) -> T? {
         return T.decode(json)
     }
     
-    static func decodeArray(json: [AnyObject]) -> [T]? {
+    static func decodeArray(_ json: [Any]) -> [T]? {
         var results = [T]()
         
         for j in json {
