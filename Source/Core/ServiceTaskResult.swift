@@ -13,15 +13,15 @@ public enum ServiceTaskResult {
     /// Defines an empty task result
     case empty
     /// Defines a task result as a value
-    case Value(Any)
+    case value(Any)
     /// Defines a task resulting in an error
     case failure(Error)
     
-    func value() throws -> Any? {
+    func taskValue() throws -> Any? {
         switch self {
         case .failure(let error): throw error
         case .empty: return nil
-        case .Value(let value): return value
+        case .value(let value): return value
         }
     }
 }
@@ -34,7 +34,7 @@ extension ServiceTaskResult {
         if let error = result?.error {
             self = .failure(error)
         } else if let value = result?.value {
-            self = .Value(value)
+            self = .value(value)
         } else {
             self = .empty
         }

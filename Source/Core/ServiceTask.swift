@@ -54,7 +54,7 @@ import Foundation
                 if responseError == nil {
                     passthroughDelegate?.serviceResultFailure(urlResponse, data: responseData, request: urlRequest, error: error)
                 }
-            case .empty, .Value(_): return
+            case .empty, .value(_): return
             }
         }
     }
@@ -217,7 +217,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .failure(_): return // bail out to avoid next handler from running
-                case .empty, .Value(_): break
+                case .empty, .value(_): break
                 }
             }
             
@@ -248,7 +248,7 @@ extension ServiceTask {
             }
             
             do {
-                let resultValue = try taskResult.value()
+                let resultValue = try taskResult.taskValue()
                 self.taskResult = try handler(resultValue)
             } catch let error {
                 self.taskResult = .failure(error)
@@ -276,7 +276,7 @@ extension ServiceTask {
             }
             
             do {
-                let value = try taskResult.value()
+                let value = try taskResult.taskValue()
                 
                 DispatchQueue.main.sync {
                     self.passthroughDelegate?.updateUIBegin(self.urlResponse)
@@ -334,7 +334,7 @@ extension ServiceTask {
             if let taskResult = self.taskResult {
                 switch taskResult {
                 case .failure(let error): handler(error)
-                case .empty, .Value(_): break
+                case .empty, .value(_): break
                 }
             }
         }
@@ -357,7 +357,7 @@ extension ServiceTask {
                     DispatchQueue.main.sync {
                         handler(error)
                     }
-                case .empty, .Value(_): break
+                case .empty, .value(_): break
                 }
             }
         }
@@ -390,7 +390,7 @@ extension ServiceTask {
                     self.taskResult = .failure(error)
                 }
 
-            case .empty, .Value(_):
+            case .empty, .value(_):
                 return // bail out; do not run this handler
             }
         }
