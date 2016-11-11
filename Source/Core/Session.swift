@@ -15,8 +15,8 @@ public protocol Session {
 }
 
 extension URLSession: Session {
-    public func dataTask(request: URLRequestEncodable, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
-        return self.dataTask(request: request.urlRequestValue, completion: completion) as DataTask
+    public func dataTask(request: URLRequestEncodable, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {        
+        return dataTask(with: request.urlRequestValue, completionHandler: completion) as DataTask
     }
 }
 

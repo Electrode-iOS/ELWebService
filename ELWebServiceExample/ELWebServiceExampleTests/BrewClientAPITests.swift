@@ -48,12 +48,12 @@ class BrewClientAPITests: XCTestCase {
 extension BrewClientAPITests {
     var brewJSONStub: AnyObject {
         let brewery = ["name": "Long Trail Brewing Company", "location": "Vermont"]
-        let brew = ["name": "Limbo IPA", "id": "1", "style": "Imperial IPA", "brewery": brewery]
+        let brew = ["name": "Limbo IPA", "id": "1", "style": "Imperial IPA", "brewery": brewery] as [String : Any]
         return ["brews": [brew]]
     }
     
     func test_responseAsBrews_callsCompletionHandlerWhenJSONIsValid() {
-        let expectation = expectationWithDescription("responseAsBrews handler called when JSON is valid")
+        let expectation = self.expectation(description: "responseAsBrews handler called when JSON is valid")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 200, json: brewJSONStub))
         let client = MockBrewClient(session: session)
@@ -69,11 +69,11 @@ extension BrewClientAPITests {
             .resume()
         
         
-        waitForExpectationsWithTimeout(2.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
     
     func test_responseAsBrews_callsErrorHandlerWhenJSONIsInvalid() {
-        let expectation = expectationWithDescription("updateErrorUI handler called when JSON is invalid")
+        let expectation = self.expectation(description: "updateErrorUI handler called when JSON is invalid")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 200, json: ["brewsssss": ["bad json"]]))
         let client = MockBrewClient(session: session)
@@ -88,6 +88,6 @@ extension BrewClientAPITests {
             .resume()
         
         
-        waitForExpectationsWithTimeout(2.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
 }

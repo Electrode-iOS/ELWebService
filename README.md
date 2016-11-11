@@ -4,11 +4,11 @@
 [![Build Status](https://travis-ci.org/Electrode-iOS/ELWebService.svg?branch=master)](https://travis-ci.org/Electrode-iOS/ELWebService) 
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-ELWebService (previously named Swallow) simplifies interaction with HTTP web services by providing an API for building `NSURLRequest` objects and processing `NSURLResponse` and `NSData` response objects. See the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
+ELWebService is an HTTP framework for Swift built on Foundation's `URLSession`. Designed to integrate cleanly with `URLSession`, ELWebService avoids using the session delegate events and does not mutate the session's configuration.
 
 ## Requirements
 
-ELWebService requires Swift 2.3 and Xcode 8.
+ELWebService requires Swift 3 and Xcode 8.
 
 ## Installation
 
@@ -38,7 +38,7 @@ let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 service
   .GET("/brewers")
   .setQueryParameters(["state" : "New York"])
-  .response { (response: NSURLResponse?, data: NSData?) in
+  .response { (response: URLResponse?, data: Data?) in
     // process response data
   }
   .resume()
@@ -52,7 +52,7 @@ let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 service
   .GET("/brewers")
   .setQueryParameters(["state" : "New York"])
-  .response { (response: NSURLResponse?, data: NSData?) in
+  .response { (response: URLResponse?, data: Data?) in
     // process response data
   }
   .responseError { (error: ErrorType) in
@@ -73,7 +73,7 @@ let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 service
   .GET("/brewers")
   .setQueryParameters(["state" : "New York"])
-  .responseJSON { (json: AnyObject, response: NSURLResponse?) in
+  .responseJSON { (json: AnyObject, response: URLResponse?) in
     // process response as JSON
   }
   .resume()
@@ -185,17 +185,17 @@ ELWebService supports Objective-C via specially-named response handler methods. 
 
 ```
 extension ServiceTask {
-    internal typealias ObjCResponseHandler = (NSData?, NSURLResponse?) -> ObjCHandlerResult?
+    internal typealias ObjCResponseHandler = (Data?, URLResponse?) -> ObjCHandlerResult?
 
-    @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self
+    @objc public func responseObjC(handler: (Data?, URLResponse?) -> ObjCHandlerResult?) -> Self
 
-    @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self
+    @objc public func responseJSONObjC(handler: (Any, URLResponse?) -> ObjCHandlerResult?) -> Self
 
-    @objc public func responseErrorObjC(handler: (NSError) -> Void) -> Self
+    @objc public func responseErrorObjC(handler: (Error) -> Void) -> Self
 
-    @objc public func updateUIObjC(handler: (AnyObject?) -> Void) -> Self
+    @objc public func updateUIObjC(handler: (Any?) -> Void) -> Self
 
-    @objc public func updateErrorUIObjC(handler: (NSError) -> Void) -> Self
+    @objc public func updateErrorUIObjC(handler: (Error) -> Void) -> Self
 }
 ```
 
@@ -238,33 +238,3 @@ For more information on the Mocking API see the [mocking section](/docs/Programm
 ## Example Project
 
 An [example project](/ELWebServiceExample) is included that demonstrates how ELWebService can be used to interact with a web service. The project uses [brewhapi](https://github.com/angelodipaolo/brewhapi) as a mock API for fetching and inserting data. brewhapi is freely hosted at [https://brewhapi.herokuapp.com/brews](https://brewhapi.herokuapp.com/brews) for testing.
-
-## Contributions
-
-We appreciate your contributions to all of our projects and look forward to interacting with you via Pull Requests, the issue tracker, via Twitter, etc.  We're happy to help you, and to have you help us.  We'll strive to answer every PR and issue and be very transparent in what we do.
-
-When contributing code, please refer to our style guide [Dennis](https://github.com/Electrode-iOS/Dennis).
-
-## License
-
-The MIT License (MIT)
-
-Copyright (c) 2015 Walmart and other Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.

@@ -11,14 +11,14 @@ import UIKit
 class BrewIndexViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView?
-    private(set) var brewClient = BrewClient()
-    private var brews = [Brew]() {
+    fileprivate(set) var brewClient = BrewClient()
+    fileprivate var brews = [Brew]() {
         didSet {
             tableView?.reloadData()
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         fetchBrews()
@@ -28,8 +28,8 @@ class BrewIndexViewController: UIViewController {
         super.viewDidLoad()
         
         title = "Tasty Brews"
-        tableView?.registerClass(UITableViewCell.self, forCellReuseIdentifier: "BrewCell")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add Brew", style: UIBarButtonItemStyle.Plain, target: self, action: "addBrewTapped")
+        tableView?.register(UITableViewCell.self, forCellReuseIdentifier: "BrewCell")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add Brew", style: UIBarButtonItemStyle.plain, target: self, action: #selector(BrewIndexViewController.addBrewTapped))
     }
 }
 
@@ -54,16 +54,16 @@ extension BrewIndexViewController {
 
 extension BrewIndexViewController: UITableViewDataSource {
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return brews.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("BrewCell", forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BrewCell", for: indexPath)
         
         let brew = brews[indexPath.row]
         cell.textLabel?.text = brew.name
@@ -74,8 +74,8 @@ extension BrewIndexViewController: UITableViewDataSource {
 
 extension BrewIndexViewController: UITableViewDelegate {
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
         
         let brew = brews[indexPath.row]
         brewTapped(brew)
@@ -89,10 +89,10 @@ extension BrewIndexViewController {
     func addBrewTapped() {
         let brewAddViewController = BrewAddViewController(brewClient: brewClient)
         let navigationController = UINavigationController(rootViewController: brewAddViewController)
-        presentViewController(navigationController, animated: true, completion: nil)
+        present(navigationController, animated: true, completion: nil)
     }
     
-    func brewTapped(brew: Brew) {
+    func brewTapped(_ brew: Brew) {
         let brewDetailViewController = BrewDetailViewController(brew: brew)
         navigationController?.pushViewController(brewDetailViewController, animated: true)
     }
