@@ -1,3 +1,7 @@
+# [3.3.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.3.1)
+
+- Merge support for PATCH HTTP requests
+
 # [3.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.3.0)
 
 - Added support for Xcode 8, Swift 2.3, and iOS SDK 10
