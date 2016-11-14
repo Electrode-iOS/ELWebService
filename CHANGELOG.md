@@ -1,3 +1,12 @@
+# [4.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.0.0)
+
+- Added support for Swift 3
+
+## Breaking
+
+- API naming changes for Swift 3
+- Removed `SessionDataTaskDataSource` API
+
 # [3.3.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.3.1)
 
 - Merge support for PATCH HTTP requests
