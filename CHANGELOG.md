@@ -1,3 +1,7 @@
+# [3.2.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.2.1)
+
+- Added support for PATCH HTTP requests.
+
 # [3.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.2.0)
 
 ### Deprecations
