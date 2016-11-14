@@ -22,7 +22,7 @@ class ServicePassthroughDelegateTests: XCTestCase {
         let _ = service
             .GET("/get")
             .response { data, response in
-                return .Value(true)
+                return .value(true)
             }
             .updateUI { value in
             }

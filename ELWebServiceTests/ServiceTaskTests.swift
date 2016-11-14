@@ -65,7 +65,7 @@ class ServiceTaskTests: XCTestCase {
         let task = successfulTask()
 
         task.response { data, response in
-                return ServiceTaskResult.Value(true)
+                return ServiceTaskResult.value(true)
             }
             .updateUI { value in
                 if let value = value as? Bool {
@@ -102,7 +102,7 @@ class ServiceTaskTests: XCTestCase {
         
         successfulTask()
             .response { _, _ in
-                return .Value(true)
+                return .value(true)
             }
             .updateUI { _ in
                 sleep(1)
@@ -273,7 +273,7 @@ extension ServiceTaskTests {
                 return .empty
             }
             .response { data, response in
-                return .Value(1)
+                return .value(1)
             }
             .responseError { error in
                 XCTFail("responseError should not be called")
@@ -299,7 +299,7 @@ extension ServiceTaskTests {
                 return .empty
             }
             .response { data, response in
-                return .Value(1)
+                return .value(1)
             }
             .updateErrorUI { error in
                 XCTFail("updateErrorUI should not be called")
@@ -444,7 +444,7 @@ extension ServiceTaskTests {
 
         successfulTask()
             .response { _, _ in
-                return .Value("response value")
+                return .value("response value")
             }
             .transform { value in
                 if let value = value as? String {
@@ -454,7 +454,7 @@ extension ServiceTaskTests {
                 }
 
                 closure1Called.fulfill()
-                return .Value("transform 1 value")
+                return .value("transform 1 value")
             }
             .transform { value in
                 if let value = value as? String {
@@ -470,7 +470,7 @@ extension ServiceTaskTests {
                 XCTAssertNil(value, "Expected .Empty result to propagate as nil")
 
                 closure3Called.fulfill()
-                return .Value("transform 3 value")
+                return .value("transform 3 value")
             }
             .updateUI { value in
                 if let value = value as? String {
@@ -619,7 +619,7 @@ extension ServiceTaskTests {
             }
             .recover { _ in
                 closure3Called.fulfill()
-                return .Value("closure 3 value")
+                return .value("closure 3 value")
             }
             .recover { error in
                 XCTFail("Did not expect recover closure to be called after recovery")
