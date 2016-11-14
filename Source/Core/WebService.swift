@@ -81,6 +81,18 @@ extension WebService {
     }
     
     /**
+     Create a service task for a PATCH HTTP request.
+     
+     - parameter path: Request path. The value can be relative to the base URL string
+     or absolute.
+     - returns: A ServiceTask instance that refers to the lifetime of processing
+     a given request.
+     */
+    public func PATCH(path: String) -> ServiceTask {
+        return request(.PATCH, path: path)
+    }
+    
+    /**
     Create a service task for a DELETE HTTP request.
     
     - parameter path: Request path. The value can be relative to the base URL string

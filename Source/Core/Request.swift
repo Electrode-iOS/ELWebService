@@ -24,12 +24,13 @@ public struct Request {
         case HEAD = "HEAD"
         case POST = "POST"
         case PUT = "PUT"
+        case PATCH = "PATCH"
         case DELETE = "DELETE"
 
         /**
          Whether requests using this method should encode parameters in the URL, instead of the body.
 
-         `GET`, `HEAD` and `DELETE` requests encode parameters in the URL, `PUT` and `POST` encode
+         `GET`, `HEAD` and `DELETE` requests encode parameters in the URL, `PUT`, `POST` and `PATCH` encode
          them in the body.
          */
         func encodesParametersInURL() -> Bool {
