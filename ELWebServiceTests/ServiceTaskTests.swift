@@ -22,32 +22,32 @@ class ServiceTaskTests: XCTestCase {
     // MARK: Tests
     
     func test_updateUI_runsOnTheMainThread() {
-        let expectation = expectationWithDescription("updateUI handler is called")
+        let expectation = self.expectation(description: "updateUI handler is called")
         let task = successfulTask()
         
         task.response { data, response in
-                return .Empty
+                return .empty
             }
             .updateUI { value in
-                XCTAssertTrue(NSThread.isMainThread())
+                XCTAssertTrue(Thread.isMainThread)
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateUI_isNotCalledWhenResponseHandlerReturnsFailure() {
-        enum ResponseError: ErrorType {
-            case IveMadeAHugeMistake
+        enum ResponseError: Error {
+            case iveMadeAHugeMistake
         }
         
-        let expectation = expectationWithDescription("responseError handler is called")
+        let expectation = self.expectation(description: "responseError handler is called")
         let task = successfulTask()
         
         task
             .response { data, response in
-                return .Failure(ResponseError.IveMadeAHugeMistake)
+                return .failure(ResponseError.iveMadeAHugeMistake)
             }
             .updateUI { value in
                 XCTFail("updateUI handler should not be called")
@@ -57,15 +57,15 @@ class ServiceTaskTests: XCTestCase {
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateUI_receivesResponseHandlerValue() {
-        let expectation = expectationWithDescription("updateUI handler is called")
+        let expectation = self.expectation(description: "updateUI handler is called")
         let task = successfulTask()
 
         task.response { data, response in
-                return ServiceTaskResult.Value(true)
+                return ServiceTaskResult.value(true)
             }
             .updateUI { value in
                 if let value = value as? Bool {
@@ -78,31 +78,31 @@ class ServiceTaskTests: XCTestCase {
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_response_runsOnBackgroundThread() {
-        let expectation = expectationWithDescription("response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         let task = successfulTask()
         
         task.response { data, response in
-                XCTAssertTrue(!NSThread.isMainThread())
+                XCTAssertTrue(!Thread.isMainThread)
                 expectation.fulfill()
    
-                return .Empty
+                return .empty
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateUI_blocksHandlerChainExecution() {
-        let expectation = expectationWithDescription("response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         var updateUIExecuted = false
         
         successfulTask()
             .response { _, _ in
-                return .Value(true)
+                return .value(true)
             }
             .updateUI { _ in
                 sleep(1)
@@ -111,11 +111,11 @@ class ServiceTaskTests: XCTestCase {
             .response { _, _ in
                 XCTAssertTrue(updateUIExecuted, "Expected updateUI handler to block and complete execution before response handler is executed")
                 expectation.fulfill()
-                return .Empty
+                return .empty
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -123,7 +123,7 @@ class ServiceTaskTests: XCTestCase {
 
 extension ServiceTaskTests {
     func test_responseJSON_handlerIsCalledWhenJSONIsValid() {
-        let expectation = expectationWithDescription("JSON response handler is called")
+        let expectation = self.expectation(description: "JSON response handler is called")
         let session = MockSession()
         
         session.addStub(MockResponse(statusCode: 200, json: ["foo": "bar"]))
@@ -131,18 +131,18 @@ extension ServiceTaskTests {
         
         task.responseJSON { json in
                 expectation.fulfill()
-                return .Empty
+                return .empty
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseJSON_errorHandlerIsCalledWhenJSONIsInvalid() {
-        let expectation = expectationWithDescription("Error handler is called")
+        let expectation = self.expectation(description: "Error handler is called")
         let session = MockSession()
         
-        let badJSONData = NSString(string: "{}couldneverbeJSON-[][[42").dataUsingEncoding(NSUTF8StringEncoding)
+        let badJSONData = NSString(string: "{}couldneverbeJSON-[][[42").data(using: String.Encoding.utf8.rawValue)
         let response = MockResponse(statusCode: 204, data: badJSONData!)
         session.addStub(response)
         
@@ -150,32 +150,32 @@ extension ServiceTaskTests {
         
         task.responseJSON { json in
                 XCTFail("responseJSON handler should not be called when JSON is invalid")
-                return .Empty
+                return .empty
             }
             .responseError { error in
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseJSON_errorHandlerIsCalledWhenJSONIsNil() {
-        let expectation = expectationWithDescription("Error handler is called")
+        let expectation = self.expectation(description: "Error handler is called")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 204))
         let task = ServiceTask(request: Request(.GET, url: "/json"), session: session)
         
         task.responseJSON { json in
                 XCTFail("responseJSON handler should not be called when JSON is invalid")
-                return .Empty
+                return .empty
             }
             .responseError { error in
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -185,12 +185,12 @@ extension ServiceTaskTests {
     // MARK: Stub
     
     func errorTask() -> ServiceTask {
-        enum TaskTestError: ErrorType {
-            case RequestFailed
+        enum TaskTestError: Error {
+            case requestFailed
         }
         
         let session = MockSession()
-        session.addStub(TaskTestError.RequestFailed as NSError)
+        session.addStub(TaskTestError.requestFailed as NSError)
         
         return ServiceTask(request: Request(.GET, url: "/error"), session: session)
     }
@@ -198,7 +198,7 @@ extension ServiceTaskTests {
     // MARK: Tests
     
     func test_responseError_handlerCalledWhenSessionReturnsError() {
-        let expectation = expectationWithDescription("Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         task.responseError { error in
@@ -206,63 +206,63 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseError_responseHandlerIsNotCalled() {
-        let expectation = expectationWithDescription("Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         task.response { data, response in
                 XCTFail("Response handler should not be called when session returns an error")
-                return .Empty
+                return .empty
             }
             .responseError { error in
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseError_runsOnBackgroundThread() {
-        let expectation = expectationWithDescription("Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         task.responseError { error in
-                XCTAssertTrue(!NSThread.isMainThread())
+                XCTAssertTrue(!Thread.isMainThread)
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseError_calledWhenResposneHandlerReturnsFailure() {
-        enum ResponseError: ErrorType {
-            case StubError
+        enum ResponseError: Error {
+            case stubError
         }
-        let expectation = expectationWithDescription("Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = successfulTask()
         
         task
             .response { data, response in
-                return .Failure(ResponseError.StubError)
+                return .failure(ResponseError.stubError)
             }
             .response { data, response in
                 XCTFail("response handler should not be called")
-                return .Empty
+                return .empty
             }
             .responseError { error in
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_responseError_isNotCalledWhenReturningResultsInResponseHandlers() {
-        let expectation = expectationWithDescription("response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 200))
         
@@ -270,25 +270,25 @@ extension ServiceTaskTests {
         
         task
             .response { data, response in
-                return .Empty
+                return .empty
             }
             .response { data, response in
-                return .Value(1)
+                return .value(1)
             }
             .responseError { error in
                 XCTFail("responseError should not be called")
             }
             .response { data, response in
                 expectation.fulfill()
-                return .Empty
+                return .empty
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
     
     func test_updateErrorUI_isNotCalledWhenReturningResultsInResponseHandlers() {
-        let expectation = expectationWithDescription("response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 200))
         
@@ -296,25 +296,25 @@ extension ServiceTaskTests {
         
         task
             .response { data, response in
-                return .Empty
+                return .empty
             }
             .response { data, response in
-                return .Value(1)
+                return .value(1)
             }
             .updateErrorUI { error in
                 XCTFail("updateErrorUI should not be called")
             }
             .response { data, response in
                 expectation.fulfill()
-                return .Empty
+                return .empty
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
     
     func test_updateErrorUI_handlerCalledWhenSessionReturnsError() {
-        let expectation = expectationWithDescription("Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         task.updateErrorUI { error in
@@ -322,24 +322,24 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateErrorUI_runsOnMainThread() {
-        let expectation = expectationWithDescription("Error handler called when session returns an error")
+        let expectation = self.expectation(description: "Error handler called when session returns an error")
         let task = errorTask()
         
         task.updateErrorUI { error in
-                XCTAssertTrue(NSThread.isMainThread(), "updateErrorUI handler should be running on the main thread")
+                XCTAssertTrue(Thread.isMainThread, "updateErrorUI handler should be running on the main thread")
                 expectation.fulfill()
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_updateErrorUI_blocksHandlerChainExecution() {
-        let expectation = expectationWithDescription("response handler is called")
+        let expectation = self.expectation(description: "response handler is called")
         var updateErrorUIExecuted = false
         
         errorTask()
@@ -353,7 +353,7 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -361,90 +361,90 @@ extension ServiceTaskTests {
 
 extension ServiceTaskTests {
     func test_transform_closureNotCalledIfAddedBeforeResponseHandler() {
-        let done = expectationWithDescription("done")
+        let done = expectation(description: "done")
 
         successfulTask()
             .transform { _ in
                 XCTFail("Did not expect transform closure to be called")
-                return .Empty
+                return .empty
             }
             .response { _, _ in
                 done.fulfill()
-                return .Empty
+                return .empty
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
     
     func test_transform_closureCalled() {
-        let closureCalled = expectationWithDescription("transform closure called")
+        let closureCalled = expectation(description: "transform closure called")
 
         successfulTask()
             .response { _, _ in
-                return .Empty
+                return .empty
             }
             .transform { _ in
                 closureCalled.fulfill()
-                return .Empty
+                return .empty
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_transform_closureNotCalledForError() {
-        let done = expectationWithDescription("done")
+        let done = expectation(description: "done")
 
         errorTask()
             .response { _, _ in
-                return .Empty
+                return .empty
             }
             .transform { _ in
                 XCTFail("Did not expect transform closure to be called")
-                return .Empty
+                return .empty
             }
             .updateErrorUI { _ in
                 done.fulfill()
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_transform_ordering() {
-        let closure1Called = expectationWithDescription("transform closure 1 called")
-        let closure2Called = expectationWithDescription("transform closure 2 called")
+        let closure1Called = expectation(description: "transform closure 1 called")
+        let closure2Called = expectation(description: "transform closure 2 called")
         var closure1CalledFirst = false
 
         successfulTask()
             .response { _, _ in
-                return .Empty
+                return .empty
             }
             .transform { _ in
                 closure1CalledFirst = true
                 closure1Called.fulfill()
-                return .Empty
+                return .empty
             }
             .transform { _ in
                 XCTAssertTrue(closure1CalledFirst, "Expected closure 1 to be called before closure 2")
                 closure2Called.fulfill()
-                return .Empty
+                return .empty
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_transform_resultPropagation() {
-        let closure1Called = expectationWithDescription("transform closure 1 called")
-        let closure2Called = expectationWithDescription("transform closure 2 called")
-        let closure3Called = expectationWithDescription("transform closure 3 called")
-        let done = expectationWithDescription("done")
+        let closure1Called = expectation(description: "transform closure 1 called")
+        let closure2Called = expectation(description: "transform closure 2 called")
+        let closure3Called = expectation(description: "transform closure 3 called")
+        let done = expectation(description: "done")
 
         successfulTask()
             .response { _, _ in
-                return .Value("response value")
+                return .value("response value")
             }
             .transform { value in
                 if let value = value as? String {
@@ -454,7 +454,7 @@ extension ServiceTaskTests {
                 }
 
                 closure1Called.fulfill()
-                return .Value("transform 1 value")
+                return .value("transform 1 value")
             }
             .transform { value in
                 if let value = value as? String {
@@ -464,13 +464,13 @@ extension ServiceTaskTests {
                 }
 
                 closure2Called.fulfill()
-                return .Empty
+                return .empty
             }
             .transform { value in
                 XCTAssertNil(value, "Expected .Empty result to propagate as nil")
 
                 closure3Called.fulfill()
-                return .Value("transform 3 value")
+                return .value("transform 3 value")
             }
             .updateUI { value in
                 if let value = value as? String {
@@ -483,7 +483,7 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -491,81 +491,81 @@ extension ServiceTaskTests {
 
 extension ServiceTaskTests {
     func test_recover_closureCalled() {
-        let closureCalled = expectationWithDescription("closure called")
+        let closureCalled = expectation(description: "closure called")
 
         errorTask()
             .recover { error in
                 closureCalled.fulfill()
-                return .Failure(error)
+                return .failure(error)
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_recover_closureNotCalledForSuccess() {
-        let done = expectationWithDescription("done")
+        let done = expectation(description: "done")
 
         successfulTask()
             .response { _, _ in
-                return .Empty
+                return .empty
             }
             .recover { error in
                 XCTFail("Did not expect recover closure to be called")
-                return .Failure(error)
+                return .failure(error)
             }
             .updateUI { _ in
                 done.fulfill()
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_recover_ordering() {
-        let closure1Called = expectationWithDescription("recover closure 1 callled")
-        let closure2Called = expectationWithDescription("recover closure 2 callled")
+        let closure1Called = expectation(description: "recover closure 1 callled")
+        let closure2Called = expectation(description: "recover closure 2 callled")
         var closure1CalledFirst = false
 
         errorTask()
             .recover { error in
                 closure1CalledFirst = true
                 closure1Called.fulfill()
-                return .Failure(error)
+                return .failure(error)
             }
             .recover { error in
                 XCTAssertTrue(closure1CalledFirst, "Expected closure 1 to be called before closure 2")
                 closure2Called.fulfill()
-                return .Failure(error)
+                return .failure(error)
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func test_recover_resultPropagation() {
-        let closure1Called = expectationWithDescription("recover closure 1 callled")
-        let closure2Called = expectationWithDescription("recover closure 2 callled")
-        let closure3Called = expectationWithDescription("recover closure 3 callled")
-        let done = expectationWithDescription("done")
+        let closure1Called = expectation(description: "recover closure 1 callled")
+        let closure2Called = expectation(description: "recover closure 2 callled")
+        let closure3Called = expectation(description: "recover closure 3 callled")
+        let done = expectation(description: "done")
 
-        enum ServiceTaskTestError: ErrorType {
-            case Oops(detail: String)
+        enum ServiceTaskTestError: Error {
+            case oops(detail: String)
         }
 
         errorTask()
             .recover { error in
                 closure1Called.fulfill()
-                return .Failure(error)
+                return .failure(error)
             }
             .recover { error in
                 closure2Called.fulfill()
-                return .Failure(ServiceTaskTestError.Oops(detail: "closure 2 error"))
+                return .failure(ServiceTaskTestError.oops(detail: "closure 2 error"))
             }
             .recover { error in
                 if let error = error as? ServiceTaskTestError {
                     switch error {
-                    case .Oops(let detail):
+                    case .oops(let detail):
                         XCTAssertEqual(detail, "closure 2 error", "Expected to receive result of previous handler")
                     }
                 } else {
@@ -573,12 +573,12 @@ extension ServiceTaskTests {
                 }
 
                 closure3Called.fulfill()
-                return .Failure(ServiceTaskTestError.Oops(detail: "closure 3 error"))
+                return .failure(ServiceTaskTestError.oops(detail: "closure 3 error"))
             }
             .updateErrorUI { error in
                 if let error = error as? ServiceTaskTestError {
                     switch error {
-                    case .Oops(let detail):
+                    case .oops(let detail):
                         XCTAssertEqual(detail, "closure 3 error", "Expected to receive result of previous handler")
                     }
                 } else {
@@ -589,7 +589,7 @@ extension ServiceTaskTests {
             }
             .resume()
         
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -597,33 +597,33 @@ extension ServiceTaskTests {
 
 extension ServiceTaskTests {
     func test_transformAndRecover_controlFlow() {
-        let closure1Called = expectationWithDescription("recover closure 1 callled")
-        let closure3Called = expectationWithDescription("recover closure 3 callled")
-        let done = expectationWithDescription("done")
+        let closure1Called = expectation(description: "recover closure 1 callled")
+        let closure3Called = expectation(description: "recover closure 3 callled")
+        let done = expectation(description: "done")
 
-        enum ServiceTaskTestError: ErrorType {
-            case Oops
+        enum ServiceTaskTestError: Error {
+            case oops
         }
 
         successfulTask()
             .response { _, _ in
-                return .Empty
+                return .empty
             }
             .transform { _ in
                 closure1Called.fulfill()
-                return .Failure(ServiceTaskTestError.Oops)
+                return .failure(ServiceTaskTestError.oops)
             }
             .transform { _ in
                 XCTFail("Did not expect transform closure to be called after failure")
-                return .Empty
+                return .empty
             }
             .recover { _ in
                 closure3Called.fulfill()
-                return .Value("closure 3 value")
+                return .value("closure 3 value")
             }
             .recover { error in
                 XCTFail("Did not expect recover closure to be called after recovery")
-                return .Failure(error)
+                return .failure(error)
             }
             .updateErrorUI { _ in
                 XCTFail("Did not expect update UI (error) closure to be called after recovery")
@@ -633,7 +633,7 @@ extension ServiceTaskTests {
             }
             .resume()
 
-        waitForExpectationsWithTimeout(2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }
 
@@ -680,7 +680,7 @@ extension ServiceTaskTests {
     // setBody
     
     func test_setBody_encodesDataInURLRequest() {
-        let bodyData = NSData()
+        let bodyData = Data()
         let request = Request(.GET, url: "/test_setBody_encodesDataInURLRequest")
         let session = RequestRecordingSession()
         let task = ServiceTask(request: request, session: session)
@@ -690,7 +690,7 @@ extension ServiceTaskTests {
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertEqual(recordedURLRequest!.HTTPBody, bodyData)
+        XCTAssertEqual(recordedURLRequest!.httpBody, bodyData)
         
     }
     
@@ -699,12 +699,12 @@ extension ServiceTaskTests {
         let session = RequestRecordingSession()
         let task = ServiceTask(request: request, session: session)
         
-        task.setCachePolicy(.ReloadIgnoringLocalCacheData)
+        task.setCachePolicy(.reloadIgnoringLocalCacheData)
         task.resume()
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertEqual(recordedURLRequest!.cachePolicy, NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData)
+        XCTAssertEqual(recordedURLRequest!.cachePolicy, NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData)
         
     }
     
@@ -717,12 +717,12 @@ extension ServiceTaskTests {
         let session = RequestRecordingSession()
         let task = ServiceTask(request: request, session: session)
         
-        task.setParameterEncoding(.JSON)
+        task.setParameterEncoding(.json)
         task.resume()
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertNotNil(recordedURLRequest?.HTTPBody)
+        XCTAssertNotNil(recordedURLRequest?.httpBody)
     }
     
     // setParameters
@@ -737,9 +737,9 @@ extension ServiceTaskTests {
 
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertNotNil(recordedURLRequest?.URL)
+        XCTAssertNotNil(recordedURLRequest?.url)
 
-        let components = NSURLComponents(URL: recordedURLRequest!.URL!, resolvingAgainstBaseURL: false)!
+        let components = URLComponents(url: recordedURLRequest!.url!, resolvingAgainstBaseURL: false)!
         
         if let queryItems = components.queryItems {
             for item in queryItems {
@@ -764,19 +764,19 @@ extension ServiceTaskTests {
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertNotNil(recordedURLRequest?.URL)
+        XCTAssertNotNil(recordedURLRequest?.url)
         
-        let encodedData = recordedURLRequest!.HTTPBody
+        let encodedData = recordedURLRequest!.httpBody
         XCTAssertNotNil(encodedData)
         
-        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
-        let components = stringValue.componentsSeparatedByString("=")
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
     
     func test_setJSON_encodesDataInRequestBody() {
-        let json = ["foo" : "bar", "paramName" : "paramValue", "numberValue" : 42]
+        let json: [String : Any] = ["foo" : "bar", "paramName" : "paramValue", "numberValue" : 42]
         let session = RequestRecordingSession()
         let task = ServiceTask(request: Request(.POST, url: "/test"), session: session)
         
@@ -785,9 +785,9 @@ extension ServiceTaskTests {
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertNotNil(recordedURLRequest!.HTTPBody)
+        XCTAssertNotNil(recordedURLRequest!.httpBody)
         
-        let bodyJSON = try? NSJSONSerialization.JSONObjectWithData(recordedURLRequest!.HTTPBody!, options: NSJSONReadingOptions())
+        let bodyJSON = try? JSONSerialization.jsonObject(with: recordedURLRequest!.httpBody!, options: JSONSerialization.ReadingOptions())
         XCTAssertNotNil(json, "JSON should not be nil")
         
         // test original parameters against encoded
@@ -805,7 +805,7 @@ extension WebServiceTests {
     func test_setPercentParameterEncodingObjC_encodesParametersAsPercent() {
         var request = Request(.POST, url: "/test_setPercentParameterEncodingObjC_")
         request.parameters = ["percentEncoded": "this needs percent encoded"]
-        request.parameterEncoding = .JSON
+        request.parameterEncoding = .json
         let session = RequestRecordingSession()
         let task = ServiceTask(request: request, session: session)
         
@@ -814,13 +814,13 @@ extension WebServiceTests {
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertNotNil(recordedURLRequest?.HTTPBody)
+        XCTAssertNotNil(recordedURLRequest?.httpBody)
         
-        let encodedData = recordedURLRequest!.HTTPBody
+        let encodedData = recordedURLRequest!.httpBody
         XCTAssertNotNil(encodedData)
         
-        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
-        let components = stringValue.componentsSeparatedByString("=")
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
@@ -828,7 +828,7 @@ extension WebServiceTests {
     func test_setJSONParameterEncodingObjC_encodedParametersAsJSON() {
         var request = Request(.POST, url: "/test_setJSONParameterEncodingObjC_")
         request.parameters = ["percentEncoded": "this needs percent encoded"]
-        request.parameterEncoding = .Percent
+        request.parameterEncoding = .percent
         let session = RequestRecordingSession()
         let task = ServiceTask(request: request, session: session)
         
@@ -837,9 +837,9 @@ extension WebServiceTests {
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertNotNil(recordedURLRequest!.HTTPBody)
+        XCTAssertNotNil(recordedURLRequest!.httpBody)
         
-        let bodyJSON = try? NSJSONSerialization.JSONObjectWithData(recordedURLRequest!.HTTPBody!, options: NSJSONReadingOptions())
+        let bodyJSON = try? JSONSerialization.jsonObject(with: recordedURLRequest!.httpBody!, options: JSONSerialization.ReadingOptions())
         XCTAssertNotNil(bodyJSON, "JSON should not be nil")
         
         // test original parameters against encoded
@@ -852,7 +852,7 @@ extension WebServiceTests {
     
     func test_setPercentEncodedParametersObjC_encodesParametersAsPercent() {
         var request = Request(.POST, url: "/test_setPercentParameterEncodingObjC_")
-        request.parameterEncoding = .JSON
+        request.parameterEncoding = .json
         let parameters = ["percentEncoded": "this needs percent encoded"]
         let session = RequestRecordingSession()
         let task = ServiceTask(request: request, session: session)
@@ -862,13 +862,13 @@ extension WebServiceTests {
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertNotNil(recordedURLRequest?.HTTPBody)
+        XCTAssertNotNil(recordedURLRequest?.httpBody)
         
-        let encodedData = recordedURLRequest!.HTTPBody
+        let encodedData = recordedURLRequest!.httpBody
         XCTAssertNotNil(encodedData)
         
-        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
-        let components = stringValue.componentsSeparatedByString("=")
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
@@ -876,7 +876,7 @@ extension WebServiceTests {
     func test_setJSONParameterEncodingObjC_encodesParametersAsJSON() {
         var request = Request(.POST, url: "/test_setJSONParameterEncodingObjC_")
         let parameters = ["percentEncoded": "this needs percent encoded"]
-        request.parameterEncoding = .Percent
+        request.parameterEncoding = .percent
         let session = RequestRecordingSession()
         let task = ServiceTask(request: request, session: session)
         
@@ -885,9 +885,9 @@ extension WebServiceTests {
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
-        XCTAssertNotNil(recordedURLRequest!.HTTPBody)
+        XCTAssertNotNil(recordedURLRequest!.httpBody)
         
-        let bodyJSON = try? NSJSONSerialization.JSONObjectWithData(recordedURLRequest!.HTTPBody!, options: NSJSONReadingOptions())
+        let bodyJSON = try? JSONSerialization.jsonObject(with: recordedURLRequest!.httpBody!, options: JSONSerialization.ReadingOptions())
         XCTAssertNotNil(bodyJSON, "JSON should not be nil")
         
         if let bodyJSON = bodyJSON as? [String : AnyObject] {
@@ -903,7 +903,7 @@ extension WebServiceTests {
 
 extension ServiceTaskTests {
     class NonRespondingSession: Session {
-        func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
+        func dataTask(request: URLRequestEncodable, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
             return MockDataTask()
         }
     }
@@ -915,7 +915,7 @@ extension ServiceTaskTests {
         
         task.cancel()
         
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Canceling)
+        XCTAssertEqual(task.state, URLSessionTask.State.canceling)
     }
     
     func test_dataTask_entersSuspendedStateWhenSuspended() {
@@ -925,13 +925,13 @@ extension ServiceTaskTests {
         
         task.suspend()
         
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Suspended)
+        XCTAssertEqual(task.state, URLSessionTask.State.suspended)
     }
     
     func test_taskResult_returnsSuspendedStateWhenDataTaskIsNil() {
         let session = NonRespondingSession()
         let task = ServiceTask(request: Request(.GET, url: "/test"), session: session)
                 
-        XCTAssertEqual(task.state, NSURLSessionTaskState.Suspended)
+        XCTAssertEqual(task.state, URLSessionTask.State.suspended)
     }
 }

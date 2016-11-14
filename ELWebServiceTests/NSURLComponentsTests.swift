@@ -11,8 +11,8 @@ import XCTest
 
 class NSURLComponentsTests: XCTestCase {
     func test_appendQueryItems_appendsWhenQueryItemsExists() {
-        let components = NSURLComponents(string: "http://httpbin.org/get?foo=bar")!
-        let items = [NSURLQueryItem(name: "boo", value: "far")]
+        var components = URLComponents(string: "http://httpbin.org/get?foo=bar")!
+        let items = [URLQueryItem(name: "boo", value: "far")]
         
         components.appendQueryItems(items)
         
@@ -21,8 +21,8 @@ class NSURLComponentsTests: XCTestCase {
     }
     
     func test_appendQueryItems_appendsWhenPercentEncodedQueryIsNil() {
-        let components = NSURLComponents(string: "http://httpbin.org/get")!
-        let items = [NSURLQueryItem(name: "boo", value: "far")]
+        var components = URLComponents(string: "http://httpbin.org/get")!
+        let items = [URLQueryItem(name: "boo", value: "far")]
         
         components.appendQueryItems(items)
         

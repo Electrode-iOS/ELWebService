@@ -13,8 +13,8 @@ class BrewAddViewController: UIViewController {
     
     @IBOutlet weak var brewNameField: UITextField?
     @IBOutlet weak var brewStyleField: UITextField?
-    private(set) var brewClient: BrewClient
-    private var brew: Brew? {
+    fileprivate(set) var brewClient: BrewClient
+    fileprivate var brew: Brew? {
         guard let name = brewNameField?.text else {return nil}
         guard let style = brewStyleField?.text else {return nil}
         
@@ -34,24 +34,24 @@ class BrewAddViewController: UIViewController {
         super.viewDidLoad()
         
         title = "Add Brew"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelTapped")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.Plain, target: self, action: "saveTapped")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.plain, target: self, action: #selector(BrewAddViewController.cancelTapped))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.plain, target: self, action: #selector(BrewAddViewController.saveTapped))
     }
 }
 
 extension BrewAddViewController {
     
     func cancelTapped() {
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
     func saveTapped() {
         guard let brew = brew else { return }
         
         brewClient
-            .insertBrew(brew)
+            .save(brew: brew)
             .updateUI { [weak self] value in
-                self?.dismissViewControllerAnimated(true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
             }
             .updateErrorUI { error in
                 print("I AM ERROR = \(error)")
@@ -64,7 +64,7 @@ extension BrewAddViewController {
 
 extension BrewAddViewController: UITextFieldDelegate {
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }

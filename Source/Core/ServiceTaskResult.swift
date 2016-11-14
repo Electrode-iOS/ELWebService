@@ -11,17 +11,17 @@ import Foundation
 /// Represents the result of a service task.
 public enum ServiceTaskResult {
     /// Defines an empty task result
-    case Empty
+    case empty
     /// Defines a task result as a value
-    case Value(Any)
+    case value(Any)
     /// Defines a task resulting in an error
-    case Failure(ErrorType)
+    case failure(Error)
     
-    func value() throws -> Any? {
+    func taskValue() throws -> Any? {
         switch self {
-        case .Failure(let error): throw error
-        case .Empty: return nil
-        case .Value(let value): return value
+        case .failure(let error): throw error
+        case .empty: return nil
+        case .value(let value): return value
         }
     }
 }
@@ -32,11 +32,11 @@ extension ServiceTaskResult {
     /// Initialize a service task result value from an Obj-C result
     init(objCHandlerResult result: ObjCHandlerResult?) {
         if let error = result?.error {
-            self = .Failure(error)
+            self = .failure(error)
         } else if let value = result?.value {
-            self = .Value(value)
+            self = .value(value)
         } else {
-            self = .Empty
+            self = .empty
         }
     }
 }
@@ -44,26 +44,26 @@ extension ServiceTaskResult {
 /// Represents the result of a Obj-C response handler
 @objc public final class ObjCHandlerResult: NSObject {
     /// The resulting value
-    private(set) var value: AnyObject?
+    fileprivate(set) var value: AnyObject?
     
     /// The resulting error
-    private(set) var error: NSError?
+    fileprivate(set) var error: NSError?
     
-    public class func resultWithValue(value: AnyObject) -> ObjCHandlerResult {
+    public class func resultWithValue(_ value: AnyObject) -> ObjCHandlerResult {
         return ObjCHandlerResult(value: value)
     }
     
-    public class func resultWithError(error: NSError) -> ObjCHandlerResult {
+    public class func resultWithError(_ error: NSError) -> ObjCHandlerResult {
         return ObjCHandlerResult(error: error)
     }
     
     /// Initialize a result with a value
-    private init(value: AnyObject) {
+    fileprivate init(value: AnyObject) {
         self.value = value
     }
     
     /// Initialize a result with an error
-    private init(error: NSError) {
+    fileprivate init(error: NSError) {
         self.error = error
     }
 }

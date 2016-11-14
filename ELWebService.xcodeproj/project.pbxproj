@@ -24,7 +24,6 @@
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
 		17D1879E1AB0B173000742BF /* ELWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAF0AF991C5054DE0007761C /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EDF1C5011FB007ADE1B /* WebService.swift */; };
-		CAF0AF9A1C5054E20007761C /* SessionDataTaskDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE01C5011FB007ADE1B /* SessionDataTaskDataSource.swift */; };
 		CAF0AF9B1C5054E60007761C /* ServiceTaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */; };
 		CAF0AF9C1C5054E90007761C /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE21C5011FB007ADE1B /* ServiceTask.swift */; };
 		CAF0AF9D1C5054ED0007761C /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE31C5011FB007ADE1B /* Request.swift */; };
@@ -44,7 +43,6 @@
 		17088ED11C5010EA007ADE1B /* ELWebServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ELWebServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17088ED51C5010EA007ADE1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17088EDF1C5011FB007ADE1B /* WebService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
-		17088EE01C5011FB007ADE1B /* SessionDataTaskDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionDataTaskDataSource.swift; sourceTree = "<group>"; };
 		17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTaskResult.swift; sourceTree = "<group>"; };
 		17088EE21C5011FB007ADE1B /* ServiceTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTask.swift; sourceTree = "<group>"; };
 		17088EE31C5011FB007ADE1B /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
@@ -153,7 +151,6 @@
 				17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */,
 				17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */,
 				17BA678E1C8416C500A26309 /* Session.swift */,
-				17088EE01C5011FB007ADE1B /* SessionDataTaskDataSource.swift */,
 				17088EDF1C5011FB007ADE1B /* WebService.swift */,
 			);
 			path = Core;
@@ -221,11 +218,11 @@
 				TargetAttributes = {
 					17088ED01C5010EA007ADE1B = {
 						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 					};
 					179C5C5D1AB079980047169F = {
 						CreatedOnToolsVersion = 6.3;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 					};
 				};
 			};
@@ -287,7 +284,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAF0AF9C1C5054E90007761C /* ServiceTask.swift in Sources */,
-				CAF0AF9A1C5054E20007761C /* SessionDataTaskDataSource.swift in Sources */,
 				CAF0AF9D1C5054ED0007761C /* Request.swift in Sources */,
 				CAF0AF991C5054DE0007761C /* WebService.swift in Sources */,
 				175B36441C85ED6400F385DD /* Mocking.swift in Sources */,
@@ -319,7 +315,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -332,7 +328,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.electrode.ELWebServiceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -448,7 +444,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -469,7 +465,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -542,7 +538,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = QADeployment;
 		};
@@ -556,7 +552,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0;
 			};
 			name = QADeployment;
 		};

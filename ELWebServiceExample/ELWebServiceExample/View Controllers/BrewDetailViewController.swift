@@ -14,7 +14,7 @@ class BrewDetailViewController: UIViewController {
     @IBOutlet weak var breweryNameLabel: UILabel?
     @IBOutlet weak var breweryLocationLabel: UILabel?
 
-    private(set) var brew: Brew
+    fileprivate(set) var brew: Brew
 
     required init(brew: Brew) {
         self.brew = brew
@@ -34,7 +34,7 @@ class BrewDetailViewController: UIViewController {
 
 extension BrewDetailViewController {
     
-    func renderBrew(brew: Brew) {
+    func renderBrew(_ brew: Brew) {
         title = brew.name
         brewStyleLabel?.text = brew.style
         breweryNameLabel?.text = brew.brewery?.name

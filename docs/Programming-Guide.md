@@ -1,7 +1,7 @@
 # ELWebService Programming Guide
 
 - [About ELWebService](#about-elwebservice)
-- [How ELWebService Works with NSURLSession](#how-elwebservice-works-with-nsurlsession)
+- [How ELWebService Works with URLSession](#how-elwebservice-works-with-urlsession)
 - [Sending Requests](#sending-requests)
 - [Handling Responses](handling-responses)
 - [Handling JSON](#handling-json)
@@ -17,16 +17,16 @@
 
 ## About ELWebService
 
-[ELWebService](https://github.com/Electrode-iOS/ELWebService) is a lightweight HTTP networking framework written in Swift. ELWebService simplifies interaction with HTTP web services by providing an API for encoding a `NSURLRequest` and processing the resulting `NSURLResponse` and `NSData` response objects. The framework is designed to be unobtrusive by acting as a convenience for working with request and response objects while leaving the crucial implementation details of the various NSURLSession delegate methods up to the developer.
+[ELWebService](https://github.com/Electrode-iOS/ELWebService) is a lightweight HTTP networking framework written in Swift. ELWebService simplifies interaction with HTTP web services by providing an API for encoding a `URLRequest` and processing the resulting `URLResponse` and `Data` response objects.  Designed to integrate cleanly with `URLSession`, ELWebService avoids using the session delegate events and does not mutate the session's configuration.
 
-## How ELWebService Works with NSURLSession
+## How ELWebService Works with URLSession
 
-ELWebService uses the shared session returned from `NSURLSession.sharedSession()` to create data tasks but can be customized to work with any session. By conforming to `Session`, your code has complete control over the `NSURLSession` instance that creates `NSURLSessionDataTask` objects for ELWebService to work with.
+ELWebService uses the shared session returned from `URLSession.shared` to create data tasks but can be customized to work with any session. By conforming to `Session`, your code has complete control over the `URLSession` instance that creates `URLSessionDataTask` objects for ELWebService to work with.
 
 ```
 class CustomSession: Session {
-    func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
-        return NSURLSession.sharedSession().dataTaskWithRequest(request.urlRequestValue, completionHandler: completion) as DataTask
+    public func dataTask(request: URLRequestEncodable, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {        
+        return dataTask(with: request.urlRequestValue, completionHandler: completion) as DataTask
     }
 }
 ```
@@ -38,10 +38,10 @@ var service = WebService(baseURLString: "http://myapi")
 service.session = CustomSession()
 ```
 
-To simplify usage further, ELWebService extends `NSURLSession` with an implementation of the `Session` protocol. 
+To simplify usage further, ELWebService extends `URLSession` with an implementation of the `Session` protocol. 
 
 ```
-service.session = NSURLSession(configuration: NSURLSessionConfiguration())
+service.session = URLSession(configuration: URLSessionConfiguration())
 ```
 
 ## Sending Requests
@@ -89,7 +89,7 @@ service
     .resume()
 ```
 
-Request methods like `GET()` return a `ServiceTask` object that represents the lifetime of a `NSURLSessionDataTask`. The handler methods return their `self` instance which enables you to chain handlers resulting in concise and expressive code.
+Request methods like `GET()` return a `ServiceTask` object that represents the lifetime of a `URLSessionDataTask`. The handler methods return their `self` instance which enables you to chain handlers resulting in concise and expressive code.
 
 After the response is received handlers are invoked in the order of which they are registered. All response and error handlers that are registered with the `response()`, `responseJSON()`, and `responseError()` are run on a background queue.
 
@@ -100,7 +100,7 @@ Use the `responseJSON()` method to add a closure for handling the response as se
 ```
 service
     .GET("/brewers")
-    .responseJSON { json: AnyObject?, response: NSURLResponse? in
+    .responseJSON { json: Any?, response: URLResponse? in
         // process JSON
     }
     .responseError { error in
@@ -227,7 +227,7 @@ service
 
 **NOTE: The `setParameters(parameters:)`, `setParameters(parameters:encoding:)`, and `Request.ParameterEncoding` APIs are deprecated as of v3.2.0 and will be removed in v4.0.0. Use `setQueryParameters()`, `setFormParameters()`, and `setJSON()` instead.**
 
-Parameterized data that is structured as a dictionary type of `[String: AnyObject]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
+Parameterized data that is structured as a dictionary type of `[String: Any]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
 
 ```
 service
@@ -277,7 +277,7 @@ service
 
 #### `setCachePolicy`
 
-The `setCachePolicy()` method sets the`NSURLRequestCachePolicy` value to use in the resulting `NSURLRequest`. See the [`NSURLRequestCachePolicy`](https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSURLRequest_Class/index.html#//apple_ref/c/tdef/NSURLRequestCachePolicy) section of the `NSURLRequest` documentation for more information.
+The `setCachePolicy()` method sets the`URLRequestCachePolicy` value to use in the resulting `URLRequest`. See the [`URLRequestCachePolicy`](https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSURLRequest_Class/index.html#//apple_ref/c/tdef/NSURLRequestCachePolicy) section of the `NSURLRequest` documentation for more information.
 
 ```
 service
@@ -287,10 +287,10 @@ service
 
 #### `setBody`
 
-The `setBody(data: NSData)` method sets the `NSData` value to use as the raw body of the HTTP request.
+The `setBody(data: Data)` method sets the `Data` value to use as the raw body of the HTTP request.
 
 ```
-let bodyData: NSData = modelData()
+let bodyData: Data = modelData()
 
 service
     .PUT("/brewers")
@@ -300,7 +300,7 @@ service
 
 #### `setJSON`
 
-The `setJSON(json: AnyObject)` method sets the JSON object that will be serialized as the body of the HTTP request.
+The `setJSON(json: Any)` method sets the JSON object that will be serialized as the body of the HTTP request.
 
 ```
 service
@@ -465,7 +465,7 @@ Most of ELWebService's Swift API bridges over to Objective-C but there are a few
 
 ### Objective-C `ServiceTask` Request API
 
-ELWebService provides a special Objective-C request API for setting request parameters and the type of parameter encoding. Since `Request.ParameterEncoding` is defined as a nested type in the `Request` struct it cannot be represented in Objective-C and therefore methods like `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)` cannot be called from Objective-C.
+ELWebService provides a special Objective-C request API for setting request parameters and the type of parameter encoding. Since `Request.ParameterEncoding` is defined as a nested type in the `Request` struct it cannot be represented in Objective-C and therefore methods like `setParameters(parameters: [String: Any], encoding: Request.ParameterEncoding)` cannot be called from Objective-C.
 
 To work around this limitation a special `ServiceTask` request API is provided for setting request parameters and their coresponding type of encoding. The designated Objective-C methods are named with an `ObjC` suffix to indicate that they are designed to be called only from Objective-C.
 
@@ -475,23 +475,23 @@ extension ServiceTask {
      Set request parameter values and configure them to be JSON-encoded.
 
      This method is designed to only be called from Obj-C. Please use
-     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     `setParameters(parameters: [String: Any], encoding: Request.ParameterEncoding)`
      when calling from Swift.
 
      - parameter parameters: Request parameter values.
     */
-    @objc public func setJSONEncodedParametersObjC(parameters: [String : AnyObject]) -> Self
+    @objc public func setJSONEncodedParametersObjC(parameters: [String : Any]) -> Self
 
     /**
      Set request parameter values and configure them to be Percent-encoded.
 
      This method is designed to be called from Obj-C only. Please use
-     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     `setParameters(parameters: [String: Any], encoding: Request.ParameterEncoding)`
      when calling from Swift.
 
      - parameter parameters: Request parameter values.
     */
-    @objc public func setPercentEncodedParametersObjC(parameters: [String : AnyObject]) -> Self
+    @objc public func setPercentEncodedParametersObjC(parameters: [String : Any]) -> Self
 
     /**
      Configure the request parameters to be JSON-encoded.
@@ -521,17 +521,17 @@ To work around this limitation a special `ServiceTask` response handler API is p
 
 ```
 extension ServiceTask {
-    internal typealias ObjCResponseHandler = (NSData?, NSURLResponse?) -> ObjCHandlerResult?
+    internal typealias ObjCResponseHandler = (Data?, URLResponse?) -> ObjCHandlerResult?
 
-    @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self
+    @objc public func responseObjC(handler: (Data?, URLResponse?) -> ObjCHandlerResult?) -> Self
 
-    @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self
+    @objc public func responseJSONObjC(handler: (Any, URLResponse?) -> ObjCHandlerResult?) -> Self
 
-    @objc public func responseErrorObjC(handler: (NSError) -> Void) -> Self
+    @objc public func responseErrorObjC(handler: (Error) -> Void) -> Self
 
-    @objc public func updateUIObjC(handler: (AnyObject?) -> Void) -> Self
+    @objc public func updateUIObjC(handler: (Any?) -> Void) -> Self
 
-    @objc public func updateErrorUIObjC(handler: (NSError) -> Void) -> Self
+    @objc public func updateErrorUIObjC(handler: (Error) -> Void) -> Self
 }
 ```
 
@@ -643,13 +643,13 @@ waitForExpectationsWithTimeout(2.0, handler: nil)
 
 ```
 public protocol MockableDataTaskResult {
-    func dataTaskResult(request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?)
+    func dataTaskResult(request: URLRequestEncodable) -> (Data?, URLResponse?, Error?)
 }
 ```
 
 ELWebService provides `MockableDataTaskResult` implementations for several types:
 
-- `NSURLResponse`/`NSHTTPURLResponse`
+- `URLResponse`/`HTTPURLResponse`
 - `NSError`
 - `MockResponse`
 
@@ -657,10 +657,10 @@ ELWebService provides `MockableDataTaskResult` implementations for several types
 
 ```
 struct MyMockedResult: MockableDataTaskResult {
-    func dataTaskResult(request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?) {
+    func dataTaskResult(request: URLRequestEncodable) -> (Data?, URLResponse?, Error?) {
         guard let url = request.urlRequestValue.URL else { return (nil, nil, nil) }
         
-        let response = NSHTTPURLResponse(URL: url, MIMEType: nil, expectedContentLength: 12345, textEncodingName: nil)
+        let response = HTTPURLResponse(URL: url, MIMEType: nil, expectedContentLength: 12345, textEncodingName: nil)
         return (nil, response, nil)
     }
 }
@@ -668,7 +668,7 @@ struct MyMockedResult: MockableDataTaskResult {
 
 ### MockResponse
 
-`MockResponse` stores the meta and body data of a response. It is provided as a convenient alternative to stubbing `NSHTTPURLResponse` and `NSData` objects directly and allows you to define both response data and meta data within a single type. 
+`MockResponse` stores the meta and body data of a response. It is provided as a convenient alternative to stubbing `HTTPURLResponse` and `Data` objects directly and allows you to define both response data and meta data within a single type. 
 
 In the simplest form, `MockResponse` can be initialized with only a status code.
 
@@ -682,10 +682,10 @@ let noConentResponse = MockResponse(statusCode: 204)
 let response = MockResponse(statusCode: 200, json: ["foo": "bar"])
 ```
 
-A initializer is provided for defining a raw `NSData` value as the response body data. The example below mocks a response with a raw `NSData` value as the response body along with a HTTP header named "Content-Length" whose value is is "12345".
+A initializer is provided for defining a raw `Data` value as the response body data. The example below mocks a response with a raw `Data` value as the response body along with a HTTP header named "Content-Length" whose value is is "12345".
 
 ```
-let responseData: NSData = mockResponseData()
+let responseData: Data = mockResponseData()
 var response = MockResponse(statusCode: 200, data: responseData)
 response.headers = ["Content-Length": "12345"]
 ```
@@ -729,7 +729,7 @@ mockSession.stub(response) { (matchingRequest: URLEncodableRequest) in
 }
 ```
 
-Errors can also be used as stubs. When providing an error stub the data task result returned to your session will contain the error as well as nil values for both the `NSData` and `NSURLResponse` values. This enables you to test your response handler in the event the request fails and the session returns an error.
+Errors can also be used as stubs. When providing an error stub the data task result returned to your session will contain the error as well as nil values for both the `Data` and `URLResponse` values. This enables you to test your response handler in the event the request fails and the session returns an error.
 
 ```
 session.addStub(ResponseError.FailedToSendRequest as NSError)
@@ -770,11 +770,11 @@ A delegate implementation that logs requests and responses might look like:
 
 ```swift
 class RequestLogger: ServicePassthroughDelegate {
-    func requestSent(request: NSURLRequest) {
+    func requestSent(request: URLRequest) {
         print("Sending request: \(request)")
     }
 
-    func responseReceived(response: NSURLResponse?, data: NSData?, request: NSURLRequest?, error: NSError?) {
+    func responseReceived(response: URLResponse?, data: Data?, request: URLRequest?, error: Error?) {
         if let response = response {
             print("Received response: \(response)")
 
