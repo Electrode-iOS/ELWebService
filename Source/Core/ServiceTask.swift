@@ -296,7 +296,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for handling the response as JSON.
-    public typealias JSONHandler = (AnyObject, URLResponse?) throws -> ServiceTaskResult
+    public typealias JSONHandler = (Any, URLResponse?) throws -> ServiceTaskResult
     
     /**
      Add a response handler to serialize the response body as a JSON object. The
@@ -312,7 +312,7 @@ extension ServiceTask {
             }
             
             let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
-            return try handler(json as AnyObject, response)
+            return try handler(json, response)
         }
     }
 }
