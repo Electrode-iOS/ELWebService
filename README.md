@@ -1,6 +1,6 @@
 # ELWebService 
 
-[![Version](https://img.shields.io/badge/version-v4.0.0-blue.svg)](https://github.com/Electrode-iOS/ELWebService/releases/latest)
+[![Version](https://img.shields.io/badge/version-v4.0.1-blue.svg)](https://github.com/Electrode-iOS/ELWebService/releases/latest)
 [![Build Status](https://travis-ci.org/Electrode-iOS/ELWebService.svg?branch=master)](https://travis-ci.org/Electrode-iOS/ELWebService) 
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
@@ -17,7 +17,7 @@ ELWebService requires Swift 3 and Xcode 8.
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "Electrode-iOS/ELWebService" ~> 4.0.0
+github "Electrode-iOS/ELWebService" ~> 4.0.1
 ```
 
 ### Manual
@@ -65,7 +65,7 @@ The error handler will only be called after a request results in an error. If an
 
 ### Handling JSON responses
 
-Use the `responseJSON()` method to serialize a successful response as a JSON value of type `AnyObject`.
+Use the `responseJSON()` method to serialize a successful response as a JSON value of type `Any`.
 
 ```
 let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
@@ -73,7 +73,7 @@ let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 service
   .GET("/brewers")
   .setQueryParameters(["state" : "New York"])
-  .responseJSON { (json: AnyObject, response: URLResponse?) in
+  .responseJSON { (json: Any, response: URLResponse?) in
     // process response as JSON
   }
   .resume()
