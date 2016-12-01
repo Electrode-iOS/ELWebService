@@ -100,7 +100,7 @@ Use the `responseJSON()` method to add a closure for handling the response as se
 ```
 service
     .GET("/brewers")
-    .responseJSON { json: Any?, response: URLResponse? in
+    .responseJSON { json: Any, response: URLResponse? in
         // process JSON
     }
     .responseError { error in
