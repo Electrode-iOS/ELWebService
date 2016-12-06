@@ -52,11 +52,8 @@ import Foundation
         self.init(baseURLString: baseURLString)
         self.passthroughDelegate = passthroughDelegate
     }
-}
 
-// MARK: - Request API
-
-extension WebService {
+    // MARK: - Request API
     /**
     Create a service task for a `GET` HTTP request.
     
@@ -139,6 +136,29 @@ extension WebService {
         task.passthroughDelegate = passthroughDelegate
         return task
     }
+
+    // MARK: - URL String Construction
+    /**
+     Return an absolute URL string relative to the baseURLString value.
+     
+     - parameter string: URL string.
+     - returns: An absoulte URL string relative to the value of `baseURLString`.
+     */
+    public func absoluteURLString(string: String) -> String {
+        return constructURLString(string, relativeToURLString: baseURLString)
+    }
+    
+    /**
+     Return an absolute URL string relative to the baseURLString value.
+     
+     - parameter string: URL string value.
+     - parameter relativeURLString: Value of relative URL string.
+     - returns: An absolute URL string.
+     */
+    func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
+        let relativeURL = NSURL(string: relativeURLString)
+        return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString!
+    }
 }
 
 // MARK: - Session API
@@ -189,28 +209,4 @@ extension WebService: SessionDataTaskDataSource {
     }
 }
 
-// MARK: - URL String Construction
 
-extension WebService {
-    /**
-     Return an absolute URL string relative to the baseURLString value.
-    
-     - parameter string: URL string.
-     - returns: An absoulte URL string relative to the value of `baseURLString`.
-    */
-    public func absoluteURLString(string: String) -> String {
-        return constructURLString(string, relativeToURLString: baseURLString)
-    }
-    
-    /**
-     Return an absolute URL string relative to the baseURLString value.
-    
-     - parameter string: URL string value.
-     - parameter relativeURLString: Value of relative URL string.
-     - returns: An absolute URL string.
-    */
-    func constructURLString(string: String, relativeToURLString relativeURLString: String) -> String {
-        let relativeURL = NSURL(string: relativeURLString)
-        return NSURL(string: string, relativeToURL: relativeURL)!.absoluteString!
-    }
-}

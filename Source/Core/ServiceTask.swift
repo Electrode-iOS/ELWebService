@@ -97,11 +97,8 @@ import Foundation
     deinit {
         handlerQueue.cancelAllOperations()
     }
-}
 
-// MARK: - Request API
-
-extension ServiceTask {
+    // MARK: - Request API
     /// TODO: Needs docs
     public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
@@ -158,11 +155,8 @@ extension ServiceTask {
         request.formParameters = parameters
         return self
     }
-}
 
-// MARK: - NSURLSesssionDataTask
-
-extension ServiceTask {
+    // MARK: - NSURLSesssionDataTask
     /// Resume the underlying data task.
     public func resume() -> Self {
         if dataTask == nil {
@@ -197,11 +191,8 @@ extension ServiceTask {
         
         handlerQueue.suspended = false
     }
-}
 
-// MARK: - Response API
-
-extension ServiceTask {
+    // MARK: - Response API
     /// A closure type alias for a result transformation handler.
     public typealias ResultTransformer = (Any?) throws -> ServiceTaskResult
 
@@ -290,11 +281,8 @@ extension ServiceTask {
         
         return self
     }
-}
 
-// MARK: - JSON
-
-extension ServiceTask {
+    // MARK: - JSON
     /// A closure type alias for handling the response as JSON.
     public typealias JSONHandler = (AnyObject, NSURLResponse?) throws -> ServiceTaskResult
     
@@ -315,11 +303,8 @@ extension ServiceTask {
             return try handler(json, response)
         }
     }
-}
 
-// MARK: - Error Handling
-
-extension ServiceTask {
+    // MARK: - Error Handling
     /// A closure type alias for an error-recovery handler.
     public typealias ErrorRecoveryHandler = (ErrorType) throws -> ServiceTaskResult
 

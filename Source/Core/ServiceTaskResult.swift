@@ -24,11 +24,8 @@ public enum ServiceTaskResult {
         case .Value(let value): return value
         }
     }
-}
 
-// MARK: - Objective-C Interop
-
-extension ServiceTaskResult {
+    // MARK: - Objective-C Interop
     /// Initialize a service task result value from an Obj-C result
     init(objCHandlerResult result: ObjCHandlerResult?) {
         if let error = result?.error {

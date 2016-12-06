@@ -116,11 +116,8 @@ class WebServiceTests: XCTestCase {
         
         XCTAssertEqual(method!, "PUT")
     }
-}
 
-// MARK: - absoluteURLString
-
-extension WebServiceTests {
+    // MARK: - absoluteURLString
     func test_absoluteURLString_constructsValidAbsoluteURL() {
         let service = WebService(baseURLString: "http://www.walmart.com/")
         
@@ -136,11 +133,8 @@ extension WebServiceTests {
         
         XCTAssertEqual(url, "http://httpbin.org/get")
     }
-}
 
-// MARK - dataTaskWithRequest
-
-extension WebServiceTests {
+    // MARK - dataTaskWithRequest
     // TODO: legacy test, remove after dataTaskWithRequest API is removed
     func test_dataTaskWithRequest_returnsSuspendedDataTask() {
         let service = WebService(baseURLString: "http://httpbin.org/")
@@ -150,11 +144,8 @@ extension WebServiceTests {
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Suspended)
     }
-}
 
-// MARK: - dataTaskSource
-
-extension WebServiceTests {
+    // MARK: - dataTaskSource
     // TODO: legacy test, remove after dataTaskSource API is removed
     func test_dataTaskSource_setterSetsSession() {
         let urlSession = NSURLSession.sharedSession()
@@ -180,6 +171,13 @@ extension WebServiceTests {
         XCTAssertTrue(task is NSURLSessionDataTask)
         XCTAssertEqual((task as! NSURLSessionDataTask).state, NSURLSessionTaskState.Suspended)
     }
+
+    func test_servicePassthroughDelegate_setsToSelfWhenImplemented() {
+        let service = WebService(baseURLString: "http://httpbin.org/")
+        
+        XCTAssertNotNil(service.passthroughDelegate)
+        XCTAssertTrue(service.passthroughDelegate! === WebService.mockPassthroughDelegate as ServicePassthroughDelegate)
+    }
 }
 
 // MARK: - servicePassthroughDelegate
@@ -192,11 +190,4 @@ extension WebService: ServicePassthroughDataSource {
     }
 }
 
-extension WebServiceTests {
-    func test_servicePassthroughDelegate_setsToSelfWhenImplemented() {
-        let service = WebService(baseURLString: "http://httpbin.org/")
-        
-        XCTAssertNotNil(service.passthroughDelegate)
-        XCTAssertTrue(service.passthroughDelegate! === WebService.mockPassthroughDelegate as ServicePassthroughDelegate)
-    }
-}
+

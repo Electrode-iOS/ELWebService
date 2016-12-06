@@ -37,11 +37,8 @@ class MockingTests: XCTestCase {
         
         XCTAssertEqual(task.state, NSURLSessionTaskState.Running)
     }
-}
 
-// MARK: - Mock Session
-
-extension MockingTests {
+    // MARK: - Mock Session
     func test_mockSession_matchesStubWhenMatcherReturnsTrue() {
         struct StubRequest: URLRequestEncodable {
             var urlRequestValue: NSURLRequest {
@@ -79,11 +76,8 @@ extension MockingTests {
         XCTAssertNil(urlResponse)
         XCTAssertNil(error)
     }
-}
 
-// MARK: - Mock Response
-
-extension MockingTests {
+    // MARK: - Mock Response
     func test_mockResponse_initializationWithData() {
         let data = NSData()
         let response = MockResponse(statusCode: 200, data: data)
@@ -108,9 +102,7 @@ extension MockingTests {
         XCTAssertNil(responseData)
         XCTAssertNotNil(error)
     }
-}
 
-extension MockingTests {
     func test_urlResponse_mockableDataTask() {
         let url = NSURL(string: "/test_urlResponse_mockableDataTask")!
         let response = NSURLResponse(URL: url, MIMEType: nil, expectedContentLength: 0, textEncodingName: nil)

@@ -117,11 +117,8 @@ class ServiceTaskTests: XCTestCase {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-}
 
-// MARK: - JSON
-
-extension ServiceTaskTests {
+    // MARK: - JSON
     func test_responseJSON_handlerIsCalledWhenJSONIsValid() {
         let expectation = expectationWithDescription("JSON response handler is called")
         let session = MockSession()
@@ -177,11 +174,8 @@ extension ServiceTaskTests {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-}
 
-// MARK: - Errors
-
-extension ServiceTaskTests {
+    // MARK: - Errors
     // MARK: Stub
     
     func errorTask() -> ServiceTask {
@@ -355,11 +349,8 @@ extension ServiceTaskTests {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-}
 
-// MARK: - Transform
-
-extension ServiceTaskTests {
+    // MARK: - Transform
     func test_transform_closureNotCalledIfAddedBeforeResponseHandler() {
         let done = expectationWithDescription("done")
 
@@ -485,11 +476,8 @@ extension ServiceTaskTests {
 
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-}
 
-// MARK: - Recover
-
-extension ServiceTaskTests {
+    // MARK: - Recover
     func test_recover_closureCalled() {
         let closureCalled = expectationWithDescription("closure called")
 
@@ -591,11 +579,8 @@ extension ServiceTaskTests {
         
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-}
 
-// MARK: - Transform and Recover Control Flow
-
-extension ServiceTaskTests {
+    // MARK: - Transform and Recover Control Flow
     func test_transformAndRecover_controlFlow() {
         let closure1Called = expectationWithDescription("recover closure 1 callled")
         let closure3Called = expectationWithDescription("recover closure 3 callled")
@@ -635,11 +620,8 @@ extension ServiceTaskTests {
 
         waitForExpectationsWithTimeout(2, handler: nil)
     }
-}
 
-// MARK: - Request API
-
-extension ServiceTaskTests {
+    // MARK: - Request API
     func test_setHeaders_encodesValuesInURLRequest() {
         let request = Request(.GET, url: "/test_setHeaders_encodesValuesInURLRequest")
         let session = RequestRecordingSession()
@@ -797,11 +779,8 @@ extension ServiceTaskTests {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
     }
-}
 
-// MARK: - Obj-C Request API
-
-extension WebServiceTests {
+    // MARK: - Obj-C Request API
     func test_setPercentParameterEncodingObjC_encodesParametersAsPercent() {
         var request = Request(.POST, url: "/test_setPercentParameterEncodingObjC_")
         request.parameters = ["percentEncoded": "this needs percent encoded"]
@@ -897,11 +876,8 @@ extension WebServiceTests {
             XCTFail("Failed to cast JSON as [String : AnyObject]")
         }
     }
-}
 
-// MARK: - DataTask API
-
-extension ServiceTaskTests {
+    // MARK: - DataTask API
     class NonRespondingSession: Session {
         func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
             return MockDataTask()
