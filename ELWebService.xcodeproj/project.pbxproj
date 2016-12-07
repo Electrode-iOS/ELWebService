@@ -221,6 +221,7 @@
 				TargetAttributes = {
 					17088ED01C5010EA007ADE1B = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = DXZ5VF8836;
 						LastSwiftMigration = 0800;
 					};
 					179C5C5D1AB079980047169F = {
@@ -313,6 +314,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = DXZ5VF8836;
 				INFOPLIST_FILE = ELWebServiceTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.electrode.ELWebServiceTests;
@@ -327,6 +329,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = DXZ5VF8836;
 				INFOPLIST_FILE = ELWebServiceTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.electrode.ELWebServiceTests;
@@ -550,6 +553,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = DXZ5VF8836;
 				INFOPLIST_FILE = ELWebServiceTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.electrode.ELWebServiceTests;
