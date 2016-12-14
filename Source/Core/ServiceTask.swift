@@ -235,7 +235,7 @@ extension ServiceTask {
      Add a response handler to transform a (non-error) result produced by an earlier
      response handler.
 
-     The handler can return any type of service task result, `.Empty`, `.Value` or
+     The handler can return any type of service task result, `.Empty`, `.value` or
      `.Failure`. The result is propagated to later response handlers.
 
      - parameter handler: Transformation handler to execute.
@@ -263,7 +263,7 @@ extension ServiceTask {
      the UI with a given value. The handler is only called if a previous response 
      handler in the chain does **not** return a `.Failure` value.
      
-     If a response handler returns a value via ServiceTaskResult.Value the
+     If a response handler returns a value via ServiceTaskResult.value the
      associated value will be passed to the update UI handler.
     
      - parameter handler: The closure to execute as the updateUI handler.
@@ -369,7 +369,7 @@ extension ServiceTask {
      Add a response handler to recover from an error produced by an earlier response
      handler.
      
-     The handler can return either a `.Value` or `.Empty`, indicating it was able to
+     The handler can return either a `.value` or `.Empty`, indicating it was able to
      recover from the error, or an `.Failure`, indicating that it was not able to
      recover. The result is propagated to later response handlers.
      

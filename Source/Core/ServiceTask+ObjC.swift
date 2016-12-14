@@ -108,7 +108,7 @@ extension ServiceTask {
      This method is designed to be called from Obj-C. Please use
      `transform(handler: ResultTransformer)` when calling from Swift.
 
-     The handler can return any type of service task result, `.Empty`, `.Value` or
+     The handler can return any type of service task result, `.Empty`, `.value` or
      `.Failure`. The result is propagated to later response handlers.
 
      - parameter handler: Transformation handler to execute.
@@ -127,7 +127,7 @@ extension ServiceTask {
      This method is designed to be called from Obj-C. Please use
      `recover(handler: ErrorRecoveryHandler)` when calling from Swift.
 
-     The handler can return either a `.Value` or `.Empty`, indicating it was able to
+     The handler can return either a `.value` or `.Empty`, indicating it was able to
      recover from the error, or an `.Failure`, indicating that it was not able to
      recover. The result is propagated to later response handlers.
 
