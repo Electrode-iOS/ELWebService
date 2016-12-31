@@ -94,7 +94,7 @@ extension NSError: MockableDataTaskResult {
 /// Implements the `Session` protocol and provides an API for adding mocked responses as stubs.
 open class MockSession: Session {
     typealias Stub = (MockableDataTaskResult, (URLRequestEncodable) -> (Bool))
-    lazy var stubs = [Stub]()
+    var stubs = [Stub]()
     
     public init() {
         
