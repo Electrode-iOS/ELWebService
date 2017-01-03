@@ -1,3 +1,7 @@
+# [4.0.3](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.0.3)
+
+- Remove `lazy` var for Carthage compatibility.
+
 # [4.0.2](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.0.2)
 
 - Update to Xcode 8.1 recommended project settings.
