@@ -14,7 +14,7 @@ import Foundation
 */
 @objc public final class WebService: NSObject {
     /// Base URL of the web service.
-    public let baseURLString: String
+    public let baseURL: URL
     
     public var session: Session = URLSession.shared
     internal fileprivate(set) weak var passthroughDelegate: ServicePassthroughDelegate?
@@ -23,18 +23,48 @@ import Foundation
     
     /**
      Initialize a web service value.
-     - parameter baseURLString: URL string to use as the base URL of the web service.
-    */
-    public init(baseURLString: String) {
-        self.baseURLString = baseURLString
-        
+     - parameter baseURL: URL to use as the base URL of the web service.
+     */
+    public init(baseURL: URL) {
+        self.baseURL = baseURL
+
         super.init()
-        
+
         if let passthroughDataSource = self as? ServicePassthroughDataSource {
             passthroughDelegate = passthroughDataSource.servicePassthroughDelegate
         }
     }
+
+    /**
+     Initialize a web service value.
+     - parameter baseURL: URL to use as the base URL of the web service.
+     - parameter passthroughDelegate: ServicePassthroughDelegate to use for hooking into service request/response events.
+     */
+    public convenience init(baseURL: URL, passthroughDelegate: ServicePassthroughDelegate) {
+        self.init(baseURL: baseURL)
+        self.passthroughDelegate = passthroughDelegate
+    }
+
+    /**
+     Initialize a web service value.
+     - parameter baseURLString: URL string to use as the base URL of the web service.
+     - note:
+     This initializer can cause a runtime crash if the `baseURLString` cannot convert to a URL.
+     It is better to use `init(baseURL: URL)` in place of this.
+    */
+    convenience public init(baseURLString: String) {
+        let baseURL = URL(string: baseURLString)
+        self.init(baseURL: baseURL!)
+    }
     
+    /**
+     Initialize a web service value.
+     - parameter baseURL: URL to use as the base URL of the web service.
+     - parameter passthroughDelegate: ServicePassthroughDelegate to use for hooking into service request/response events.
+     - note:
+     This initializer can cause a runtime crash if the `baseURLString` cannot convert to a URL.
+     It is better to use `init(baseURL: URL, passthroughDelegate: ServicePassthroughDelegate)` in place of this.
+     */
     public convenience init(baseURLString: String, passthroughDelegate: ServicePassthroughDelegate) {
         self.init(baseURLString: baseURLString)
         self.passthroughDelegate = passthroughDelegate
@@ -181,10 +211,10 @@ extension WebService {
      Return an absolute URL string relative to the baseURLString value.
     
      - parameter string: URL string.
-     - returns: An absoulte URL string relative to the value of `baseURLString`.
+     - returns: An absolute URL string relative to the value of `baseURLString`.
     */
     public func absoluteURLString(_ string: String) -> String {
-        return constructURLString(string, relativeToURLString: baseURLString)
+        return constructURLString(string, relativeToURL: baseURL)
     }
     
     /**
@@ -194,8 +224,8 @@ extension WebService {
      - parameter relativeURLString: Value of relative URL string.
      - returns: An absolute URL string.
     */
-    func constructURLString(_ string: String, relativeToURLString relativeURLString: String) -> String {
-        let relativeURL = URL(string: relativeURLString)
-        return URL(string: string, relativeTo: relativeURL)!.absoluteString
+    func constructURLString(_ string: String, relativeToURL: URL) -> String {
+        let urlString =  relativeToURL.appendingPathComponent(string).absoluteString
+        return urlString
     }
 }

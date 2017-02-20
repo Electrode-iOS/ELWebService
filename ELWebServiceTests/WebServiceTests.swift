@@ -13,25 +13,6 @@ import XCTest
 // MARK: - Request Creation
 
 class WebServiceTests: XCTestCase {
-    func test_request_constructsValidAbsoluteURL() {
-        let service = WebService(baseURLString:  "http://httpbin.org/")
-        let session = RequestRecordingSession()
-        service.session = session
-        
-        let task = service.request(.GET, path: "/get")
-        task.resume()
-        
-        
-        let recordedRequest = session.recordedRequests.first?.urlRequestValue
-        XCTAssertNotNil(recordedRequest)
-        
-        let url = recordedRequest?.url
-        XCTAssertNotNil(url)
-        
-        let absoluteString = url!.absoluteString
-        XCTAssertEqual(absoluteString, "http://httpbin.org/get")
-    }
-    
     func test_get_createsGETRequest() {
         let service = WebService(baseURLString:  "http://httpbin.org/")
         let session = RequestRecordingSession()
@@ -48,7 +29,7 @@ class WebServiceTests: XCTestCase {
         
         XCTAssertEqual(method!, "GET")
     }
-    
+
     func test_post_createPOSTRequest() {
         let service = WebService(baseURLString:  "http://httpbin.org/")
         let session = RequestRecordingSession()
@@ -121,21 +102,57 @@ class WebServiceTests: XCTestCase {
 // MARK: - absoluteURLString
 
 extension WebServiceTests {
+    func test_request_constructsValidAbsoluteURL() {
+        let service = WebService(baseURLString:  "http://httpbin.org/")
+        let session = RequestRecordingSession()
+        service.session = session
+
+        let task = service.request(.GET, path: "get")
+        task.resume()
+
+
+        let recordedRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedRequest)
+
+        let url = recordedRequest?.url
+        XCTAssertNotNil(url)
+
+        let absoluteString = url!.absoluteString
+        XCTAssertEqual(absoluteString, "http://httpbin.org/get")
+    }
+
     func test_absoluteURLString_constructsValidAbsoluteURL() {
+        let service = WebService(baseURLString: "http://www.walmart.com")
+
+        let url = service.absoluteURLString("/v1/foo/bar")
+
+        XCTAssertEqual(url, "http://www.walmart.com/v1/foo/bar")
+    }
+
+    func test_absoluteURLString_constructsValidURLWhenPathDoesNotStartWithSlash() {
         let service = WebService(baseURLString: "http://www.walmart.com/")
-        
-        let url = service.absoluteURLString("/foo")
-        
-        XCTAssertEqual(url, "http://www.walmart.com/foo")
+
+        let url = service.absoluteURLString("v1/foo/bar")
+
+        XCTAssertEqual(url, "http://www.walmart.com/v1/foo/bar")
     }
     
-    func test_absoluteURLString_constructsValidURLWhenPathIsAbsoluteURL() {
-        let service = WebService(baseURLString: "http://www.walmart.com/")
-        
-        let url = service.absoluteURLString("http://httpbin.org/get")
-        
-        XCTAssertEqual(url, "http://httpbin.org/get")
+     func test_absoluteURLString_constructsValidURLWhenBaseHasRootPath() {
+        let service = WebService(baseURLString: "http://localhost:8000/rootPath")
+
+        let url = service.absoluteURLString("/v1/foo/bar")
+
+        XCTAssertEqual(url, "http://localhost:8000/rootPath/v1/foo/bar")
     }
+
+    func test_absoluteURLString_constructsValidURLWhenBaseHasRootPathWithSlash() {
+        let service = WebService(baseURLString: "http://localhost:8000/rootPath/")
+
+        let url = service.absoluteURLString("v1/foo/bar")
+
+        XCTAssertEqual(url, "http://localhost:8000/rootPath/v1/foo/bar")
+    }
+
 }
 
 // MARK: - servicePassthroughDelegate
@@ -154,5 +171,27 @@ extension WebServiceTests {
         
         XCTAssertNotNil(service.passthroughDelegate)
         XCTAssertTrue(service.passthroughDelegate! === WebService.mockPassthroughDelegate as ServicePassthroughDelegate)
+    }
+}
+
+// MARK: - URL initializers
+extension WebServiceTests {
+    func test_init_baseURL() {
+        guard let baseURL = URL(string: "http://httpbin.org") else {
+            XCTFail()
+            return
+        }
+
+        let service = WebService(baseURL: baseURL)
+        XCTAssertEqual(service.baseURL.absoluteString, "http://httpbin.org")
+    }
+
+    func test_init_baseURL_passthroughDelegate() {
+        guard let baseURL = URL(string: "http://httpbin.org") else {
+            XCTFail()
+            return
+        }
+        let service = WebService(baseURL: baseURL, passthroughDelegate: WebService.mockPassthroughDelegate)
+        XCTAssertEqual(service.baseURL.absoluteString, "http://httpbin.org")
     }
 }
