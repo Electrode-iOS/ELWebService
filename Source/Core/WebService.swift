@@ -13,19 +13,22 @@ import Foundation
  and processing the resulting `NSURLResponse` object.
 */
 @objc public final class WebService: NSObject {
-    /// Base URL of the web service.
-    public let baseURL: URL
-    
+    /**
+        Base URL of the web service.
+        If the base URL is nil, the path is interpreted as an absolute URL.
+     */
+    public let baseURL: URL?
+
     public var session: Session = URLSession.shared
     internal fileprivate(set) weak var passthroughDelegate: ServicePassthroughDelegate?
-    
+
     // MARK: Initialization
-    
+
     /**
      Initialize a web service value.
      - parameter baseURL: URL to use as the base URL of the web service.
      */
-    public init(baseURL: URL) {
+    public init(baseURL: URL?) {
         self.baseURL = baseURL
 
         super.init()
@@ -40,7 +43,7 @@ import Foundation
      - parameter baseURL: URL to use as the base URL of the web service.
      - parameter passthroughDelegate: ServicePassthroughDelegate to use for hooking into service request/response events.
      */
-    public convenience init(baseURL: URL, passthroughDelegate: ServicePassthroughDelegate) {
+    public convenience init(baseURL: URL?, passthroughDelegate: ServicePassthroughDelegate) {
         self.init(baseURL: baseURL)
         self.passthroughDelegate = passthroughDelegate
     }
@@ -54,9 +57,9 @@ import Foundation
     */
     convenience public init(baseURLString: String) {
         let baseURL = URL(string: baseURLString)
-        self.init(baseURL: baseURL!)
+        self.init(baseURL: baseURL)
     }
-    
+
     /**
      Initialize a web service value.
      - parameter baseURL: URL to use as the base URL of the web service.
@@ -97,7 +100,7 @@ extension WebService {
     public func POST(_ path: String) -> ServiceTask {
         return request(.POST, path: path)
     }
-    
+
     /**
     Create a service task for a PUT HTTP request.
     
@@ -109,7 +112,7 @@ extension WebService {
     public func PUT(_ path: String) -> ServiceTask {
         return request(.PUT, path: path)
     }
-    
+
     /**
      Create a service task for a PATCH HTTP request.
      
@@ -121,7 +124,7 @@ extension WebService {
     public func PATCH(path: String) -> ServiceTask {
         return request(.PATCH, path: path)
     }
-    
+
     /**
     Create a service task for a DELETE HTTP request.
     
@@ -133,7 +136,7 @@ extension WebService {
     public func DELETE(_ path: String) -> ServiceTask {
         return request(.DELETE, path: path)
     }
-    
+
     /**
     Create a service task for a HEAD HTTP request.
     
@@ -145,7 +148,7 @@ extension WebService {
     public func HEAD(_ path: String) -> ServiceTask {
         return request(.HEAD, path: path)
     }
-    
+
     /**
      Create a service task to fulfill a service request. By default the service
      task is started by calling resume(). To prevent service tasks from
@@ -161,7 +164,7 @@ extension WebService {
     func request(_ method: Request.Method, path: String) -> ServiceTask {
         return serviceTask(request: Request(method, url: absoluteURLString(path)))
     }
-    
+
     /// Create a service task to fulfill a given request.
     func serviceTask(request: Request) -> ServiceTask {
         let task = ServiceTask(request: request, session: self)
@@ -174,28 +177,28 @@ extension WebService {
 
 extension WebService: Session {
     typealias TaskHandler = (Data?, URLResponse?, Error?) -> Void
-    
+
     public func dataTask(request: URLRequestEncodable, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
         return dataTask(session: session, request: request, completion: completion)
     }
-    
+
     func dataTask(session: Session, request: URLRequestEncodable, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
         let urlRequest = canonicalRequest(request: request).urlRequestValue
-        
+
         passthroughDelegate?.requestSent(urlRequest)
         return session.dataTask(request: urlRequest, completion: onTaskCompletion(urlRequest, completionHandler: completion))
     }
-    
+
     func canonicalRequest(request: URLRequestEncodable) -> URLRequestEncodable {
         let urlRequest = request.urlRequestValue
-        
+
         if let modifiedRequest = passthroughDelegate?.modifiedRequest(urlRequest) {
             return modifiedRequest
         }
-        
+
         return urlRequest
     }
-    
+
     func onTaskCompletion(_ request: URLRequestEncodable, completionHandler: @escaping TaskHandler) -> TaskHandler {
         return { data, response, error in
             self.passthroughDelegate?.responseReceived(response, data: data, request: request.urlRequestValue, error: error)
@@ -216,7 +219,7 @@ extension WebService {
     public func absoluteURLString(_ string: String) -> String {
         return constructURLString(string, relativeToURL: baseURL)
     }
-    
+
     /**
      Return an absolute URL string relative to the baseURLString value.
     
@@ -224,8 +227,11 @@ extension WebService {
      - parameter relativeURLString: Value of relative URL string.
      - returns: An absolute URL string.
     */
-    func constructURLString(_ string: String, relativeToURL: URL) -> String {
-        let urlString =  relativeToURL.appendingPathComponent(string).absoluteString
-        return urlString
+    func constructURLString(_ string: String, relativeToURL: URL?) -> String {
+        guard string != "" else { // if string is empty then just return the baseURL
+            return baseURL?.absoluteString ?? ""
+        }
+        let url = URL(string: string, relativeTo: relativeToURL)!.absoluteString
+        return url
     }
 }
