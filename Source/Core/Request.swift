@@ -106,9 +106,13 @@ public struct Request {
     /// The HTTP method of the request.
     public let method: Method
     
+    public let requestURL: URL
+
     /// The URL string of the HTTP request.
-    public let url: String
-    
+    public var url: String {
+        return requestURL.absoluteString
+    }
+
     /// The body of the HTTP request.
     public var body: Data?
     
@@ -167,13 +171,24 @@ public struct Request {
     
     /**
      Intialize a request value.
+
+     - parameter method: The HTTP request method.
+     - parameter url: The URL string of the HTTP request.
+     */
+    init(_ method: Method, url: URL) {
+        self.method = method
+        self.requestURL = url
+    }
+
+    /**
+     Intialize a request value.
      
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
     */
-    init(_ method: Method, url: String) {
-        self.method = method
-        self.url = url
+    init(_ method: Method, url urlString: String) {
+        let aURL = URL(string: urlString)!
+        self.init(method, url: aURL)
     }
 }
 

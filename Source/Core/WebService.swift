@@ -17,16 +17,11 @@ import Foundation
         Base URL of the web service.
         If the base URL is nil, the path is interpreted as an absolute URL.
      */
-    private (set) public var baseURL: URL? = nil
+    public let baseURL: URL?
 
     /// Base URL of the web service (as String).
     public var baseURLString: String {
-        get {
-            return baseURL?.absoluteString ?? ""
-        }
-        set {
-            baseURL = URL(string: baseURLString)
-        }
+        return baseURL?.absoluteString ?? ""
     }
 
     public var session: Session = URLSession.shared
@@ -36,23 +31,14 @@ import Foundation
 
     /**
      Initialize a web service value.
+     - parameter baseURL: URL to use as the base URL of the web service.
      */
-    public override init() {
+    public init(baseURL: URL? = nil) {
+        self.baseURL = baseURL
         super.init()
-
         if let passthroughDataSource = self as? ServicePassthroughDataSource {
             passthroughDelegate = passthroughDataSource.servicePassthroughDelegate
         }
-    }
-
-    /**
-     Initialize a web service value.
-     - parameter baseURL: URL to use as the base URL of the web service.
-     */
-    convenience public init(baseURL: URL?) {
-        self.init()
-
-        self.baseURL = baseURL
     }
 
     /**
