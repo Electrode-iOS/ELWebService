@@ -17,7 +17,7 @@ import Foundation
         Base URL of the web service.
         If the base URL is nil, the path is interpreted as an absolute URL.
      */
-    public let baseURL: URL?
+    private (set) public var baseURL: URL? = nil
 
     public var session: Session = URLSession.shared
     internal fileprivate(set) weak var passthroughDelegate: ServicePassthroughDelegate?
@@ -26,16 +26,23 @@ import Foundation
 
     /**
      Initialize a web service value.
-     - parameter baseURL: URL to use as the base URL of the web service.
      */
-    public init(baseURL: URL?) {
-        self.baseURL = baseURL
-
+    public override init() {
         super.init()
 
         if let passthroughDataSource = self as? ServicePassthroughDataSource {
             passthroughDelegate = passthroughDataSource.servicePassthroughDelegate
         }
+    }
+
+    /**
+     Initialize a web service value.
+     - parameter baseURL: URL to use as the base URL of the web service.
+     */
+    convenience public init(baseURL: URL?) {
+        self.init()
+
+        self.baseURL = baseURL
     }
 
     /**
@@ -216,7 +223,7 @@ extension WebService {
      - parameter string: URL string.
      - returns: An absolute URL string relative to the value of `baseURLString`.
     */
-    public func absoluteURLString(_ string: String) -> String {
+    dynamic public func absoluteURLString(_ string: String) -> String {
         return constructURLString(string, relativeToURL: baseURL)
     }
 
