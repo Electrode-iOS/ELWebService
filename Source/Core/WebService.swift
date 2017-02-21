@@ -165,7 +165,7 @@ extension WebService {
      a given request.
      */
     func request(_ method: Request.Method, path: String) -> ServiceTask {
-        return serviceTask(request: Request(method, url: absoluteURLString(path)))
+        return serviceTask(request: Request(method, url: absoluteURL(path)))
     }
 
     /// Create a service task to fulfill a given request.
@@ -215,26 +215,36 @@ extension WebService: Session {
 extension WebService {
     /**
      Return an absolute URL string relative to the baseURLString value.
-    
+
      - parameter string: URL string.
      - returns: An absolute URL string relative to the value of `baseURLString`.
-    */
-    dynamic public func absoluteURLString(_ string: String) -> String {
-        return constructURLString(string, relativeToURL: baseURL)
+     */
+    dynamic public func absoluteURL(_ string: String) -> URL {
+        return constructURL(string, relativeToURL: baseURL)!
     }
 
     /**
      Return an absolute URL string relative to the baseURLString value.
     
+     - parameter string: URL string.
+     - returns: An absolute URL string relative to the value of `baseURLString`.
+    */
+    dynamic public func absoluteURLString(_ string: String) -> String {
+        return absoluteURL(string).absoluteString
+    }
+
+    /**
+     Return an absolute URL string relative to the baseURLString value.
+
      - parameter string: URL string value.
      - parameter relativeURLString: Value of relative URL string.
      - returns: An absolute URL string.
-    */
-    func constructURLString(_ string: String, relativeToURL: URL?) -> String {
+     */
+    func constructURL(_ string: String, relativeToURL: URL?) -> URL? {
         guard string != "" else { // if string is empty then just return the baseURL
-            return baseURL?.absoluteString ?? ""
+            return baseURL
         }
-        let url = URL(string: string, relativeTo: relativeToURL)!.absoluteString
+        let url = URL(string: string, relativeTo: relativeToURL)
         return url
     }
 }
