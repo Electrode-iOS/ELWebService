@@ -19,6 +19,16 @@ import Foundation
      */
     private (set) public var baseURL: URL? = nil
 
+    /// Base URL of the web service (as String).
+    public var baseURLString: String {
+        get {
+            return baseURL?.absoluteString ?? ""
+        }
+        set {
+            baseURL = URL(string: baseURLString)
+        }
+    }
+
     public var session: Session = URLSession.shared
     internal fileprivate(set) weak var passthroughDelegate: ServicePassthroughDelegate?
 

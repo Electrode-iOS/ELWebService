@@ -103,6 +103,14 @@ class WebServiceTests: XCTestCase {
 
 extension WebServiceTests {
 
+    func test_absoluteURLString_constructsValidURLWhenPathIsAbsoluteURL() {
+        let service = WebService(baseURLString: "http://www.walmart.com/")
+
+        let url = service.absoluteURLString("http://httpbin.org/get")
+
+        XCTAssertEqual(url, "http://httpbin.org/get")
+    }
+
     func test_absoluteURLString_emptyBase() {
         let service = WebService(baseURLString: "")
 
@@ -123,9 +131,9 @@ extension WebServiceTests {
         let service = WebService(baseURLString: "http://www.walmart.com")
 
         // When the relative URL has a scheme, should replace the entire base URL
-        let url = service.absoluteURLString("http://www.amazon.com")
+        let url = service.absoluteURLString("http://httpbin.org")
 
-        XCTAssertEqual(url, "http://www.amazon.com")
+        XCTAssertEqual(url, "http://httpbin.org")
     }
 
     func test_absoluteURLString_baseNoTrailingSlash_relativeNoLeadingSlash() {
