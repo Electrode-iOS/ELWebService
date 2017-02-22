@@ -14,8 +14,8 @@ extension ServiceTask {
         return
             responseJSON { json, response in
                 guard
-                    let dictionary = json["brews"],
-                    let jsonArray = dictionary as? [Any],
+                let dictionary = json as? [String: Any],
+                    let jsonArray = dictionary["brews"] as? [Any],
                     let decodedArray = ModelDecoder<Brew>.decodeArray(jsonArray)
                     else {
                         throw ServiceTaskDecodeError.failedToDecodeJSONArray
