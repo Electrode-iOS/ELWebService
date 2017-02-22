@@ -1,3 +1,16 @@
+# [4.1.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.1.0)
+
+`WebService` can now be initialized with a `URL` type for the baseURL along with the existing `baseURLString`. Example:
+
+```
+let url = URL(string: "http://httpbin.org")
+let service = WebService(baseURL: url)
+```
+
+- Added `baseURL: URL?` property to `WebService`
+- Added an initializer to `WebService` for initializing with a `URL`.
+- Enabled runtime overriding of `absoluteURLString(_:)`
+
 # [4.0.3](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.0.3)
 
 - Remove `lazy` var for Carthage compatibility.
