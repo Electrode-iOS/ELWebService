@@ -133,6 +133,6 @@ extension MockingTests {
         
         let (_, _, resultError) = error.dataTaskResult(request)
         
-        XCTAssertEqual(resultError as! NSError, error)
+        XCTAssertEqual(resultError! as NSError, error)
     }
 }
