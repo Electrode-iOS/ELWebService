@@ -1,3 +1,9 @@
+# [4.1.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.1.1)
+
+- Resolved various Xcode 8.3 warnings
+- Fixed build errors in example project
+- Added `@discardableResult` in Obj-C APIs to resolve unused value warning
+
 # [4.1.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.1.0)
 
 `WebService` can now be initialized with a `URL` type for the baseURL along with the existing `baseURLString`. Example:
