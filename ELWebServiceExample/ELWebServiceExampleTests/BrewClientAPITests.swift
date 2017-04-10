@@ -29,12 +29,12 @@ class BrewClientAPITests: XCTestCase {
         let session = RequestRecordingSession()
         let client = MockBrewClient(session: session)
         
-        client.fetchBrewWithBrewID(brewID).resume()
+        client.fetchBrew(brewID: brewID).resume()
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
         
-        let url = recordedURLRequest?.URL
+        let url = recordedURLRequest?.url
         XCTAssertNotNil(url)
         
         let path = url?.path
@@ -46,9 +46,9 @@ class BrewClientAPITests: XCTestCase {
 // MARK: - Resposnse Handling Tests
 
 extension BrewClientAPITests {
-    var brewJSONStub: AnyObject {
-        let brewery = ["name": "Long Trail Brewing Company", "location": "Vermont"]
-        let brew = ["name": "Limbo IPA", "id": "1", "style": "Imperial IPA", "brewery": brewery] as [String : Any]
+    var brewJSONStub: [String : Any] {
+        let brewery: [String : Any] = ["name": "Long Trail Brewing Company", "location": "Vermont"]
+        let brew: [String : Any] = ["name": "Limbo IPA", "id": "1", "style": "Imperial IPA", "brewery": brewery]
         return ["brews": [brew]]
     }
     
@@ -59,7 +59,7 @@ extension BrewClientAPITests {
         let client = MockBrewClient(session: session)
         
         client
-            .fetchBrewWithBrewID("12345")
+            .fetchBrew(brewID: "12345")
             .responseAsBrews { brews in
                 XCTAssertEqual(brews.count, 1)
                 expectation.fulfill()
@@ -79,7 +79,7 @@ extension BrewClientAPITests {
         let client = MockBrewClient(session: session)
         
         client
-            .fetchBrewWithBrewID("12345")
+            .fetchBrew(brewID: "12345")
             .responseAsBrews { brews in
                 XCTFail("responseAsBrews handler should not be called when JSON is invalid")
             }.updateErrorUI { error in

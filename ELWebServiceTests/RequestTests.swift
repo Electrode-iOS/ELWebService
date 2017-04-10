@@ -229,7 +229,7 @@ func ELTestAssertRequestParametersEqual(_ parameters: [String: Any], _ originalP
             let comparisonValue = comparisonValue as? Int {
             XCTAssertEqual(originalValue, comparisonValue)
         } else {
-            XCTFail("Failed to downcast values for originalValue: \(originalValue) and \(comparisonValue)")
+            XCTFail("Failed to downcast values for originalValue: \(originalValue) and \(String(describing: comparisonValue))")
         }
     }
 }
