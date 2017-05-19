@@ -70,6 +70,8 @@ import Foundation
     /// Type responsible for creating NSURLSessionDataTask objects
     fileprivate var session: Session?
     
+    fileprivate var json: Any?
+    
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
     
@@ -311,8 +313,13 @@ extension ServiceTask {
                 throw ServiceTaskError.jsonSerializationFailedNilResponseBody
             }
             
-            let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
-            return try handler(json, response)
+            if let json = self.json {
+                return try handler(json, response)
+            } else {
+                let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
+                self.json = json
+                return try handler(json, response)
+            }
         }
     }
 }
