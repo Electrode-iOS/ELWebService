@@ -13,6 +13,8 @@ public protocol URLRequestEncodable {
     var urlRequestValue: URLRequest {get}
 }
 
+public typealias QueryParameterEncoder = (_ url: URL?, _ parameters: [String: Any]) -> URL?
+
 /**
  Encapsulates the data required to send an HTTP request.
 */
@@ -136,6 +138,10 @@ public struct Request {
             }
         }
     }
+    
+    public var queryParameterEncoder: QueryParameterEncoder = { (url, parameters) -> URL? in
+        return url?.URLByAppendingQueryItems(parameters.queryItems)
+    }
 
     /**
      The HTTP header fields of the request. Each key/value pair represents a 
@@ -211,7 +217,7 @@ extension Request: URLRequestEncodable {
         
         if parameters.count > 0 {
             if method.encodesParametersInURL() {
-                if let encodedURL = urlRequest.url?.URLByAppendingQueryItems(parameters.queryItems) {
+                if let encodedURL = queryParameterEncoder(urlRequest.url, parameters) {
                     urlRequest.url = encodedURL
                 }
             } else {
@@ -230,9 +236,9 @@ extension Request: URLRequestEncodable {
             urlRequest.httpBody = body
         }
         
-        // queryParameters property overwrite and previously encoded query values
+        // queryParameters property overwrite any previously encoded query values
         if let queryParameters = queryParameters,
-            let encodedURL = urlRequest.url?.URLByAppendingQueryItems(queryParameters.queryItems) {
+            let encodedURL = queryParameterEncoder(urlRequest.url, queryParameters) {
             urlRequest.url = encodedURL
         }
         

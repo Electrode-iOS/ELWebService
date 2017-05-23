@@ -153,6 +153,19 @@ extension ServiceTask {
         return self
     }
     
+    /**
+     Sets the key/value pairs that will be encoded as the query in the URL.
+     
+     - parameter parameters: Query parameter data.
+     - parameter handler: A callback that is invoked when the query parameters are encoded in the URL. Enables you to define custom encoding behavior.
+     - returns: Self instance to support chaining.
+    */
+    @discardableResult public func setQueryParameters(_ parameters: [String: Any], encoder: @escaping QueryParameterEncoder) -> Self {
+        setQueryParameters(parameters)
+        request.queryParameterEncoder = encoder
+        return self
+    }
+    
     /// Sets the key/value pairs that are encoded as form data in the request body.
     @discardableResult public func setFormParameters(_ parameters: [String: Any]) -> Self {
         request.formParameters = parameters
