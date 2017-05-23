@@ -127,6 +127,28 @@ class RequestTests: XCTestCase {
         ELTestAssertURLQueryEqual(url: urlRequest.url!, parameters: parameters)
     }
     
+    func test_queryParameterEncoder_encodesDataInURL() {
+        var request = Request(.GET, url: "http://httpbin.org/get")
+        let parameters = ["foo" : "bar"]
+        request.queryParameters = parameters
+        
+        request.queryParameterEncoder = { (url, parameters) -> URL? in
+            var path = ""
+            
+            for (key, value) in parameters {
+                path += "\(key)/\(value)"
+            }
+            
+            let encodedURL = url?.appendingPathComponent(path)
+            return encodedURL
+        }
+        
+        let urlRequest = request.urlRequestValue
+
+        
+        XCTAssertEqual(urlRequest.url!, URL(string: "http://httpbin.org/get/foo/bar")!)
+    }
+    
     func test_formParameters_setsFormEncodedHeaderField() {
         var request = Request(.POST, url: "http://httpbin.org/")
         request.formParameters = ["percentEncoded" : "this needs percent encoded"]
