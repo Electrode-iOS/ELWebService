@@ -212,6 +212,49 @@ service
     .setQueryParameters(["state" : "new york"])
 ```
 
+#### Custom Encoding
+
+Custom encoding behavior can be defined for query parameters. Provide a `QueryParameterEncoder` closure that returns an encoded URL.
+
+```
+service
+    .GET("/brewers")
+    .setQueryParameters(["brew" : "12345"], encoder: { (url, parameters) -> URL? in
+        // manually encode query parameters
+        var path = ""
+        
+        for (key, value) in parameters {
+            path += "\(key)/\(value)"
+        }
+        
+        // return the encoded URL
+        let encodedURL = url?.appendingPathComponent(path)
+        return encodedURL
+    })
+```
+
+To reuse custom encoding behavior, define a `QueryParameterEncoder` constant.
+
+```
+// Define a custom encoding
+let customEncoder: QueryParameterEncoder = { (url, parameters) -> URL? in
+    var path = ""
+    
+    for (key, value) in parameters {
+        path += "\(key)/\(value)"
+    }
+    
+    let encodedURL = url?.appendingPathComponent(path)
+    return encodedURL
+}
+
+// Use custom encoding
+service
+    .GET("/brewers")
+    .setQueryParameters(["foo" : "bar"], encoder: customEncoder)
+
+```
+
 ### Form Parameters
 
 Form parameters are sent as percent-encoded data in the request body. Setting form parameters will automatically set the Content-Type header to `"application/x-www-form-urlencoded"`.
