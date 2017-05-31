@@ -1,3 +1,13 @@
+# [4.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.2.0)
+
+### New Features
+
+- Added `QueryParameterEncoder` API for defining a custom encoding for query parameters
+
+### Fixes
+
+- Cache JSON deserialization so it can be reused in other handlers Previously if there were multiple `responseJSON` handlers in a service task chain, the response body would be deserialized for each `responseJSON` call. This change allows multiple calls to reuse the same deserialized payload.
+
 # [4.1.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.1.1)
 
 - Resolved various Xcode 8.3 warnings
