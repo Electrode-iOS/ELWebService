@@ -41,11 +41,11 @@ class BrewAddViewController: UIViewController {
 
 extension BrewAddViewController {
     
-    func cancelTapped() {
+    @objc func cancelTapped() {
         dismiss(animated: true, completion: nil)
     }
     
-    func saveTapped() {
+    @objc func saveTapped() {
         guard let brew = brew else { return }
         
         brewClient

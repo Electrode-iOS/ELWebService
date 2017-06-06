@@ -86,7 +86,7 @@ extension BrewIndexViewController: UITableViewDelegate {
 
 extension BrewIndexViewController {
     
-    func addBrewTapped() {
+    @objc func addBrewTapped() {
         let brewAddViewController = BrewAddViewController(brewClient: brewClient)
         let navigationController = UINavigationController(rootViewController: brewAddViewController)
         present(navigationController, animated: true, completion: nil)
