@@ -49,11 +49,11 @@ extension ServiceTaskResult {
     /// The resulting error
     fileprivate(set) var error: NSError?
     
-    public class func resultWithValue(_ value: AnyObject) -> ObjCHandlerResult {
+    @objc dynamic public class func resultWithValue(_ value: AnyObject) -> ObjCHandlerResult {
         return ObjCHandlerResult(value: value)
     }
     
-    public class func resultWithError(_ error: NSError) -> ObjCHandlerResult {
+    @objc dynamic public class func resultWithError(_ error: NSError) -> ObjCHandlerResult {
         return ObjCHandlerResult(error: error)
     }
     
