@@ -219,7 +219,7 @@ extension WebService {
      - parameter string: URL string.
      - returns: An absolute URL string relative to the value of `baseURLString`.
      */
-    dynamic public func absoluteURL(_ string: String) -> URL {
+    @objc dynamic public func absoluteURL(_ string: String) -> URL {
         return constructURL(string, relativeToURL: baseURL)!
     }
 
@@ -229,7 +229,7 @@ extension WebService {
      - parameter string: URL string.
      - returns: An absolute URL string relative to the value of `baseURLString`.
     */
-    dynamic public func absoluteURLString(_ string: String) -> String {
+    @objc dynamic public func absoluteURLString(_ string: String) -> String {
         return absoluteURL(string).absoluteString
     }
 
