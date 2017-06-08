@@ -13,10 +13,9 @@
 		170A61431BBC135F00768A12 /* Brewery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A61421BBC135F00768A12 /* Brewery.swift */; };
 		170A61481BBC13B100768A12 /* BrewIndexViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170A61461BBC13B100768A12 /* BrewIndexViewController.swift */; };
 		170A61491BBC13B100768A12 /* BrewIndexViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 170A61471BBC13B100768A12 /* BrewIndexViewController.xib */; };
-		178DAE021BBC1665003556B9 /* ServiceTask+Brew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DAE011BBC1665003556B9 /* ServiceTask+Brew.swift */; };
 		178DAE081BBC169F003556B9 /* ServiceTask+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DAE071BBC169F003556B9 /* ServiceTask+JSON.swift */; };
-		178DAE0A1BBC16D4003556B9 /* ModelDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178DAE091BBC16D4003556B9 /* ModelDecoder.swift */; };
 		1792A0261C8A102100E792CD /* BrewClientAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1792A0251C8A102100E792CD /* BrewClientAPITests.swift */; };
+		17A16B2F1EE88B4F0087FA32 /* BrewsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A16B2E1EE88B4F0087FA32 /* BrewsResponse.swift */; };
 		17B21DC71AB8A10D007E5370 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21DC61AB8A10D007E5370 /* AppDelegate.swift */; };
 		17B21DCE1AB8A10D007E5370 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17B21DCD1AB8A10D007E5370 /* Images.xcassets */; };
 		17B21DD11AB8A10D007E5370 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17B21DCF1AB8A10D007E5370 /* LaunchScreen.xib */; };
@@ -80,12 +79,11 @@
 		170A61421BBC135F00768A12 /* Brewery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brewery.swift; sourceTree = "<group>"; };
 		170A61461BBC13B100768A12 /* BrewIndexViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewIndexViewController.swift; sourceTree = "<group>"; };
 		170A61471BBC13B100768A12 /* BrewIndexViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrewIndexViewController.xib; sourceTree = "<group>"; };
-		178DAE011BBC1665003556B9 /* ServiceTask+Brew.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+Brew.swift"; sourceTree = "<group>"; };
 		178DAE071BBC169F003556B9 /* ServiceTask+JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+JSON.swift"; sourceTree = "<group>"; };
-		178DAE091BBC16D4003556B9 /* ModelDecoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelDecoder.swift; sourceTree = "<group>"; };
 		1792A01B1C8A0B4000E792CD /* ELWebServiceExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ELWebServiceExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1792A01F1C8A0B4100E792CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1792A0251C8A102100E792CD /* BrewClientAPITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrewClientAPITests.swift; sourceTree = "<group>"; };
+		17A16B2E1EE88B4F0087FA32 /* BrewsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrewsResponse.swift; sourceTree = "<group>"; };
 		17B21DC11AB8A10D007E5370 /* ELWebServiceExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ELWebServiceExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17B21DC51AB8A10D007E5370 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17B21DC61AB8A10D007E5370 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -122,9 +120,7 @@
 			children = (
 				170A613A1BBC132500768A12 /* BrewClient.swift */,
 				170A613B1BBC132500768A12 /* BrewClientAPI.swift */,
-				178DAE011BBC1665003556B9 /* ServiceTask+Brew.swift */,
 				178DAE071BBC169F003556B9 /* ServiceTask+JSON.swift */,
-				178DAE091BBC16D4003556B9 /* ModelDecoder.swift */,
 			);
 			path = HTTP;
 			sourceTree = "<group>";
@@ -134,6 +130,7 @@
 			children = (
 				170A613D1BBC132500768A12 /* Brew.swift */,
 				170A61421BBC135F00768A12 /* Brewery.swift */,
+				17A16B2E1EE88B4F0087FA32 /* BrewsResponse.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -361,12 +358,11 @@
 				17BBC3DF1BBC1AAC00D7DE44 /* BrewDetailViewController.swift in Sources */,
 				170A613E1BBC132500768A12 /* BrewClient.swift in Sources */,
 				170A61431BBC135F00768A12 /* Brewery.swift in Sources */,
-				178DAE0A1BBC16D4003556B9 /* ModelDecoder.swift in Sources */,
 				170A613F1BBC132500768A12 /* BrewClientAPI.swift in Sources */,
 				170A61401BBC132500768A12 /* Brew.swift in Sources */,
 				170A61481BBC13B100768A12 /* BrewIndexViewController.swift in Sources */,
 				17BBC3E51BBC224A00D7DE44 /* BrewAddViewController.swift in Sources */,
-				178DAE021BBC1665003556B9 /* ServiceTask+Brew.swift in Sources */,
+				17A16B2F1EE88B4F0087FA32 /* BrewsResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

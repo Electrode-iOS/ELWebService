@@ -9,7 +9,7 @@
 import Foundation
 import ELWebService
 
-struct Brew {
+struct Brew: Codable {
     var name: String
     var style: String
     var brewery: Brewery?
@@ -20,27 +20,7 @@ struct Brew {
     }
 }
 
-extension Brew: ModelDecodable {
- 
-    static func decode(_ json: Any) -> Brew? {
-        guard let dictionary = json as? [String: Any],
-            let name = dictionary["name"] as? String,
-            let style = dictionary["style"] as? String
-            else {
-                return nil
-        }
-        var brew = Brew(name: name, style: style)
-        
-        if let breweryJSON = dictionary["brewery"] {
-            brew.brewery = Brewery.decode(breweryJSON)
-        }
-        
-        return brew
-    }
-}
-
 extension Brew {
-    
     var webServiceParameters: [String: Any] {
         var params: [String: Any] = ["name": name, "style": style]
         

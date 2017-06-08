@@ -335,6 +335,28 @@ extension ServiceTask {
             }
         }
     }
+    
+    public func responseDecoded<T: Decodable>(completionQueue: ServiceTaskQueue, handler: @escaping (T, URLResponse?) -> Void) -> Self {
+        return response { data, response in
+            guard let data = data else {
+                throw ServiceTaskError.jsonSerializationFailedNilResponseBody
+            }
+            
+            let decodedResponse = try JSONDecoder().decode(T.self, from: data)
+            
+            switch completionQueue {
+            case .main:
+                DispatchQueue.main.async {
+                    handler(decodedResponse, response)
+                }
+            case .background:
+                handler(decodedResponse, response)
+                
+            }
+            
+            return .empty
+        }
+    }
 }
 
 // MARK: - Error Handling
@@ -417,6 +439,10 @@ extension ServiceTask {
         
         return self
     }
+}
+
+public enum ServiceTaskQueue {
+    case main, background
 }
 
 // MARK: - Errors

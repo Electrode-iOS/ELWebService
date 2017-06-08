@@ -40,8 +40,8 @@ extension BrewIndexViewController {
     func fetchBrews() {
         brewClient
             .fetchAllBrews()
-            .responseAsBrews { [weak self] brews in
-                self?.brews = brews
+            .responseDecoded(completionQueue: .main) { [weak self] (model: BrewsResponse, response) in
+                self?.brews = model.brews
             }
             .responseError {error in
                 print("I AM ERROR = \(error)")
