@@ -34,9 +34,9 @@ import Foundation
     
     fileprivate var request: Request
     
-    fileprivate var urlRequest: URLRequest {
-        return request.urlRequestValue as URLRequest
-    }
+    lazy fileprivate var urlRequest: URLRequest = {
+        return self.request.urlRequestValue as URLRequest
+    }()
     
     /// Dispatch queue that queues up and dispatches handler blocks
     fileprivate let handlerQueue: OperationQueue
