@@ -32,6 +32,8 @@ import Foundation
         return .suspended
     }
     
+    fileprivate(set) var metrics = ServiceTaskMetrics()
+    
     fileprivate var request: Request
     
     lazy fileprivate var urlRequest: URLRequest = {
@@ -186,6 +188,7 @@ extension ServiceTask {
             }
         }
         
+        metrics.fetchStartDate = Date()
         dataTask?.resume()
         return self
     }
@@ -202,6 +205,8 @@ extension ServiceTask {
     
     /// Handle the response and kick off the handler queue
     internal func handleResponse(_ response: URLResponse?, data: Data?, error: Error?) {
+        metrics.responseEndDate = Date()
+        passthroughDelegate?.didFinishCollectingTaskMetrics(metrics: metrics, request: urlRequest, response: response, error: error)
         urlResponse = response
         responseData = data
         responseError = error

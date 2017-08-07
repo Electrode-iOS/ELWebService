@@ -22,6 +22,7 @@
 		17821A031C623D2C00D3837D /* ServiceTask+ResponseInjection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17821A021C623D2C00D3837D /* ServiceTask+ResponseInjection.swift */; };
 		17BA678F1C8416C500A26309 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BA678E1C8416C500A26309 /* Session.swift */; };
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
+		17D064691F3425A6007E1035 /* ServiceTaskMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */; };
 		17D1879E1AB0B173000742BF /* ELWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAF0AF991C5054DE0007761C /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EDF1C5011FB007ADE1B /* WebService.swift */; };
 		CAF0AF9B1C5054E60007761C /* ServiceTaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */; };
@@ -62,6 +63,7 @@
 		179C5C5E1AB079980047169F /* ELWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ELWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17BA678E1C8416C500A26309 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		17C96AAA1AB0CBB800D49071 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTaskMetrics.swift; sourceTree = "<group>"; };
 		17D187961AB0B173000742BF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17D187991AB0B173000742BF /* ELWebService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ELWebService.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -152,6 +154,7 @@
 				17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */,
 				17BA678E1C8416C500A26309 /* Session.swift */,
 				17088EDF1C5011FB007ADE1B /* WebService.swift */,
+				17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 				17BA678F1C8416C500A26309 /* Session.swift in Sources */,
 				17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */,
 				1720E8241C6A483100DBB925 /* ServicePassthroughDelegate.swift in Sources */,
+				17D064691F3425A6007E1035 /* ServiceTaskMetrics.swift in Sources */,
 				CAF0AF9B1C5054E60007761C /* ServiceTaskResult.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
