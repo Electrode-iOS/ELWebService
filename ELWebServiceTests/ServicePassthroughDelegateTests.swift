@@ -101,6 +101,7 @@ class ServicePassthroughDelegateSpy: ServicePassthroughDelegate {
     var updateUIBeginExpectation: XCTestExpectation?
     var updateUIEndExpectation: XCTestExpectation?
     var serviceResultFailureExpecation: XCTestExpectation?
+    var metricsCollectedExpectation: XCTestExpectation?
     
     func requestSent(_ request: URLRequest) {
         requestSentExpectation?.fulfill()
@@ -120,5 +121,9 @@ class ServicePassthroughDelegateSpy: ServicePassthroughDelegate {
     
     func serviceResultFailure(_ response: URLResponse?, data: Data?, request: URLRequest?, error: Error) {
         serviceResultFailureExpecation?.fulfill()
+    }
+    
+    func didFinishCollectingTaskMetrics(metrics: ServiceTaskMetrics, request: URLRequest, response: URLResponse?, error: Error?) {
+        metricsCollectedExpectation?.fulfill()
     }
 }
