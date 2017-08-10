@@ -25,7 +25,7 @@ import Foundation
     }
 
     public var session: Session = URLSession.shared
-    internal fileprivate(set) weak var passthroughDelegate: ServicePassthroughDelegate?
+    public weak var passthroughDelegate: ServicePassthroughDelegate?
 
     // MARK: Initialization
 
