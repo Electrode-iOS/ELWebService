@@ -28,7 +28,7 @@ public struct Request {
         case PUT = "PUT"
         case PATCH = "PATCH"
         case DELETE = "DELETE"
-
+        
         /**
          Whether requests using this method should encode parameters in the URL, instead of the body.
 
@@ -53,25 +53,6 @@ public struct Request {
         case percent
         /// Encode parameters as JSON
         case json
-        
-        /**
-         Encode query parameters in an existing URL.
-        
-         - parameter url: Query string will be appended to this NSURL value.
-         - parameter parameters: Query parameters to be encoded as a query string.
-         - returns: A NSURL value with query string parameters encoded.
-        */
-        // TODO: remove this function in 4.0.0
-        public func encodeURL(_ url: URL, parameters: [String : Any]) -> URL? {
-            switch self {
-            case .percent:
-                return url.URLByAppendingQueryItems(parameters.queryItems)
-            
-            case .json:
-                assertionFailure("Cannot encode URL parameters using JSON encoding")
-                return nil // <-- unreachable
-            }
-        }
         
         /**
          Encode query parameters into a NSData value for request body.
@@ -147,10 +128,10 @@ public struct Request {
      The HTTP header fields of the request. Each key/value pair represents a 
      HTTP header field value using the key as the field name.
     */
-    internal(set) var headers = [String : String]()
+    public var headers = [String : String]()
     
     /// The cache policy of the request. See NSURLRequestCachePolicy.
-    internal(set) var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
+    public var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
     
     /// The type of parameter encoding to use when encoding request parameters.
     public var parameterEncoding = ParameterEncoding.percent {
@@ -181,7 +162,7 @@ public struct Request {
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
      */
-    init(_ method: Method, url: URL) {
+    public init(_ method: Method, url: URL) {
         self.method = method
         self.requestURL = url
     }
@@ -192,9 +173,14 @@ public struct Request {
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
     */
-    init(_ method: Method, url urlString: String) {
+    public init(_ method: Method, url urlString: String) {
         let aURL = URL(string: urlString)!
         self.init(method, url: aURL)
+    }
+    
+    public mutating func serialize(json: Any) throws {
+        contentType = Request.ContentType.json
+        body = try JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
     }
 }
 
