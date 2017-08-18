@@ -221,7 +221,8 @@ extension WebServiceTests {
         let session = RequestRecordingSession()
         service.session = session
 
-        let task = service.request(.GET, path: "get")
+        let request = service.request(.GET, path: "get")
+        let task = service.serviceTask(request: request)
         task.resume()
 
         let recordedRequest = session.recordedRequests.first?.urlRequestValue
