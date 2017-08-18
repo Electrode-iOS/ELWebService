@@ -15,7 +15,9 @@ import Foundation
 */
 @objc public final class ServiceTask: SessionTask {
     fileprivate var request: Request
-    
+    override var urlRequest: URLRequest {
+        return request.urlRequestValue
+    }
     // MARK: Intialization
     
     /**
