@@ -90,6 +90,52 @@ class RequestTests: XCTestCase {
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
+    
+    func test_parameters_percentEncodesWithSpacesInStrings() {
+        var request = Request(.GET, url: "http://httpbin.org/")
+        request.parameters = ["percentEncoded" : "this needs percent encoded"]
+        request.parameterEncoding = Request.ParameterEncoding.percent
+        
+        let encodedURL = request.urlRequestValue.url
+        
+        XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
+        XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
+        
+        let stringValue = encodedURL!.query!
+        let components = stringValue.components(separatedBy: "=")
+        XCTAssertEqual(components[0], "percentEncoded")
+        XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
+    }
+    
+    func test_parameters_percentEncodesWithIntValue() {
+        var request = Request(.GET, url: "http://httpbin.org/")
+        request.parameters = ["number" : 500]
+        request.parameterEncoding = Request.ParameterEncoding.percent
+        
+        let encodedURL = request.urlRequestValue.url
+        
+        XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
+        XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
+        
+        let stringValue = encodedURL!.query!
+        let components = stringValue.components(separatedBy: "=")
+        XCTAssertEqual(components[1], "500")
+    }
+    
+    func test_encodeURL_percentEncodesWithBoolValue() {
+        var request = Request(.GET, url: "http://httpbin.org/")
+        request.parameters = ["boolValue" : true]
+        request.parameterEncoding = Request.ParameterEncoding.percent
+        
+        let encodedURL = request.urlRequestValue.url
+        
+        XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
+        XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
+        
+        let stringValue = encodedURL!.query!
+        let components = stringValue.components(separatedBy: "=")
+        XCTAssertEqual(components[1], "1")
+    }
 
     func test_settingParameterEncodingToJSON_setsContentTypeToJSON() {
         var request = Request(.GET, url: "http://httpbin.org/")
