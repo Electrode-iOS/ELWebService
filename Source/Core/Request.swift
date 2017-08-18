@@ -60,7 +60,7 @@ public struct Request {
          - parameter parameters: Query parameters to be encoded as HTTP body.
          - returns: NSData value with containing encoded parameters.
         */
-        public func encodeBody(_ parameters: [String : Any]) -> Data? {
+        func encodeBody(_ parameters: [String : Any]) -> Data? {
             switch self {
             case .percent:
                 return parameters.percentEncodedQueryString?.data(using: String.Encoding.utf8, allowLossyConversion: false)
@@ -99,13 +99,7 @@ public struct Request {
     /// The body of the HTTP request.
     public var body: Data?
     
-    /**
-     The parameters to encode in the HTTP request. Request parameters are percent
-     encoded and are appended as a query string or set as the request body 
-     depending on the HTTP request method.
-    */
-    // TODO: remove `parameters` in 4.0.0
-    public var parameters = [String : Any]()
+
     
     /// The key/value pairs that will be encoded as the query in the URL.
     public var queryParameters: [String : Any]?
@@ -133,8 +127,15 @@ public struct Request {
     /// The cache policy of the request. See NSURLRequestCachePolicy.
     public var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
     
+    /**
+     The parameters to encode in the HTTP request. Request parameters are percent
+     encoded and are appended as a query string or set as the request body
+     depending on the HTTP request method.
+    */
+    var parameters = [String : Any]()
+    
     /// The type of parameter encoding to use when encoding request parameters.
-    public var parameterEncoding = ParameterEncoding.percent {
+    var parameterEncoding = ParameterEncoding.percent {
         didSet {
             if parameterEncoding == .json {
                 contentType = ContentType.json
