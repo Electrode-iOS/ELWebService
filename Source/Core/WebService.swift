@@ -25,7 +25,7 @@ import Foundation
     }
 
     public var session: Session = URLSession.shared
-    internal fileprivate(set) weak var passthroughDelegate: ServicePassthroughDelegate?
+    public weak var passthroughDelegate: ServicePassthroughDelegate?
 
     // MARK: Initialization
 
@@ -159,7 +159,7 @@ extension WebService {
      - parameter path: Request path. The value can be relative to the base URL string
      or absolute.
      - returns: A request.
-     */
+    */
     public func request(_ method: Request.Method, path: String) -> Request {
         return Request(method, url: absoluteURL(path))
     }

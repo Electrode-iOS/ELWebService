@@ -15,4 +15,14 @@ public struct ServiceTaskMetrics {
     
     /// The time immediately after the `URLSessionDataTask`'s completion handler is called.
     public internal(set) var responseEndDate: Date?
+    
+    /// The time interval between `fetchStartDate` and `responseEndDate`
+    public var responseTime: TimeInterval? {
+        guard
+            let startDate = fetchStartDate,
+            let endDate = responseEndDate else {
+                return nil
+        }
+        return endDate.timeIntervalSince(startDate)
+    }
 }
