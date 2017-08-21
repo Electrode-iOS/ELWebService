@@ -1,3 +1,9 @@
+# [4.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.4.0)
+
+### New Features
+
+- Make the `WebService`'s' `request` method public so external interfaces can more dynamically create `ServiceTask` instances
+
 # [4.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.3.0)
 
 ### New Features
