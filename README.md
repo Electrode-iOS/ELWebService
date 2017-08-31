@@ -17,7 +17,7 @@ ELWebService requires Swift 3.1 and Xcode 8.3.
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "Electrode-iOS/ELWebService" ~> 4.4.0
+github "Electrode-iOS/ELWebService" ~> 4.4.1
 ```
 
 ### Manual

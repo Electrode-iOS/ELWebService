@@ -1,3 +1,7 @@
+# [4.4.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.4.1)
+
+- Use default settings for bitcode
+
 # [4.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.4.0)
 
 ### New Features
