@@ -1,3 +1,9 @@
+# [4.5.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.5.0)
+
+### New Features
+
+- Make the default `URLSession` modifiable within the app instead of relying on the system level shared instance
+
 # [4.4.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.4.1)
 
 - Use default settings for bitcode
