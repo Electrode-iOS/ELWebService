@@ -107,6 +107,12 @@ import Foundation
 
 extension ServiceTask {
     /// TODO: Needs docs
+    @discardableResult public func shouldHandleCookies(_ handle: Bool) -> Self {
+        urlRequest.httpShouldHandleCookies = handle
+        return self
+    }
+    
+    /// TODO: Needs docs
     @discardableResult public func setParameters(_ parameters: [String: Any], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
         request.parameterEncoding = encoding ?? .percent
