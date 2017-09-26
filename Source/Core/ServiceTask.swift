@@ -106,9 +106,17 @@ import Foundation
 // MARK: - Request API
 
 extension ServiceTask {
-    /// TODO: Needs docs
-    @discardableResult public func shouldHandleCookies(_ handle: Bool) -> Self {
-        urlRequest.httpShouldHandleCookies = handle
+    
+    /**
+     Sets a boolean that indicates whether the receiver should use the default
+     cookie handling for the request.
+     
+     - parameter handle: true if the receiver should use the default cookie
+     handling for the request, false otherwise. The default is true.
+     - returns: Self instance to support chaining.
+     */
+    @discardableResult public func setShouldHandleCookies(_ handle: Bool) -> Self {
+        request.shouldHandleCookies = handle
         return self
     }
     
