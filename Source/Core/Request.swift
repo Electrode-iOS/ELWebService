@@ -118,6 +118,9 @@ public struct Request {
     /// The body of the HTTP request.
     public var body: Data?
     
+    /// The Boolean to indicate if default cookies should be set for request.
+    public var shouldHandleCookies: Bool = true
+
     /**
      The parameters to encode in the HTTP request. Request parameters are percent
      encoded and are appended as a query string or set as the request body 
@@ -210,6 +213,7 @@ extension Request: URLRequestEncodable {
         let urlRequest = NSMutableURLRequest(url: URL(string: url)!)
         urlRequest.httpMethod = method.rawValue
         urlRequest.cachePolicy = cachePolicy
+        urlRequest.httpShouldHandleCookies = shouldHandleCookies
         
         for (name, value) in headers {
             urlRequest.addValue(value, forHTTPHeaderField: name)
