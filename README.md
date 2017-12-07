@@ -1,6 +1,6 @@
 # ELWebService 
 
-[![Version](https://img.shields.io/badge/version-v4.4.0-blue.svg)](https://github.com/Electrode-iOS/ELWebService/releases/latest)
+[![Version](https://img.shields.io/badge/version-v4.6.0-blue.svg)](https://github.com/Electrode-iOS/ELWebService/releases/latest)
 [![Build Status](https://travis-ci.org/Electrode-iOS/ELWebService.svg?branch=master)](https://travis-ci.org/Electrode-iOS/ELWebService) 
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
@@ -17,7 +17,7 @@ ELWebService requires Swift 3.1 and Xcode 8.3.
 Install with [Carthage](https://github.com/Carthage/Carthage) by adding the framework to your project's [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile).
 
 ```
-github "Electrode-iOS/ELWebService" ~> 4.4.0
+github "Electrode-iOS/ELWebService" ~> 4.6.0
 ```
 
 ### Manual

@@ -1,3 +1,19 @@
+# [4.6.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.6.0)
+
+### New Features
+
+- Add [`setShouldHandleCookies`](https://github.com/Electrode-iOS/ELWebService/blob/master/Source/Core/ServiceTask.swift#L118) API for configuring the default cookie behavior of the request
+
+# [4.5.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.5.0)
+
+### New Features
+
+- Make the default `URLSession` modifiable within the app instead of relying on the system level shared instance
+
+# [4.4.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.4.1)
+
+- Use default settings for bitcode
+
 # [4.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.4.0)
 
 ### New Features

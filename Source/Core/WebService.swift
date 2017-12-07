@@ -24,7 +24,23 @@ import Foundation
         return baseURL?.absoluteString ?? ""
     }
 
-    public var session: Session = URLSession.shared
+    /**
+     Default session that will be used by instances of WebService for their
+     subsequent communications. This is broken out separately from the per-instance
+     session so that application global configuration can be done, such as setting
+     additionalHTTPHeaders, that will then apply throughout the application.
+     */
+    public static var defaultSession: Session = URLSession.shared
+    
+    /**
+     The session is a lazy variable so that in the time between the creation of
+     a WebService instance and the first request made to that service the
+     defaultSession could be replaced and the instance would still use that
+     default value rather than requiring the defaultSession to be configured
+     before the WebService instance is even created.
+     */
+    public lazy var session: Session = WebService.defaultSession
+    
     public weak var passthroughDelegate: ServicePassthroughDelegate?
 
     // MARK: Initialization
