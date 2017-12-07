@@ -10,57 +10,6 @@ import XCTest
 @testable import ELWebService
 
 class ParameterEncodingTests: XCTestCase {
-    
-    // MARK: encodeURL
-    
-    func test_encodeURL_percentEncodesWithSpacesInStrings() {
-        let url = URL(string: "http://httpbin.org/get")!
-        let parameters = ["percentEncoded" : "this needs percent encoded"]
-        let encoding = Request.ParameterEncoding.percent
-        
-        let encodedURL = encoding.encodeURL(url, parameters: parameters)
-        
-        XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
-        XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
-        
-        let stringValue = encodedURL!.query!
-        let components = stringValue.components(separatedBy: "=")
-        XCTAssertEqual(components[0], "percentEncoded")
-        XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
-    }
-    
-    func test_encodeURL_percentEncodesWithIntValue() {
-        let url = URL(string: "http://httpbin.org/get")!
-        let parameters = ["number" : 500]
-        let encoding = Request.ParameterEncoding.percent
-        
-        let encodedURL = encoding.encodeURL(url, parameters: parameters)
-        
-        XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
-        XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
-        
-        let stringValue = encodedURL!.query!
-        let components = stringValue.components(separatedBy: "=")
-        XCTAssertEqual(components[1], "500")
-    }
-    
-    func test_encodeURL_percentEncodesWithBoolValue() {
-        let url = URL(string: "http://httpbin.org/get")!
-        let parameters = ["boolValue" : true]
-        let encoding = Request.ParameterEncoding.percent
-        
-        let encodedURL = encoding.encodeURL(url, parameters: parameters)
-        
-        XCTAssertNotNil(encodedURL, "Encoded URL should be not be nil")
-        XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
-        
-        let stringValue = encodedURL!.query!
-        let components = stringValue.components(separatedBy: "=")
-        XCTAssertEqual(components[1], "1")
-    }
-    
-    // MARK: encodeBody
-
     func test_encodeBody_percentEncodesWithSpacesInStrings() {
         let parameters = ["percentEncoded" : "this needs percent encoded"]
         let encoding = Request.ParameterEncoding.percent

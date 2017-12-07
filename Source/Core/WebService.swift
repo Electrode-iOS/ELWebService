@@ -105,7 +105,7 @@ extension WebService {
     a given request.
     */
     public func GET(_ path: String) -> ServiceTask {
-        return request(.GET, path: path)
+        return serviceTask(.GET, path: path)
     }
 
     /**
@@ -117,7 +117,7 @@ extension WebService {
     a given request.
     */
     public func POST(_ path: String) -> ServiceTask {
-        return request(.POST, path: path)
+        return serviceTask(.POST, path: path)
     }
 
     /**
@@ -129,7 +129,7 @@ extension WebService {
     a given request.
     */
     public func PUT(_ path: String) -> ServiceTask {
-        return request(.PUT, path: path)
+        return serviceTask(.PUT, path: path)
     }
 
     /**
@@ -141,7 +141,7 @@ extension WebService {
      a given request.
      */
     public func PATCH(path: String) -> ServiceTask {
-        return request(.PATCH, path: path)
+        return serviceTask(.PATCH, path: path)
     }
 
     /**
@@ -153,7 +153,7 @@ extension WebService {
     a given request.
     */
     public func DELETE(_ path: String) -> ServiceTask {
-        return request(.DELETE, path: path)
+        return serviceTask(.DELETE, path: path)
     }
 
     /**
@@ -165,30 +165,44 @@ extension WebService {
     a given request.
     */
     public func HEAD(_ path: String) -> ServiceTask {
-        return request(.HEAD, path: path)
+        return serviceTask(.HEAD, path: path)
     }
 
     /**
-     Create a service task to fulfill a service request. By default the service
-     task is started by calling resume(). To prevent service tasks from
-     automatically resuming set the `startTasksImmediately` of the WebService
-     value to `false`.
+     Create a service task to fulfill a service request.
+     
+     - parameter method: HTTP request method.
+     - parameter path: Request path. The value can be relative to the base URL string
+     or absolute.
+     - returns: A request.
+    */
+    public func request(_ method: Request.Method, path: String) -> Request {
+        return Request(method, url: absoluteURL(path))
+    }
+    
+    /**
+     Create a service task to fulfill a service request.
      
      - parameter method: HTTP request method.
      - parameter path: Request path. The value can be relative to the base URL string
      or absolute.
      - returns: A ServiceTask instance that refers to the lifetime of processing
      a given request.
-     */
-    public func request(_ method: Request.Method, path: String) -> ServiceTask {
-        return serviceTask(request: Request(method, url: absoluteURL(path)))
-    }
-
-    /// Create a service task to fulfill a given request.
-    func serviceTask(request: Request) -> ServiceTask {
+    */
+    public func serviceTask(request: Request) -> ServiceTask {
         let task = ServiceTask(request: request, session: self)
         task.passthroughDelegate = passthroughDelegate
         return task
+    }
+    
+    public func sessionTask(request: URLRequestEncodable) -> SessionTask {
+        let task = SessionTask(urlRequestEncodable: request, session: self)
+        task.passthroughDelegate = passthroughDelegate
+        return task
+    }
+    
+    func serviceTask(_ method: Request.Method, path: String) -> ServiceTask {
+        return serviceTask(request: request(method, path: path))
     }
 }
 

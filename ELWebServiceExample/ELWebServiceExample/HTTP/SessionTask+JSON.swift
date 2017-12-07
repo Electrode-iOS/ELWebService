@@ -9,7 +9,7 @@
 import Foundation
 import ELWebService
 
-enum ServiceTaskDecodeError: Error {
+enum SessionTaskDecodeError: Error {
     case failedToDecodeJSONArray
     case failedToDecodeJSONObject
 }

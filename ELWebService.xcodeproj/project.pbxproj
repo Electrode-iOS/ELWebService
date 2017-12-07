@@ -12,6 +12,7 @@
 		17088EEC1C501208007ADE1B /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EEA1C501208007ADE1B /* RequestTests.swift */; };
 		1720E8241C6A483100DBB925 /* ServicePassthroughDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720E8231C6A483100DBB925 /* ServicePassthroughDelegate.swift */; };
 		1720E8261C6A508000DBB925 /* ServicePassthroughDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */; };
+		1729F8D21F39808800387709 /* SessionTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1729F8D11F39808800387709 /* SessionTask.swift */; };
 		17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */; };
 		175B36441C85ED6400F385DD /* Mocking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175B36431C85ED6400F385DD /* Mocking.swift */; };
 		1772B15C1C88F0BA006587E0 /* NSURLComponentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1772B15B1C88F0BA006587E0 /* NSURLComponentsTests.swift */; };
@@ -51,6 +52,7 @@
 		17088EEA1C501208007ADE1B /* RequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTests.swift; sourceTree = "<group>"; };
 		1720E8231C6A483100DBB925 /* ServicePassthroughDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicePassthroughDelegate.swift; sourceTree = "<group>"; };
 		1720E8251C6A508000DBB925 /* ServicePassthroughDelegateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServicePassthroughDelegateTests.swift; sourceTree = "<group>"; };
+		1729F8D11F39808800387709 /* SessionTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTask.swift; sourceTree = "<group>"; };
 		17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ServiceTask+ObjC.swift"; sourceTree = "<group>"; };
 		175B36431C85ED6400F385DD /* Mocking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocking.swift; sourceTree = "<group>"; };
 		1772B15B1C88F0BA006587E0 /* NSURLComponentsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSURLComponentsTests.swift; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 				17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */,
 				17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */,
 				17BA678E1C8416C500A26309 /* Session.swift */,
+				1729F8D11F39808800387709 /* SessionTask.swift */,
 				17088EDF1C5011FB007ADE1B /* WebService.swift */,
 				17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */,
 			);
@@ -289,6 +292,7 @@
 				CAF0AF9C1C5054E90007761C /* ServiceTask.swift in Sources */,
 				CAF0AF9D1C5054ED0007761C /* Request.swift in Sources */,
 				CAF0AF991C5054DE0007761C /* WebService.swift in Sources */,
+				1729F8D21F39808800387709 /* SessionTask.swift in Sources */,
 				175B36441C85ED6400F385DD /* Mocking.swift in Sources */,
 				17BA678F1C8416C500A26309 /* Session.swift in Sources */,
 				17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */,

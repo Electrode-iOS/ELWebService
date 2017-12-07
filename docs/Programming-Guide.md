@@ -2,14 +2,20 @@
 
 - [About ELWebService](#about-elwebservice)
 - [How ELWebService Works with URLSession](#how-elwebservice-works-with-urlsession)
-- [Sending Requests](#sending-requests)
-- [Handling Responses](handling-responses)
-- [Handling JSON](#handling-json)
-- [Composing Response Handlers](#composing-response-handlers)
-- [Updating UI](#updating-ui)
-- [Request Parameters](#request-parameters)
-- [Request Encoding](#request-encoding)
-- [ServiceTaskResult](#servicetaskresult)
+- [Quick Start](#quickstart)
+    - [Sending Requests](#sending-requests)
+    - [Handling Responses](handling-responses)
+- [Requests](#requests)
+    - [Sending JSON](#sending-json)
+    - [Query Parameters](#query-parameters)
+    - [Form Parameters](#form-parameters)
+    - [Request Headers](#request-headers)
+    - [Request Body](#request-body)
+- [Responses](#responses)
+    - [Handling JSON](#handling-json)
+    - [Composing Response Handlers](#composing-response-handlers)
+    - [Updating UI](#updating-ui)
+    - [ServiceTaskResult](#servicetaskresult)
 - [Building an API Client](#building-an-api-client)
 - [Objective-C Interoperability](#objective-c-interoperability)
 - [Mocking](#mocking)
@@ -44,7 +50,7 @@ To simplify usage further, ELWebService extends `URLSession` with an implementat
 service.session = URLSession(configuration: URLSessionConfiguration())
 ```
 
-## Sending Requests
+## Quick Start
 
 Initialize a `WebService` instance with a base URL.
 
@@ -52,23 +58,33 @@ Initialize a `WebService` instance with a base URL.
 let service = WebService(baseURLString: "http://brewhapi.herokuapp.com/")
 ```
 
-Send a request by calling the `GET()` method and passing it a relative path. The service's base URL is used to construct an absolute URL that is relative to the path passed to `GET()`.
+### Sending Requests
+
+Create a request by calling the `request(_ method:path:)` method with the HTTP method and a relative path. The service's base URL is used to construct an absolute URL that is relative to the path.
 
 ```
-service
-    .GET("/brewers")
-    .resume()
+let request: Request = service.request(.GET, path: "/brewers")
 ```
 
-The code above sends a GET request with the URL "http://brewhapi.herokuapp.com/brewers". Along with GET, `WebService` also offers methods for POST, DELETE, and other common HTTP verbs.
+To send a request, create a session task and call `resume()`
 
-## Handling Responses
+```
+let task: SessionTask = service.sessionTask(request: request)
+task.resume()
+```
+
+The code above sends a GET request with the URL "http://brewhapi.herokuapp.com/brewers".
+
+
+### Handling Responses
 
 A successful response is handled asynchronously by defining a closure to process the response and registering it as a response handler using the `response()` method.
 
 ```
+let request: Request = service.request(.GET, path: "/brewers")
+
 service
-    .GET("/brewers")
+    .sessionTask(request: request)
     .response { data, response in
         // process response
     }
@@ -78,8 +94,10 @@ service
 The response closure will only be called if the request does not result in an error. To handle the event of a failure provide a closure for error handling by calling the `responseError()` method.
 
 ```
+let request: Request = service.request(.GET, path: "/brewers")
+
 service
-    .GET("/brewers")
+    .sessionTask(request: request)
     .response { data, response in
         // process response
     }
@@ -89,17 +107,105 @@ service
     .resume()
 ```
 
-Request methods like `GET()` return a `ServiceTask` object that represents the lifetime of a `URLSessionDataTask`. The handler methods return their `self` instance which enables you to chain handlers resulting in concise and expressive code.
+The `sessionTask(request:)` method returns a `SessionTask` object that represents the lifetime of a `URLSessionDataTask`. The handler methods return their `self` instance which enables you to chain handlers resulting in concise and expressive code.
 
 After the response is received handlers are invoked in the order of which they are registered. All response and error handlers that are registered with the `response()`, `responseJSON()`, and `responseError()` are run on a background queue.
 
-## Handling JSON
+
+## Requests
+
+### Sending JSON
+
+Call the `serialize(json:)` method to serialize a JSON object as the body data of the request. The Content-Type header will be set to `"application/json"` and an error may be thrown if the JSON serialization fails.
+
+```
+let request: Request = service.request(.POST, path: "/brewers")
+try request.serialize(json: ["name": "Trashboat Brewing"])
+```
+
+### Query Parameters
+
+Query parameters are percent-encoded and appended as a query string of the request URL. The code below sends a request with the URL "/brewers?state=new%20york".
+
+```
+var request = service.request(.GET, path: "/brewers")
+request.queryParameters = ["state" : "new york"]
+```
+
+#### Custom Encoding
+
+Custom encoding behavior can be defined for query parameters. Provide a `QueryParameterEncoder` closure that returns an encoded URL.
+
+```
+var request = service.request(.GET, path: "/brewers")
+request.queryParameterEncoder = { (url, parameters) -> URL? in
+    // manually encode query parameters
+    var path = ""
+    
+    for (key, value) in parameters {
+        path += "\(key)/\(value)"
+    }
+    
+    // return the encoded URL
+    let encodedURL = url?.appendingPathComponent(path)
+    return encodedURL
+}
+request.queryParameters = ["brew" : "12345"]
+```
+
+To reuse custom encoding behavior, define a `QueryParameterEncoder` constant.
+
+```
+// Define a custom encoding
+let customEncoder: QueryParameterEncoder = { (url, parameters) -> URL? in
+    var path = ""
+    
+    for (key, value) in parameters {
+        path += "\(key)/\(value)"
+    }
+    
+    let encodedURL = url?.appendingPathComponent(path)
+    return encodedURL
+}
+
+// Use custom encoding
+var request = service.request(.GET, path: "/brewers")
+request.queryParameterEncoder = customEncoder
+request.queryParameters = ["brew" : "12345"]
+```
+
+### Form Parameters
+
+Form parameters are sent as percent-encoded data in the request body. Setting form parameters will automatically set the Content-Type header to `"application/x-www-form-urlencoded"`.
+
+```
+var request = service.request(.POST, path: "/brewers")
+request.formParameters = ["name": "Trashboat Brewing"]
+```
+
+### Request Headers
+
+```
+request.headers["custom-header-name"] = "foo"
+```
+
+### Request Body
+
+Set the `Data` value to use as the body of the HTTP request.
+
+```
+request.body: Data = modelData()
+```
+
+## Responses
+
+### Handling JSON
 
 Use the `responseJSON()` method to add a closure for handling the response as serialized JSON. The `json` value is provided as a result of calling `NSJSONSerialization.JSONObjectWithData()`.
 
 ```
 service
-    .GET("/brewers")
+    .sessionTask(request: request)
     .responseJSON { json: Any, response: URLResponse? in
         // process JSON
     }
@@ -115,7 +221,7 @@ At times, it can be useful to process the response using multiple handlers. Addi
 
 ```
 service
-    .GET("/brewers")
+    .sessionTask(request: request)
     .response { data, response in
         let intermediateValue: (Int, Int)
 
@@ -137,8 +243,10 @@ service
 Processing handlers are only called when there is a value to process, not when there is an error. If an earlier handler returns a `.Failure` result, then the handlers that follow are not invoked.
 
 ```
+let request = service.request(.GET, path: "/brewers")
+
 service
-    .GET("/brewers")
+    .sessionTask(request: request)
     .response { data, response in
         return .Failure(Error.Nope)
     }
@@ -154,7 +262,7 @@ A recovery handler can return a value (`.Empty` or `.Value`) to indicate that it
 
 ```
 service
-    .GET("/brewers")
+    .sessionTask(request: request)
     .response { data, response in
         return .Failure(MyError.Nope)
     }
@@ -181,7 +289,7 @@ All response and error handlers that are registered with the `response()`, `resp
 
 ```
 service
-    .GET("/brewers")
+    .sessionTask(request: request)
     .responseJSON { json, response in
         if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
             return .Value(models)
@@ -200,176 +308,25 @@ service
     .resume()
 ```
 
-## Request Parameters
-
-### Query Parameters
-
-Query parameters are percent-encoded and appended as a query string of the request URL. The code below sends a request with the URL "/brewers?state=new%20york".
-
-```
-service
-    .GET("/brewers")
-    .setQueryParameters(["state" : "new york"])
-```
-
-#### Custom Encoding
-
-Custom encoding behavior can be defined for query parameters. Provide a `QueryParameterEncoder` closure that returns an encoded URL.
-
-```
-service
-    .GET("/brewers")
-    .setQueryParameters(["brew" : "12345"], encoder: { (url, parameters) -> URL? in
-        // manually encode query parameters
-        var path = ""
-        
-        for (key, value) in parameters {
-            path += "\(key)/\(value)"
-        }
-        
-        // return the encoded URL
-        let encodedURL = url?.appendingPathComponent(path)
-        return encodedURL
-    })
-```
-
-To reuse custom encoding behavior, define a `QueryParameterEncoder` constant.
-
-```
-// Define a custom encoding
-let customEncoder: QueryParameterEncoder = { (url, parameters) -> URL? in
-    var path = ""
-    
-    for (key, value) in parameters {
-        path += "\(key)/\(value)"
-    }
-    
-    let encodedURL = url?.appendingPathComponent(path)
-    return encodedURL
-}
-
-// Use custom encoding
-service
-    .GET("/brewers")
-    .setQueryParameters(["foo" : "bar"], encoder: customEncoder)
-
-```
-
-### Form Parameters
-
-Form parameters are sent as percent-encoded data in the request body. Setting form parameters will automatically set the Content-Type header to `"application/x-www-form-urlencoded"`.
-
-```
-service
-    .POST("/brewers")
-    .setFormParameters(["name": "Trashboat Brewing"])
-```
-
-
-### Legacy Request Parameter API (deprecated)
-
-**NOTE: The `setParameters(parameters:)`, `setParameters(parameters:encoding:)`, and `Request.ParameterEncoding` APIs are deprecated as of v3.2.0 and will be removed in v4.0.0. Use `setQueryParameters()`, `setFormParameters()`, and `setJSON()` instead.**
-
-Parameterized data that is structured as a dictionary type of `[String: Any]` can be sent in the request with the `setParameters()` method. Parameters are percent encoded and appended as a query string of the request URL for GET and HEAD requests. The code below sends a request with the URL "/brewers?state=new%20york".
-
-```
-service
-    .GET("/brewers")
-    .setParameters(["state" : "new york"])
-```
-
-For all other HTTP methods, parameters are sent as the request body with the default parameter encoding of `.Percent`.
-
-```
-service
-    .POST("/brewers")
-    .setParameters(["name": "Trashboat Brewing"])
-```
-
-The code above produces a request with the body contents set to `"name=Trashboat%20Brewing"`.
-
-JSON can be sent by specifying the parameter encoding to be `.JSON`.
-
-```
-service
-    .POST("/brewers")
-    .setParameters(["name": "Trashboat Brewing"], encoding: .JSON)
-```
-
-Now the parameters are JSON encoded in the body of the request.
-
-### Legacy Parameter Encodings API (deprecated)
-
-**NOTE: The `Request.ParameterEncoding` APIs are deprecated as of v3.2.0 and will be removed in v4.0.0. Use `setQueryParameters()`, `setFormParameters()`, and `setJSON()` instead.**
-
-The `setParameters()` method accepts an optional second parameter named `encoding` that allows you to specify how the request parameters will be encoded in the HTTP request. A value of `.JSON` will serialize the `parameters` data as JSON in the HTTP body and set the Content-Type HTTP header to "application/json".
-
-A `.Percent` option specifies that the parameters will be encoded as a percent-encoded string. `.Percent` is the default configuration for encoding request parameters.
-
-## Request Encoding
-
-#### `setHeaderValue`
-
-The `setHeaderValue()` method adds an HTTP header value and name to the HTTP request.
-
-```
-service
-    .GET("/brews",
-    .setHeaderValue("foo", forName: "custom-header-name")
-```
-
-#### `setCachePolicy`
-
-The `setCachePolicy()` method sets the`URLRequestCachePolicy` value to use in the resulting `URLRequest`. See the [`URLRequestCachePolicy`](https://developer.apple.com/library/ios/documentation/Cocoa/Reference/Foundation/Classes/NSURLRequest_Class/index.html#//apple_ref/c/tdef/NSURLRequestCachePolicy) section of the `NSURLRequest` documentation for more information.
-
-```
-service
-    .GET("/brews")
-    .setCachePolicy(.ReloadIgnoringLocalCacheData)
-```
-
-#### `setBody`
-
-The `setBody(data: Data)` method sets the `Data` value to use as the raw body of the HTTP request.
-
-```
-let bodyData: Data = modelData()
-
-service
-    .PUT("/brewers")
-    .setBody(bodyData)
-```
-
-
-#### `setJSON`
-
-The `setJSON(json: Any)` method sets the JSON object that will be serialized as the body of the HTTP request.
-
-```
-service
-    .POST("/numbers")
-    .setJSON(["one", "two", "three"])
-```
-
-## ServiceTaskResult
+### ServiceTaskResult
 
 `ServiceTaskResult` values can be used to control how values flow through the handler chain. This allows response handlers to run on a background queue and pass processed data to the next response handler in the chain.
 
 Response handlers must return one of the following `ServiceTaskResult` values:
 
-- Return `.Empty` to provide no processed value to the next handler. All subsequent handlers in the chain will continue to run.
-- Return `.Value(Any)` with an associated value of `Any` type to provide a resulting value to the next handler in the chain. All subsequent handlers in the chain will continue to run.
-- Return `.Failure(ErrorType)` with an associated value of `ErrorType` to prevent any subsequent response handlers from running. All registered error handlers will run instead.
+- Return `.empty` to provide no processed value to the next handler. All subsequent handlers in the chain will continue to run.
+- Return `.value(Any)` with an associated value of `Any` type to provide a resulting value to the next handler in the chain. All subsequent handlers in the chain will continue to run.
+- Return `.failure(Error)` with an associated value of `Error` to prevent any subsequent response handlers from running. All registered error handlers will run instead.
 
-The example below uses `ServiceTaskResult` to first filter out any responses that do not have the status code of 200. The first handler simply checks for the 200 status code and returns a `.Failure` result if the status is anything but 200. If the status check passes a result of `.Empty` is returned to allow the subsequent response handlers in the chain to continue running.
+The example below uses `ServiceTaskResult` to first filter out any responses that do not have the status code of 200. The first handler simply checks for the 200 status code and returns a `.failure` result if the status is anything but 200. If the status check passes a result of `.empty` is returned to allow the subsequent response handlers in the chain to continue running.
 
-The second response handler in the example serializes the response a JSON and attempts to decode the JSON as an array of model values. If the decoding succeeds the handler uses the `.Value` result to pass the model values to handler registered by `updateUI()`. In the case of a failure a `.Failure` result is returned with a decoding error.
+The second response handler in the example serializes the response a JSON and attempts to decode the JSON as an array of model values. If the decoding succeeds the handler uses the `.value` result to pass the model values to handler registered by `updateUI()`. In the case of a failure a `.failure` result is returned with a decoding error.
 
-Finally the `updateUI()` handler will be run if all previous response handlers did not return a `.Failure` result. The update UI handler is passed the value that was returned from the last response handler in the chain via a `.Value` result.
+Finally the `updateUI()` handler will be run if all previous response handlers did not return a `.failure` result. The update UI handler is passed the value that was returned from the last response handler in the chain via a `.value` result.
 
 ```
 service
-    .GET("/brewers")
+    .sessionTask(request: request)
     .response { data, response in
         // filter responses that do not have status 200
 
@@ -378,7 +335,7 @@ service
             return .Failure(ResponseError.ExpectedStatus200)
         }
 
-        return .Empty
+        return .empty
     }
     .responseJSON { json, response in
         // decode JSON as an array of models

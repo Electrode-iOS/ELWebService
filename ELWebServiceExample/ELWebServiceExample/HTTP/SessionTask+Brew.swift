@@ -9,7 +9,7 @@
 import Foundation
 import ELWebService
 
-extension ServiceTask {
+extension SessionTask {
     func responseAsBrews(_ handler: @escaping ([Brew]) -> Void) -> Self {
         return
             responseJSON { json, response in
@@ -18,7 +18,7 @@ extension ServiceTask {
                     let jsonArray = dictionary["brews"] as? [Any],
                     let decodedArray = ModelDecoder<Brew>.decodeArray(jsonArray)
                     else {
-                        throw ServiceTaskDecodeError.failedToDecodeJSONArray
+                        throw SessionTaskDecodeError.failedToDecodeJSONArray
                 }
                 
                 return .value(decodedArray)

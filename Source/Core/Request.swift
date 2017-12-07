@@ -28,7 +28,7 @@ public struct Request {
         case PUT = "PUT"
         case PATCH = "PATCH"
         case DELETE = "DELETE"
-
+        
         /**
          Whether requests using this method should encode parameters in the URL, instead of the body.
 
@@ -55,31 +55,12 @@ public struct Request {
         case json
         
         /**
-         Encode query parameters in an existing URL.
-        
-         - parameter url: Query string will be appended to this NSURL value.
-         - parameter parameters: Query parameters to be encoded as a query string.
-         - returns: A NSURL value with query string parameters encoded.
-        */
-        // TODO: remove this function in 4.0.0
-        public func encodeURL(_ url: URL, parameters: [String : Any]) -> URL? {
-            switch self {
-            case .percent:
-                return url.URLByAppendingQueryItems(parameters.queryItems)
-            
-            case .json:
-                assertionFailure("Cannot encode URL parameters using JSON encoding")
-                return nil // <-- unreachable
-            }
-        }
-        
-        /**
          Encode query parameters into a NSData value for request body.
         
          - parameter parameters: Query parameters to be encoded as HTTP body.
          - returns: NSData value with containing encoded parameters.
         */
-        public func encodeBody(_ parameters: [String : Any]) -> Data? {
+        func encodeBody(_ parameters: [String : Any]) -> Data? {
             switch self {
             case .percent:
                 return parameters.percentEncodedQueryString?.data(using: String.Encoding.utf8, allowLossyConversion: false)
@@ -120,14 +101,6 @@ public struct Request {
     
     /// The Boolean to indicate if default cookies should be set for request.
     public var shouldHandleCookies: Bool = true
-
-    /**
-     The parameters to encode in the HTTP request. Request parameters are percent
-     encoded and are appended as a query string or set as the request body 
-     depending on the HTTP request method.
-    */
-    // TODO: remove `parameters` in 4.0.0
-    public var parameters = [String : Any]()
     
     /// The key/value pairs that will be encoded as the query in the URL.
     public var queryParameters: [String : Any]?
@@ -150,13 +123,20 @@ public struct Request {
      The HTTP header fields of the request. Each key/value pair represents a 
      HTTP header field value using the key as the field name.
     */
-    internal(set) var headers = [String : String]()
+    public var headers = [String : String]()
     
     /// The cache policy of the request. See NSURLRequestCachePolicy.
-    internal(set) var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
+    public var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
+    
+    /**
+     The parameters to encode in the HTTP request. Request parameters are percent
+     encoded and are appended as a query string or set as the request body
+     depending on the HTTP request method.
+    */
+    var parameters = [String : Any]()
     
     /// The type of parameter encoding to use when encoding request parameters.
-    public var parameterEncoding = ParameterEncoding.percent {
+    var parameterEncoding = ParameterEncoding.percent {
         didSet {
             if parameterEncoding == .json {
                 contentType = ContentType.json
@@ -184,7 +164,7 @@ public struct Request {
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
      */
-    init(_ method: Method, url: URL) {
+    public init(_ method: Method, url: URL) {
         self.method = method
         self.requestURL = url
     }
@@ -195,9 +175,14 @@ public struct Request {
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
     */
-    init(_ method: Method, url urlString: String) {
+    public init(_ method: Method, url urlString: String) {
         let aURL = URL(string: urlString)!
         self.init(method, url: aURL)
+    }
+    
+    public mutating func serialize(json: Any) throws {
+        contentType = Request.ContentType.json
+        body = try JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
     }
 }
 
