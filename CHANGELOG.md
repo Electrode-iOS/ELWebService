@@ -1,3 +1,9 @@
+# [5.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v5.0.0)
+
+### New Features
+
+- Added `data: Data?` parameter to `didFinishCollectingTaskMetrics` in the `ServicePassthroughDelegate` protocol. This is useful for components that need to monitor the data firehose from web service responses. 
+
 # [4.6.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.6.0)
 
 ### New Features
