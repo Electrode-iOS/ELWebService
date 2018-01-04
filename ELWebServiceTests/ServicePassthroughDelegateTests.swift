@@ -123,7 +123,7 @@ class ServicePassthroughDelegateSpy: ServicePassthroughDelegate {
         serviceResultFailureExpecation?.fulfill()
     }
     
-    func didFinishCollectingTaskMetrics(metrics: ServiceTaskMetrics, request: URLRequest, response: URLResponse?, error: Error?) {
+    func didFinishCollectingTaskMetrics(metrics: ServiceTaskMetrics, request: URLRequest, response: URLResponse?, data: Data?, error: Error?) {
         metricsCollectedExpectation?.fulfill()
     }
 }
