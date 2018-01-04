@@ -28,7 +28,7 @@ public protocol ServicePassthroughDelegate: class {
     func modifiedRequest(_ request: URLRequest) -> URLRequest?
     
     /// Called when service task metrics are available upon response completion
-    func didFinishCollectingTaskMetrics(metrics: ServiceTaskMetrics, request: URLRequest, response: URLResponse?, error: Error?)
+    func didFinishCollectingTaskMetrics(metrics: ServiceTaskMetrics, request: URLRequest, response: URLResponse?, data: Data?, error: Error?)
 }
 
 extension ServicePassthroughDelegate {
