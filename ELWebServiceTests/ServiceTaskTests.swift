@@ -129,7 +129,7 @@ extension ServiceTaskTests {
         session.addStub(MockResponse(statusCode: 200, json: ["foo": "bar"]))
         let task = ServiceTask(request: Request(.GET, url: "/json"), session: session)
         
-        task.responseJSON { json in
+        task.responseJSON { json, _  in
                 expectation.fulfill()
                 return .empty
             }
@@ -148,7 +148,7 @@ extension ServiceTaskTests {
         
         let task = ServiceTask(request: Request(.GET, url: "/json"), session: session)
         
-        task.responseJSON { json in
+        task.responseJSON { json, _  in
                 XCTFail("responseJSON handler should not be called when JSON is invalid")
                 return .empty
             }
@@ -166,7 +166,7 @@ extension ServiceTaskTests {
         session.addStub(MockResponse(statusCode: 204))
         let task = ServiceTask(request: Request(.GET, url: "/json"), session: session)
         
-        task.responseJSON { json in
+        task.responseJSON { json, _  in
                 XCTFail("responseJSON handler should not be called when JSON is invalid")
                 return .empty
             }
