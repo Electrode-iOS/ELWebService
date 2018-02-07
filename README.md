@@ -7,7 +7,7 @@ ELWebService is an HTTP framework for Swift built on Foundation's `URLSession`. 
 
 ## Requirements
 
-ELWebService requires Swift 3.2 and Xcode 9.2.
+ELWebService requires Swift 4 and Xcode 9.2.
 
 ## Installation
 

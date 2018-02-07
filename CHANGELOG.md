@@ -1,3 +1,7 @@
+# [6.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.0.0)
+
+- Migrate to Swift 4
+
 # [5.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v5.0.0)
 
 ### New Features
