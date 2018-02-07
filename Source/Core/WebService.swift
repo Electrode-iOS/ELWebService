@@ -17,10 +17,10 @@ import Foundation
         Base URL of the web service.
         If the base URL is nil, the path is interpreted as an absolute URL.
      */
-    public let baseURL: URL?
+    @objc public let baseURL: URL?
 
     /// Base URL of the web service (as String).
-    public var baseURLString: String {
+    @objc public var baseURLString: String {
         return baseURL?.absoluteString ?? ""
     }
 
@@ -49,7 +49,7 @@ import Foundation
      Initialize a web service value.
      - parameter baseURL: URL to use as the base URL of the web service.
      */
-    public init(baseURL: URL? = nil) {
+    @objc public init(baseURL: URL? = nil) {
         self.baseURL = baseURL
         super.init()
         if let passthroughDataSource = self as? ServicePassthroughDataSource {
@@ -74,7 +74,7 @@ import Foundation
      This initializer can cause a runtime crash if the `baseURLString` cannot convert to a URL.
      It is better to use `init(baseURL: URL)` in place of this.
     */
-    convenience public init(baseURLString: String) {
+    @objc convenience public init(baseURLString: String) {
         let baseURL = URL(string: baseURLString)
         self.init(baseURL: baseURL)
     }
@@ -104,7 +104,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func GET(_ path: String) -> ServiceTask {
+    @objc public func GET(_ path: String) -> ServiceTask {
         return request(.GET, path: path)
     }
 
@@ -116,7 +116,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func POST(_ path: String) -> ServiceTask {
+    @objc public func POST(_ path: String) -> ServiceTask {
         return request(.POST, path: path)
     }
 
@@ -128,7 +128,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func PUT(_ path: String) -> ServiceTask {
+    @objc public func PUT(_ path: String) -> ServiceTask {
         return request(.PUT, path: path)
     }
 
@@ -140,7 +140,7 @@ extension WebService {
      - returns: A ServiceTask instance that refers to the lifetime of processing
      a given request.
      */
-    public func PATCH(path: String) -> ServiceTask {
+    @objc public func PATCH(path: String) -> ServiceTask {
         return request(.PATCH, path: path)
     }
 
@@ -152,7 +152,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func DELETE(_ path: String) -> ServiceTask {
+    @objc public func DELETE(_ path: String) -> ServiceTask {
         return request(.DELETE, path: path)
     }
 
@@ -164,7 +164,7 @@ extension WebService {
     - returns: A ServiceTask instance that refers to the lifetime of processing
     a given request.
     */
-    public func HEAD(_ path: String) -> ServiceTask {
+    @objc public func HEAD(_ path: String) -> ServiceTask {
         return request(.HEAD, path: path)
     }
 
@@ -235,7 +235,7 @@ extension WebService {
      - parameter string: URL string.
      - returns: An absolute URL string relative to the value of `baseURLString`.
      */
-    dynamic public func absoluteURL(_ string: String) -> URL {
+    @objc dynamic public func absoluteURL(_ string: String) -> URL {
         return constructURL(string, relativeToURL: baseURL)!
     }
 
@@ -245,7 +245,7 @@ extension WebService {
      - parameter string: URL string.
      - returns: An absolute URL string relative to the value of `baseURLString`.
     */
-    dynamic public func absoluteURLString(_ string: String) -> String {
+    @objc dynamic public func absoluteURLString(_ string: String) -> String {
         return absoluteURL(string).absoluteString
     }
 
