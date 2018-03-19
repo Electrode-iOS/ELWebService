@@ -74,6 +74,8 @@ import Foundation
     
     fileprivate var json: Any?
     
+    fileprivate var metricsHandler: MetricsHandler?
+    
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
     
@@ -221,6 +223,7 @@ extension ServiceTask {
     internal func handleResponse(_ response: URLResponse?, data: Data?, error: Error?) {
         metrics.responseEndDate = Date()
         passthroughDelegate?.didFinishCollectingTaskMetrics(metrics: metrics, request: urlRequest, response: response, data: data, error: error)
+        metricsHandler?(metrics, response)
         urlResponse = response
         responseData = data
         responseError = error
@@ -353,6 +356,24 @@ extension ServiceTask {
                 return try handler(json, response)
             }
         }
+    }
+}
+
+// MARK: - Metrics
+
+extension ServiceTask {
+    public typealias MetricsHandler = (ServiceTaskMetrics, URLResponse?) -> Void
+    
+    /**
+     Set a callback that will be invoked when service task metrics have been
+     collected
+     
+     - parameter handler: Callback to invoke when metrics have been collected.
+     - returns: Self instance to support chaining.
+     */
+    public func metricsCollected(_ handler: @escaping MetricsHandler) -> Self {
+        metricsHandler = handler
+        return self
     }
 }
 
