@@ -1,3 +1,9 @@
+# [6.1.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.1.0)
+
+### New Features
+
+- Added `metricsCollected` handler API for setting a callback to read response time for an individual service task response.
+
 # [6.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.0.0)
 
 - Migrate to Swift 4
