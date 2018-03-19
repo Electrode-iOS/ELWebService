@@ -14,6 +14,7 @@
 - [Objective-C Interoperability](#objective-c-interoperability)
 - [Mocking](#mocking)
 - [Logging](#logging)
+- [Metrics](#metrics)
 
 ## About ELWebService
 
@@ -831,6 +832,36 @@ class RequestLogger: ServicePassthroughDelegate {
 
     // other protocol methods…
 }
+```
+
+## Metrics
+
+ELWebService automatically measures response time as a time interval between when `resume()` is first called and when the completion handler of the underlying `URLSessionTask` is called.
+
+### Capture All Response Times
+
+Capture response times for all responses using the `ServicePassthroughDelegate`'s `didFinishCollectingTaskMetrics(metrics:request:response:data:error:)` method.
+
+```
+extension StandardAnalytics: ServicePassthroughDelegate {
+    public func didFinishCollectingTaskMetrics(metrics: ServiceTaskMetrics, request: URLRequest, response: URLResponse?, data: Data?, error: Error?) {
+        let responseTime: TimeInterval? = metrics.responseTime
+        // log metrics
+    }
+```
+
+### Capture Individual Response
+
+Set the `metricsCollected` handler to capture metrics for a particular `ServiceTask` instance.
+
+```
+let task = service
+    .GET("/brewers")
+    .metricsCollected { metrics, response in
+        let responseTime: TimeInterval? = metrics.responseTime
+
+    }
+    .resume()
 ```
 
 ## More Information
