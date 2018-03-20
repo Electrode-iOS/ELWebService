@@ -351,9 +351,12 @@ extension ServiceTask {
             if let json = self.json {
                 return try handler(json, response)
             } else {
+                self.metrics.responseJSONStartDate = Date()
                 let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
                 self.json = json
-                return try handler(json, response)
+                let result = try handler(json, response)
+                self.metrics.responseJSONEndDate = Date()
+                return result
             }
         }
     }

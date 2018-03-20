@@ -18,9 +18,24 @@ public struct ServiceTaskMetrics {
     
     /// The time interval between `fetchStartDate` and `responseEndDate`
     public var responseTime: TimeInterval? {
+        return timeInterval(startDate: fetchStartDate, endDate: responseEndDate)
+    }
+    
+    /// The time immediately before the response data is deserialized by JSONSerialization.
+    public internal(set) var responseJSONStartDate: Date?
+
+    /// The time immediately after the `responseJSON` handler returns.
+    public internal(set) var responseJSONEndDate: Date?
+    
+    /// The time interval between `fetchStartDate` and `responseEndDate`
+    public var deserializationTime: TimeInterval? {
+        return timeInterval(startDate: responseJSONStartDate, endDate: responseJSONEndDate)
+    }
+    
+    private func timeInterval(startDate: Date?, endDate: Date?) -> TimeInterval? {
         guard
-            let startDate = fetchStartDate,
-            let endDate = responseEndDate else {
+            let startDate = startDate,
+            let endDate = endDate else {
                 return nil
         }
         return endDate.timeIntervalSince(startDate)
