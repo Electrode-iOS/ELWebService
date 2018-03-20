@@ -32,6 +32,17 @@ public struct ServiceTaskMetrics {
         return timeInterval(startDate: responseJSONStartDate, endDate: responseJSONEndDate)
     }
     
+    /// The time immediately before the updateUI handler is called.
+    public internal(set) var updateUIStartDate: Date?
+    
+    /// The time immediately after the `updateUI` handler returns.
+    public internal(set) var updateUIEndDate: Date?
+    
+    /// The time interval between `updateUIStartDate` and `updateUIEndDate`
+    public var updateUITime: TimeInterval? {
+        return timeInterval(startDate: updateUIStartDate, endDate: updateUIEndDate)
+    }
+    
     private func timeInterval(startDate: Date?, endDate: Date?) -> TimeInterval? {
         guard
             let startDate = startDate,

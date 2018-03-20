@@ -327,7 +327,9 @@ extension ServiceTask {
                 
                 DispatchQueue.main.sync {
                     self.passthroughDelegate?.updateUIBegin(self.urlResponse)
+                    self.metrics.updateUIStartDate = Date()
                     handler(value)
+                    self.metrics.updateUIEndDate = Date()
                     self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                 }
             } catch _ {
