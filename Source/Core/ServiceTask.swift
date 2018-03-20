@@ -233,7 +233,6 @@ extension ServiceTask {
     /// Handle the response and kick off the handler queue
     internal func handleResponse(_ response: URLResponse?, data: Data?, error: Error?) {
         metrics.responseEndDate = Date()
-        passthroughDelegate?.didFinishCollectingTaskMetrics(metrics: metrics, request: urlRequest, response: response, data: data, error: error)
         urlResponse = response
         responseData = data
         responseError = error
