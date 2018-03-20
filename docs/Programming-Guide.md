@@ -857,8 +857,17 @@ Set the `metricsCollected` handler to capture metrics for a particular `ServiceT
 ```
 let task = service
     .GET("/brewers")
+    .responseJSON { json, response in
+        if let models: [Brewer] = JSONDecoder<Brewer>.decode(json)  {
+            return .Value(models)
+        } else {
+            // any value conforming to ErrorType
+            return .Failure(JSONDecoderError.FailedToDecodeBrewer)
+        }
+    }
     .metricsCollected { metrics, response in
         let responseTime: TimeInterval? = metrics.responseTime
+        let jsonTime: TimeInterval? = metrics.responseJSONTime
 
     }
     .resume()

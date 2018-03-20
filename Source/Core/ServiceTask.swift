@@ -76,6 +76,8 @@ import Foundation
     
     fileprivate var metricsHandler: MetricsHandler?
     
+    fileprivate var wasSuspended = false
+    
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
     
@@ -206,11 +208,20 @@ extension ServiceTask {
         
         metrics.fetchStartDate = Date()
         dataTask?.resume()
+        
+        // run metrics handler at end of queue
+        if !wasSuspended {
+            handlerQueue.addOperation {
+                self.sendMetrics()
+            }
+        }
+        
         return self
     }
     
     /// Suspend the underlying data task.
     public func suspend() {
+        wasSuspended = true
         dataTask?.suspend()
     }
     
@@ -223,7 +234,6 @@ extension ServiceTask {
     internal func handleResponse(_ response: URLResponse?, data: Data?, error: Error?) {
         metrics.responseEndDate = Date()
         passthroughDelegate?.didFinishCollectingTaskMetrics(metrics: metrics, request: urlRequest, response: response, data: data, error: error)
-        metricsHandler?(metrics, response)
         urlResponse = response
         responseData = data
         responseError = error
@@ -377,6 +387,11 @@ extension ServiceTask {
     public func metricsCollected(_ handler: @escaping MetricsHandler) -> Self {
         metricsHandler = handler
         return self
+    }
+    
+    func sendMetrics() {
+        passthroughDelegate?.didFinishCollectingTaskMetrics(metrics: metrics, request: urlRequest, response: urlResponse, data: responseData, error: responseError)
+        metricsHandler?(metrics, urlResponse)
     }
 }
 

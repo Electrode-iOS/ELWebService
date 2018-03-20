@@ -27,8 +27,8 @@ public struct ServiceTaskMetrics {
     /// The time immediately after the `responseJSON` handler returns.
     public internal(set) var responseJSONEndDate: Date?
     
-    /// The time interval between `fetchStartDate` and `responseEndDate`
-    public var deserializationTime: TimeInterval? {
+    /// The time interval between `responseJSONStartDate` and `responseJSONEndDate`
+    public var responseJSONTime: TimeInterval? {
         return timeInterval(startDate: responseJSONStartDate, endDate: responseJSONEndDate)
     }
     
