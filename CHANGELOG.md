@@ -1,3 +1,8 @@
+# [6.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.2.0)
+
+- Expose `ServiceTask`'s `metrics` property
+- Add `updateUITime` and `responseJSON` time to `ServiceTaskMetrics`
+
 # [6.1.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.1.0)
 
 ### New Features
