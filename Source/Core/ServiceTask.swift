@@ -32,7 +32,8 @@ import Foundation
         return .suspended
     }
     
-    fileprivate(set) var metrics = ServiceTaskMetrics()
+    /// Performance metrics collected during the execution of a service task
+    public fileprivate(set) var metrics = ServiceTaskMetrics()
     
     fileprivate var request: Request
     
@@ -75,6 +76,8 @@ import Foundation
     fileprivate var json: Any?
     
     fileprivate var metricsHandler: MetricsHandler?
+    
+    fileprivate var hasEverBeenSuspended = false
     
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
@@ -206,11 +209,20 @@ extension ServiceTask {
         
         metrics.fetchStartDate = Date()
         dataTask?.resume()
+        
+        // run metrics handler at end of queue
+        if !hasEverBeenSuspended {
+            handlerQueue.addOperation {
+                self.sendMetrics()
+            }
+        }
+        
         return self
     }
     
     /// Suspend the underlying data task.
     public func suspend() {
+        hasEverBeenSuspended = true
         dataTask?.suspend()
     }
     
@@ -222,8 +234,6 @@ extension ServiceTask {
     /// Handle the response and kick off the handler queue
     internal func handleResponse(_ response: URLResponse?, data: Data?, error: Error?) {
         metrics.responseEndDate = Date()
-        passthroughDelegate?.didFinishCollectingTaskMetrics(metrics: metrics, request: urlRequest, response: response, data: data, error: error)
-        metricsHandler?(metrics, response)
         urlResponse = response
         responseData = data
         responseError = error
@@ -317,7 +327,9 @@ extension ServiceTask {
                 
                 DispatchQueue.main.sync {
                     self.passthroughDelegate?.updateUIBegin(self.urlResponse)
+                    self.metrics.updateUIStartDate = Date()
                     handler(value)
+                    self.metrics.updateUIEndDate = Date()
                     self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                 }
             } catch _ {
@@ -351,9 +363,12 @@ extension ServiceTask {
             if let json = self.json {
                 return try handler(json, response)
             } else {
+                self.metrics.responseJSONStartDate = Date()
                 let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
                 self.json = json
-                return try handler(json, response)
+                let result = try handler(json, response)
+                self.metrics.responseJSONEndDate = Date()
+                return result
             }
         }
     }
@@ -374,6 +389,11 @@ extension ServiceTask {
     public func metricsCollected(_ handler: @escaping MetricsHandler) -> Self {
         metricsHandler = handler
         return self
+    }
+    
+    func sendMetrics() {
+        passthroughDelegate?.didFinishCollectingTaskMetrics(metrics: metrics, request: urlRequest, response: urlResponse, data: responseData, error: responseError)
+        metricsHandler?(metrics, urlResponse)
     }
 }
 
