@@ -32,7 +32,8 @@ import Foundation
         return .suspended
     }
     
-    fileprivate(set) var metrics = ServiceTaskMetrics()
+    /// Performance metrics collected during the execution of a service task
+    public fileprivate(set) var metrics = ServiceTaskMetrics()
     
     fileprivate var request: Request
     
