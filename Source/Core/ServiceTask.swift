@@ -77,7 +77,7 @@ import Foundation
     
     fileprivate var metricsHandler: MetricsHandler?
     
-    fileprivate var wasSuspended = false
+    fileprivate var hasEverBeenSuspended = false
     
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
@@ -211,7 +211,7 @@ extension ServiceTask {
         dataTask?.resume()
         
         // run metrics handler at end of queue
-        if !wasSuspended {
+        if !hasEverBeenSuspended {
             handlerQueue.addOperation {
                 self.sendMetrics()
             }
@@ -222,7 +222,7 @@ extension ServiceTask {
     
     /// Suspend the underlying data task.
     public func suspend() {
-        wasSuspended = true
+        hasEverBeenSuspended = true
         dataTask?.suspend()
     }
     
