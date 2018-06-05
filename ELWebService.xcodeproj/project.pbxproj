@@ -221,11 +221,11 @@
 				TargetAttributes = {
 					17088ED01C5010EA007ADE1B = {
 						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = "";
 					};
 					179C5C5D1AB079980047169F = {
 						CreatedOnToolsVersion = 6.3;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = "";
 					};
 				};
 			};
@@ -320,8 +320,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -335,8 +334,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.electrode.ELWebServiceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -467,8 +465,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -488,8 +485,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -569,8 +565,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
 				PRODUCT_NAME = ELWebService;
 				SKIP_INSTALL = YES;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = QADeployment;
 		};
@@ -585,8 +580,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ELWebServiceTests/ELWebServiceTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = QADeployment;
 		};
