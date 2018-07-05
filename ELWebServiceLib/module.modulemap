@@ -1,0 +1,10 @@
+module ELWebService {
+    umbrella header "ELWebService.h"
+    
+    export *
+}
+
+module ELWebService.Swift {
+    header "ELWebService-Swift.h"
+    requires objc
+}

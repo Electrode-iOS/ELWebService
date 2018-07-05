@@ -24,6 +24,17 @@
 		17C96AAB1AB0CBB800D49071 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
 		17D064691F3425A6007E1035 /* ServiceTaskMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */; };
 		17D1879E1AB0B173000742BF /* ELWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3E51BF7520EADC360073F501 /* Mocking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175B36431C85ED6400F385DD /* Mocking.swift */; };
+		3E51BF7620EADC360073F501 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE31C5011FB007ADE1B /* Request.swift */; };
+		3E51BF7720EADC360073F501 /* ServicePassthroughDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1720E8231C6A483100DBB925 /* ServicePassthroughDelegate.swift */; };
+		3E51BF7820EADC360073F501 /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE21C5011FB007ADE1B /* ServiceTask.swift */; };
+		3E51BF7920EADC360073F501 /* ServiceTaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */; };
+		3E51BF7A20EADC360073F501 /* ServiceTask+ObjC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17547AD51C6121E200D4B030 /* ServiceTask+ObjC.swift */; };
+		3E51BF7B20EADC360073F501 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BA678E1C8416C500A26309 /* Session.swift */; };
+		3E51BF7C20EADC360073F501 /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EDF1C5011FB007ADE1B /* WebService.swift */; };
+		3E51BF7D20EADC360073F501 /* ServiceTaskMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */; };
+		3E8BC45520EC2B3E002F31E9 /* ELWebService.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; };
+		3E8BC45620EC2B3E002F31E9 /* module.modulemap in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3E8BC45420EC2B05002F31E9 /* module.modulemap */; };
 		3E8CA4A320E587CB00CBDA69 /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE21C5011FB007ADE1B /* ServiceTask.swift */; };
 		3E8CA4A420E587CB00CBDA69 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE31C5011FB007ADE1B /* Request.swift */; };
 		3E8CA4A520E587CB00CBDA69 /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EDF1C5011FB007ADE1B /* WebService.swift */; };
@@ -51,6 +62,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3E51BF6B20EADC1A0073F501 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				3E8BC45520EC2B3E002F31E9 /* ELWebService.h in CopyFiles */,
+				3E8BC45620EC2B3E002F31E9 /* module.modulemap in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		17088ED11C5010EA007ADE1B /* ELWebServiceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ELWebServiceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17088ED51C5010EA007ADE1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -77,6 +102,8 @@
 		17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTaskMetrics.swift; sourceTree = "<group>"; };
 		17D187961AB0B173000742BF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17D187991AB0B173000742BF /* ELWebService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ELWebService.h; sourceTree = "<group>"; };
+		3E51BF6D20EADC1A0073F501 /* libELWebService.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libELWebService.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E8BC45420EC2B05002F31E9 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		3E8CA4B520E587CB00CBDA69 /* ELWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ELWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -90,6 +117,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		179C5C5A1AB079980047169F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E51BF6A20EADC1A0073F501 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -129,6 +163,7 @@
 			children = (
 				17D187951AB0B173000742BF /* Source */,
 				17D187A01AB0B1F7000742BF /* Supporting Files */,
+				3E8BC45320EC2AF0002F31E9 /* ELWebServiceLib */,
 				17088ED21C5010EA007ADE1B /* ELWebServiceTests */,
 				179C5C5F1AB079980047169F /* Products */,
 			);
@@ -140,6 +175,7 @@
 				179C5C5E1AB079980047169F /* ELWebService.framework */,
 				17088ED11C5010EA007ADE1B /* ELWebServiceTests.xctest */,
 				3E8CA4B520E587CB00CBDA69 /* ELWebService.framework */,
+				3E51BF6D20EADC1A0073F501 /* libELWebService.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -177,6 +213,14 @@
 				17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		3E8BC45320EC2AF0002F31E9 /* ELWebServiceLib */ = {
+			isa = PBXGroup;
+			children = (
+				3E8BC45420EC2B05002F31E9 /* module.modulemap */,
+			);
+			path = ELWebServiceLib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -237,6 +281,24 @@
 			productReference = 179C5C5E1AB079980047169F /* ELWebService.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		3E51BF6C20EADC1A0073F501 /* ELWebServiceLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E51BF7420EADC1A0073F501 /* Build configuration list for PBXNativeTarget "ELWebServiceLib" */;
+			buildPhases = (
+				3E51BF6920EADC1A0073F501 /* Sources */,
+				3E51BF6A20EADC1A0073F501 /* Frameworks */,
+				3E51BF6B20EADC1A0073F501 /* CopyFiles */,
+				3E8BC45820EC2C0D002F31E9 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ELWebServiceLib;
+			productName = ELWebServieLib;
+			productReference = 3E51BF6D20EADC1A0073F501 /* libELWebService.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		3E8CA4A120E587CB00CBDA69 /* ELWebService_static */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3E8CA4B120E587CB00CBDA69 /* Build configuration list for PBXNativeTarget "ELWebService_static" */;
@@ -261,7 +323,7 @@
 		179C5C551AB079980047169F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 0930;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = WalmartLabs;
 				TargetAttributes = {
@@ -272,6 +334,11 @@
 					179C5C5D1AB079980047169F = {
 						CreatedOnToolsVersion = 6.3;
 						LastSwiftMigration = 0920;
+					};
+					3E51BF6C20EADC1A0073F501 = {
+						CreatedOnToolsVersion = 9.3;
+						DevelopmentTeam = DXZ5VF8836;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -290,6 +357,7 @@
 				179C5C5D1AB079980047169F /* ELWebService */,
 				3E8CA4A120E587CB00CBDA69 /* ELWebService_static */,
 				17088ED01C5010EA007ADE1B /* ELWebServiceTests */,
+				3E51BF6C20EADC1A0073F501 /* ELWebServiceLib */,
 			);
 		};
 /* End PBXProject section */
@@ -319,6 +387,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3E8BC45820EC2C0D002F31E9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Copy ELWebService-Swift.h to where other ELWebService headers go in products directory, so that when it is imported as a module, it can be found.\ncp \"$DERIVED_FILE_DIR\"/\"$PRODUCT_MODULE_NAME\"-Swift.h \"$BUILT_PRODUCTS_DIR\"/include/\"$PRODUCT_MODULE_NAME\"/";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		17088ECD1C5010EA007ADE1B /* Sources */ = {
@@ -350,6 +434,22 @@
 				1720E8241C6A483100DBB925 /* ServicePassthroughDelegate.swift in Sources */,
 				17D064691F3425A6007E1035 /* ServiceTaskMetrics.swift in Sources */,
 				CAF0AF9B1C5054E60007761C /* ServiceTaskResult.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E51BF6920EADC1A0073F501 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E51BF7520EADC360073F501 /* Mocking.swift in Sources */,
+				3E51BF7620EADC360073F501 /* Request.swift in Sources */,
+				3E51BF7720EADC360073F501 /* ServicePassthroughDelegate.swift in Sources */,
+				3E51BF7820EADC360073F501 /* ServiceTask.swift in Sources */,
+				3E51BF7920EADC360073F501 /* ServiceTaskResult.swift in Sources */,
+				3E51BF7A20EADC360073F501 /* ServiceTask+ObjC.swift in Sources */,
+				3E51BF7B20EADC360073F501 /* Session.swift in Sources */,
+				3E51BF7C20EADC360073F501 /* WebService.swift in Sources */,
+				3E51BF7D20EADC360073F501 /* ServiceTaskMetrics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -564,6 +664,77 @@
 			};
 			name = Release;
 		};
+		3E51BF7120EADC1A0073F501 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = DXZ5VF8836;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
+				PRODUCT_NAME = ELWebService;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3E51BF7220EADC1A0073F501 /* QADeployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = DXZ5VF8836;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
+				PRODUCT_NAME = ELWebService;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = QADeployment;
+		};
+		3E51BF7320EADC1A0073F501 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = DXZ5VF8836;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ELWebService;
+				PRODUCT_NAME = ELWebService;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		3E8CA4B220E587CB00CBDA69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -757,6 +928,16 @@
 				179C5C751AB079980047169F /* Debug */,
 				DB5F6F7F1C77CEA50048EA81 /* QADeployment */,
 				179C5C761AB079980047169F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E51BF7420EADC1A0073F501 /* Build configuration list for PBXNativeTarget "ELWebServiceLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E51BF7120EADC1A0073F501 /* Debug */,
+				3E51BF7220EADC1A0073F501 /* QADeployment */,
+				3E51BF7320EADC1A0073F501 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
