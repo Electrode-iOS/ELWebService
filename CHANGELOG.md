@@ -1,3 +1,7 @@
+# [6.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.3.0)
+
+- Add a target that builds a static framework for iOS platform.
+
 # [6.2.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.2.1)
 
 - Update to Xcode 9.3 recommended project settings
