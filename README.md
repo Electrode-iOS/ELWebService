@@ -21,7 +21,13 @@ github "Electrode-iOS/ELWebService"
 
 ### Manual
 
-Install manually by adding `ELWebService.xcodeproj` to your project and configuring your target to link `ELWebService.framework`.
+Install manually by adding `ELWebService.xcodeproj` to your project and configuring your target to link `ELWebService.framework` from `ELWebService` target.
+
+There are two target that builds `ELWebService.framework`.
+1. `ELWebService`: Creates dynamically linked `ELWebService.framework.`
+2. `ELWebService_static`: Creates statically linked `ELWebService.framework`.
+
+Both targets build the same product (`ELWebService.framework`), thus linking the same app against both `ELWebService` and `ELWebService_static` should be avoided.
 
 ## Usage
 
