@@ -96,6 +96,8 @@ public struct Request {
         public static let contentLength = "Content-Length"
         public static let accept = "Accept"
         public static let cacheControl = "Cache-Control"
+        public static let sessionID = "sid"
+        public static let visitorID = "vid"
     }
     
     /// A group of static constants for referencing supported HTTP 
@@ -174,6 +176,18 @@ public struct Request {
     internal(set) var userAgent: String? {
         set { headers[Headers.userAgent] = newValue }
         get { return headers[Headers.userAgent] }
+    }
+    
+    /// The HTTP `sid` header field value of the request.
+    public var sessionID:String? {
+        set { headers[Headers.sessionID] = newValue }
+        get { return headers[Headers.sessionID] }
+    }
+    
+    /// The HTTP `vid` header field value of the request.
+    public var visitorID:String? {
+        set { headers[Headers.visitorID] = newValue }
+        get { return headers[Headers.visitorID] }
     }
     
     // MARK: Initialization
