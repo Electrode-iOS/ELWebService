@@ -693,7 +693,26 @@ extension ServiceTaskTests {
         XCTAssertEqual(recordedURLRequest!.httpBody, bodyData)
         
     }
-    
+
+    // setBodyContentType
+
+    func test_setBodyContentType_setsHTTPBodyAndContentTypeHaderInURLRequest() {
+        let bodyData = Data()
+        let contentType = "image/png"
+        let request = Request(.GET, url: "/test_setBodyContentType_setsHTTPBodyAndContentTypeHaderInURLRequest")
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+
+        task.setBody(bodyData, contentType: contentType)
+        task.resume()
+
+        let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedURLRequest)
+        XCTAssertEqual(recordedURLRequest!.httpBody, bodyData)
+        XCTAssertEqual(recordedURLRequest?.allHTTPHeaderFields?[Request.Headers.contentType], contentType)
+    }
+
+
     func test_setCachePolicy_setsPolicyInURLRequest() {
         let request = Request(.GET, url: "/test_setBody_encodesDataInURLRequest")
         let session = RequestRecordingSession()
@@ -705,10 +724,8 @@ extension ServiceTaskTests {
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
         XCTAssertEqual(recordedURLRequest!.cachePolicy, NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData)
-        
     }
-    
-    
+
     // setJSON
     
     func test_setParametersEncoding_setsParameterEncodingInRequest() {
@@ -723,6 +740,24 @@ extension ServiceTaskTests {
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
         XCTAssertNotNil(recordedURLRequest?.httpBody)
+    }
+
+    // setJSONData
+
+    func test_setBodyAndContentType_setsBodyAndContentTypeHeaderInRequest() {
+        let request = Request(.POST, url: "/test_setBodyAndContentType_setsBodyAndContentTypeHeaderInRequest")
+        let contentType = "image/jpg"
+        let bodyData = Data()
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+
+        task.setBody(bodyData, contentType: contentType)
+        task.resume()
+
+        let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
+        XCTAssertNotNil(recordedURLRequest)
+        XCTAssertEqual(recordedURLRequest!.httpBody, bodyData)
+        XCTAssertEqual(recordedURLRequest?.allHTTPHeaderFields?[Request.Headers.contentType], contentType)
     }
     
     // setParameters
