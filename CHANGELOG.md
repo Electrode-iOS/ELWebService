@@ -1,3 +1,8 @@
+# [6.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.4.0)
+
+- Add `setJSONData()` API
+- Add ability to set custom content-type header
+
 # [6.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.3.0)
 
 - Add a target that builds a static framework for iOS platform.
