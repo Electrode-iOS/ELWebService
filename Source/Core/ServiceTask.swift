@@ -132,18 +132,38 @@ extension ServiceTask {
         
         return self
     }
-    
-    /// TODO: Needs docs
+
     @discardableResult public func setBody(_ data: Data) -> Self {
         request.body = data
         return self
     }
-    
+
+    /// Sets the `body` of the request to the provided `data` and the `Content-Type` header to `contentType`.
+    ///
+    /// - Parameters:
+    ///   - data: A `Data` instance.
+    ///   - contentType: The `Content-Type` header value describing the type of `data`.
+    /// - Returns: `self`
+    @discardableResult public func setBody(_ data: Data, contentType: String) -> Self {
+        request.body = data
+        request.contentType = contentType
+        return self
+    }
+
     /// TODO: Needs docs
     @discardableResult public func setJSON(_ json: Any) -> Self {
         request.contentType = Request.ContentType.json
         request.body = try? JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
         return self
+    }
+
+    /// Sets the `body` of the `Request` to the provided `json` data and the `Content-Type` header
+    /// to `application/json`.
+    ///
+    /// - Parameter json: A `Data` instance containing JSON data.
+    /// - Returns: `self`
+    @discardableResult public func setJSONData(_ json: Data) -> Self {
+        return setBody(json, contentType: Request.ContentType.json)
     }
     
     /// TODO: Needs docs
