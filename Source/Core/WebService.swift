@@ -39,7 +39,18 @@ import Foundation
      default value rather than requiring the defaultSession to be configured
      before the WebService instance is even created.
      */
-    public lazy var session: Session = WebService.defaultSession
+    public var session: Session {
+        get {
+            return _session
+        }
+        set {
+            _session = newValue
+            if let _ = _session as? MockSession {
+                self.passthroughDelegate = nil
+            }
+        }
+    }
+    private lazy var _session: Session = WebService.defaultSession
     
     public weak var passthroughDelegate: ServicePassthroughDelegate?
 
