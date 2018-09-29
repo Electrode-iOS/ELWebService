@@ -214,6 +214,12 @@ extension ServiceTask {
         request.formParameters = parameters
         return self
     }
+
+    /// Sets the key/value pairs that are encoded as form data in the request body.
+    @discardableResult public func setFormParametersAllowedCharacters(_ allowedCharacters: CharacterSet) -> Self {
+        request.formParametersAllowedCharacters = allowedCharacters
+        return self
+    }
 }
 
 // MARK: - NSURLSesssionDataTask
