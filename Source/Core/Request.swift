@@ -79,10 +79,10 @@ public struct Request {
          - parameter parameters: Query parameters to be encoded as HTTP body.
          - returns: NSData value with containing encoded parameters.
         */
-        public func encodeBody(_ parameters: [String : Any]) -> Data? {
+        public func encodeBody(_ parameters: [String : Any], allowedCharacters: CharacterSet? = nil) -> Data? {
             switch self {
             case .percent:
-                return parameters.percentEncodedQueryString?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+                return parameters.percentEncodedQueryString(with: allowedCharacters)?.data(using: String.Encoding.utf8, allowLossyConversion: false)
             case .json:
                 return try? JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions())
             }
@@ -261,9 +261,7 @@ extension URLRequest: URLRequestEncodable {
 extension Dictionary {
     /// Return an encoded query string using the elements in the dictionary.
     var percentEncodedQueryString: String? {
-        var components = URLComponents(string: "")
-        components?.queryItems = queryItems
-        return components?.url?.query
+        return percentEncodedQueryString(with: nil)
     }
     
     var queryItems: [URLQueryItem] {
@@ -289,6 +287,19 @@ extension Dictionary {
     
     var percentEncodedData: Data? {
         return percentEncodedQueryString?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+    }
+
+    func percentEncodedQueryString(with allowedCharacters: CharacterSet?) -> String? {
+        var components = URLComponents(string: "")
+        components?.queryItems = queryItems
+        if let allowedCharacters = allowedCharacters {
+            components?.queryItems = queryItems.map { item in
+                URLQueryItem(name: item.name,
+                             value: item.value?.addingPercentEncoding(withAllowedCharacters: allowedCharacters))
+            }
+            return components?.query
+        }
+        return components?.url?.query
     }
 }
 
