@@ -146,6 +146,8 @@ public struct Request {
         return url?.URLByAppendingQueryItems(parameters.queryItems)
     }
 
+    public var formParametersAllowedCharacters: CharacterSet? = nil
+
     /**
      The HTTP header fields of the request. Each key/value pair represents a 
      HTTP header field value using the key as the field name.
@@ -286,7 +288,7 @@ extension Dictionary {
     }
     
     var percentEncodedData: Data? {
-        return percentEncodedQueryString?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+        return percentEncodedQueryString(with: formParametersAllowedCharacters)?.data(using: String.Encoding.utf8, allowLossyConversion: false)
     }
 
     func percentEncodedQueryString(with allowedCharacters: CharacterSet?) -> String? {
