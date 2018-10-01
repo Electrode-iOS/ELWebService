@@ -135,7 +135,7 @@ public struct Request {
     /// The key/value pairs that are encoded as form data in the request body.
     public var formParameters: [String : Any]? {
         didSet {
-            if let formData = formParameters?.percentEncodedData {
+            if let formData = formParameters?.percentEncodedData(with: formParametersAllowedCharacters) {
                 body = formData
                 contentType = ContentType.formEncoded
             }
@@ -146,6 +146,9 @@ public struct Request {
         return url?.URLByAppendingQueryItems(parameters.queryItems)
     }
 
+    /**
+    If form parameters are specified, characters not in this set will be percent-encoded
+    */
     public var formParametersAllowedCharacters: CharacterSet? = nil
 
     /**
@@ -261,11 +264,7 @@ extension URLRequest: URLRequestEncodable {
 // MARK: - Query String
 
 extension Dictionary {
-    /// Return an encoded query string using the elements in the dictionary.
-    var percentEncodedQueryString: String? {
-        return percentEncodedQueryString(with: nil)
-    }
-    
+
     var queryItems: [URLQueryItem] {
         var items = [URLQueryItem]()
         
@@ -287,10 +286,24 @@ extension Dictionary {
         return items
     }
     
+    // Default encoding
     var percentEncodedData: Data? {
-        return percentEncodedQueryString(with: formParametersAllowedCharacters)?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+        return percentEncodedData(with: nil)
     }
 
+    // Encoding with custom allowed character set
+    func percentEncodedData(with allowedCharacters: CharacterSet?) -> Data? {
+        return percentEncodedQueryString(with: allowedCharacters)?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+    }
+
+    /// Return an encoded query string using the elements in the dictionary.
+
+    // Default encoding
+    var percentEncodedQueryString: String? {
+        return percentEncodedQueryString(with: nil)
+    }
+
+    // Encoding with custom allowed character set
     func percentEncodedQueryString(with allowedCharacters: CharacterSet?) -> String? {
         var components = URLComponents(string: "")
         components?.queryItems = queryItems
