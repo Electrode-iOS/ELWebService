@@ -1,3 +1,7 @@
+# [6.5.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.5.0)
+
+- Add support for percent-encoding the body while specifying allowed characters.
+
 # [6.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.4.0)
 
 - Add `setJSONData()` API
