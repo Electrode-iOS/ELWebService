@@ -74,7 +74,19 @@ class ParameterEncodingTests: XCTestCase {
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
-    
+
+    func test_encodeBody_charSet() {
+        let parameters = ["percentEncoded" : "this + needs percent / encoded"]
+        let encoding = Request.ParameterEncoding.percent
+        let encodedData = encoding.encodeBody(parameters, allowedCharacters: CharacterSet.alphanumerics)
+        XCTAssertNotNil(encodedData, "Encoded body should be non-nil")
+
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
+        XCTAssertEqual(components[0], "percentEncoded")
+        XCTAssertEqual(components[1], "this%20%2B%20needs%20percent%20%2F%20encoded")
+    }
+
     func test_encodeBody_encodesJSONParameters() {
         let encoding = Request.ParameterEncoding.json
         let parameters: [String: Any] = ["foo" : "bar", "paramName" : "paramValue", "number" : 42]

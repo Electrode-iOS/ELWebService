@@ -79,10 +79,10 @@ public struct Request {
          - parameter parameters: Query parameters to be encoded as HTTP body.
          - returns: NSData value with containing encoded parameters.
         */
-        public func encodeBody(_ parameters: [String : Any]) -> Data? {
+        public func encodeBody(_ parameters: [String : Any], allowedCharacters: CharacterSet? = nil) -> Data? {
             switch self {
             case .percent:
-                return parameters.percentEncodedQueryString?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+                return parameters.percentEncodedQueryString(with: allowedCharacters)?.data(using: String.Encoding.utf8, allowLossyConversion: false)
             case .json:
                 return try? JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions())
             }
@@ -135,7 +135,7 @@ public struct Request {
     /// The key/value pairs that are encoded as form data in the request body.
     public var formParameters: [String : Any]? {
         didSet {
-            if let formData = formParameters?.percentEncodedData {
+            if let formData = formParameters?.percentEncodedData(with: formParametersAllowedCharacters) {
                 body = formData
                 contentType = ContentType.formEncoded
             }
@@ -145,6 +145,11 @@ public struct Request {
     public var queryParameterEncoder: QueryParameterEncoder = { (url, parameters) -> URL? in
         return url?.URLByAppendingQueryItems(parameters.queryItems)
     }
+
+    /**
+    If form parameters are specified, characters not in this set will be percent-encoded
+    */
+    public var formParametersAllowedCharacters: CharacterSet? = nil
 
     /**
      The HTTP header fields of the request. Each key/value pair represents a 
@@ -259,13 +264,7 @@ extension URLRequest: URLRequestEncodable {
 // MARK: - Query String
 
 extension Dictionary {
-    /// Return an encoded query string using the elements in the dictionary.
-    var percentEncodedQueryString: String? {
-        var components = URLComponents(string: "")
-        components?.queryItems = queryItems
-        return components?.url?.query
-    }
-    
+
     var queryItems: [URLQueryItem] {
         var items = [URLQueryItem]()
         
@@ -287,8 +286,35 @@ extension Dictionary {
         return items
     }
     
+    // Default encoding
     var percentEncodedData: Data? {
-        return percentEncodedQueryString?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+        return percentEncodedData(with: nil)
+    }
+
+    // Encoding with custom allowed character set
+    func percentEncodedData(with allowedCharacters: CharacterSet?) -> Data? {
+        return percentEncodedQueryString(with: allowedCharacters)?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+    }
+
+    /// Return an encoded query string using the elements in the dictionary.
+
+    // Default encoding
+    var percentEncodedQueryString: String? {
+        return percentEncodedQueryString(with: nil)
+    }
+
+    // Encoding with custom allowed character set
+    func percentEncodedQueryString(with allowedCharacters: CharacterSet?) -> String? {
+        var components = URLComponents(string: "")
+        components?.queryItems = queryItems
+        if let allowedCharacters = allowedCharacters {
+            components?.queryItems = queryItems.map { item in
+                URLQueryItem(name: item.name,
+                             value: item.value?.addingPercentEncoding(withAllowedCharacters: allowedCharacters))
+            }
+            return components?.query
+        }
+        return components?.url?.query
     }
 }
 
