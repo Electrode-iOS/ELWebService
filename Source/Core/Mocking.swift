@@ -17,25 +17,25 @@ public protocol MockableDataTaskResult {
      - parameter request: The request that the data task result is responding to.
      - returns: Data that will be passed to the completion handler of the task.
     */
-    func dataTaskResult(request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?)
+    func dataTaskResult(_ request: URLRequestEncodable) -> (Data?, URLResponse?, Error?)
 }
 
 // MARK: - MockResponse
 
 /// Encapsulates the meta and body data of a response.
 public struct MockResponse {
-    enum Error: ErrorType {
-        case InvalidURL
+    enum MockError: Error {
+        case invalidURL
     }
     
     /// HTTP status code.
     public let statusCode: Int
  
     /// Response body data
-    public var data: NSData?
+    public var data: Data?
     
     /// Response URL
-    public var url: NSURL?
+    public var url: URL?
     
     /// HTTP header fields
     public var headers: [String : String]?
@@ -49,33 +49,33 @@ public struct MockResponse {
     }
     
     /// Create a mock response with a status code and response body data.
-    public init(statusCode: Int, data: NSData) {
+    public init(statusCode: Int, data: Data) {
         self.init(statusCode: statusCode)
         self.data = data
     }
     
     /// Create a mocked response with a  JSON object to use as the stubbed response body data.
-    public init(statusCode: Int, json: AnyObject) {
+    public init(statusCode: Int, json: Any) {
         self.init(statusCode: statusCode)
-        self.data = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
+        self.data = try? JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
     }
 }
 
 extension MockResponse: MockableDataTaskResult {
     /// Creates a data task result from the mock response data
-    public func dataTaskResult(request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?) {
-        guard let responseURL = url ?? request.urlRequestValue.URL else {
-            return (nil, nil, Error.InvalidURL as NSError)
+    public func dataTaskResult(_ request: URLRequestEncodable) -> (Data?, URLResponse?, Error?) {
+        guard let responseURL = url ?? request.urlRequestValue.url else {
+            return (nil, nil, MockError.invalidURL as NSError)
         }
         
-        let response = NSHTTPURLResponse(URL: responseURL, statusCode: statusCode, HTTPVersion: version, headerFields: headers)
+        let response = HTTPURLResponse(url: responseURL, statusCode: statusCode, httpVersion: version, headerFields: headers)
         return (data, response, nil)
     }
 }
 
-extension NSURLResponse: MockableDataTaskResult {
+extension URLResponse: MockableDataTaskResult {
     /// Creates a data task result with NSURLResponse instance as the response parameter
-    public func dataTaskResult(request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?) {
+    public func dataTaskResult(_ request: URLRequestEncodable) -> (Data?, URLResponse?, Error?) {
         return (nil, self, nil)
     }
 }
@@ -84,7 +84,7 @@ extension NSURLResponse: MockableDataTaskResult {
 
 extension NSError: MockableDataTaskResult {
     /// Creates a data task result with NSError instance as the error parameter
-    public func dataTaskResult(request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?) {
+    public func dataTaskResult(_ request: URLRequestEncodable) -> (Data?, URLResponse?, Error?) {
         return (nil, nil, self)
     }
 }
@@ -92,28 +92,28 @@ extension NSError: MockableDataTaskResult {
 // MARK: - MockSession
 
 /// Implements the `Session` protocol and provides an API for adding mocked responses as stubs.
-public class MockSession: Session {
+open class MockSession: Session {
     typealias Stub = (MockableDataTaskResult, (URLRequestEncodable) -> (Bool))
-    lazy var stubs = [Stub]()
+    var stubs = [Stub]()
     
     public init() {
         
     }
     
     /// Creates a data task for a given request and calls the completion handler on a background queue.
-    public func dataTask(request request: URLRequestEncodable, completion: (NSData?, NSURLResponse?, NSError?) -> Void) -> DataTask {
+    open func dataTask(request: URLRequestEncodable, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
         requestSent(request)
         
         let (data, response, error) = stubbedResponse(request: request)
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+        DispatchQueue.global(qos: .default).async {
             completion(data, response, error)
         }
         
         return MockDataTask()
     }
     
-    public func requestSent(request: URLRequestEncodable) {
+    open func requestSent(_ request: URLRequestEncodable) {
         
     }
     
@@ -127,7 +127,7 @@ public class MockSession: Session {
      - parameter requestMatcher: A matcher closure that determines if the mocked 
      response is used as a response stub for a given request.
     */
-    public func addStub(response: MockableDataTaskResult, requestMatcher: (URLRequestEncodable) -> (Bool)) {
+    open func addStub(_ response: MockableDataTaskResult, requestMatcher: @escaping (URLRequestEncodable) -> (Bool)) {
         stubs.append((response, requestMatcher))
     }
 
@@ -138,7 +138,7 @@ public class MockSession: Session {
      - parameter response: A mockable data task result that provides the mocked
      response value.
     */
-    public func addStub(response: MockableDataTaskResult) {
+    open func addStub(_ response: MockableDataTaskResult) {
         stubs.append((response, { _ in return true}))
     }
     
@@ -147,8 +147,8 @@ public class MockSession: Session {
      
      - parameter request: The request that needs a stubbed response.
      */
-    public func stubbedResponse(request request: URLRequestEncodable) -> (NSData?, NSURLResponse?, NSError?) {
-        for (response, matcher) in stubs.reverse() where matcher(request) {
+    open func stubbedResponse(request: URLRequestEncodable) -> (Data?, URLResponse?, Error?) {
+        for (response, matcher) in stubs.reversed() where matcher(request) {
             return response.dataTaskResult(request)
         }
         
@@ -159,11 +159,11 @@ public class MockSession: Session {
 // MARK: - Mocked Sessions
 
 /// A MockableSession that records all of the requests that are sent during its lifetime.
-public class RequestRecordingSession: MockSession {
+open class RequestRecordingSession: MockSession {
     /// The requests that were sent during the lifetime of the session.
-    public private(set) var recordedRequests = [URLRequestEncodable]()
+    open fileprivate(set) var recordedRequests = [URLRequestEncodable]()
     
-    public override func requestSent(request: URLRequestEncodable) {
+    open override func requestSent(_ request: URLRequestEncodable) {
         recordedRequests.append(request)
     }
 }
@@ -172,21 +172,21 @@ public class RequestRecordingSession: MockSession {
 
 /// A concrete implementation of DataTask for mocking purposes.
 public final class MockDataTask: DataTask {
-    private(set) public var state = NSURLSessionTaskState.Suspended
+    fileprivate(set) public var state = URLSessionTask.State.suspended
     
     public init() {
         
     }
     
     public func suspend() {
-        state = .Suspended
+        state = .suspended
     }
     
     public func resume() {
-        state = .Running
+        state = .running
     }
     
     public func cancel() {
-        state = .Canceling
+        state = .canceling
     }
 }

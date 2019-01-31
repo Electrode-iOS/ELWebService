@@ -10,22 +10,23 @@ import Foundation
 import ELWebService
 
 extension ServiceTask {
-    
-    func responseAsBrews(handler: ([Brew]) -> Void) -> Self {
+    func responseAsBrews(_ handler: @escaping ([Brew]) -> Void) -> Self {
         return
             responseJSON { json, response in
-                if let json = self.jsonObject(json, forKey: "brews"),
-                    let jsonArray = json as? [AnyObject],
-                    let decodedArray = ModelDecoder<Brew>.decodeArray(jsonArray) {
-                        return .Value(decodedArray)
-                } else {
-                    return .Failure(ServiceTaskDecodeError.FailedToDecodeJSONArray)
+                guard
+                let dictionary = json as? [String: Any],
+                    let jsonArray = dictionary["brews"] as? [Any],
+                    let decodedArray = ModelDecoder<Brew>.decodeArray(jsonArray)
+                    else {
+                        throw ServiceTaskDecodeError.failedToDecodeJSONArray
                 }
-            }
-            .updateUI { value in
-                if let brews = value as? [Brew] {
-                    handler(brews)
+                
+                return .value(decodedArray)
                 }
-            }
+                .updateUI { value in
+                    if let brews = value as? [Brew] {
+                        handler(brews)
+                    }
+        }
     }
 }

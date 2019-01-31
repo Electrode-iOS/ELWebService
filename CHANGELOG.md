@@ -1,3 +1,132 @@
+# [6.5.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.5.0)
+
+- Add support for percent-encoding the body while specifying allowed characters.
+
+# [6.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.4.0)
+
+- Add `setJSONData()` API
+- Add ability to set custom content-type header
+
+# [6.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.3.0)
+
+- Add a target that builds a static framework for iOS platform.
+
+# [6.2.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.2.1)
+
+- Update to Xcode 9.3 recommended project settings
+
+# [6.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.2.0)
+
+- Expose `ServiceTask`'s `metrics` property
+- Add `updateUITime` and `responseJSON` time to `ServiceTaskMetrics`
+
+# [6.1.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.1.0)
+
+### New Features
+
+- Added `metricsCollected` handler API for setting a callback to read response time for an individual service task response.
+
+# [6.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.0.0)
+
+- Migrate to Swift 4
+
+# [5.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v5.0.0)
+
+### New Features
+
+- Added `data: Data?` parameter to `didFinishCollectingTaskMetrics` in the `ServicePassthroughDelegate` protocol. This is useful for components that need to monitor the data firehose from web service responses. 
+
+# [4.6.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.6.0)
+
+### New Features
+
+- Add [`setShouldHandleCookies`](https://github.com/Electrode-iOS/ELWebService/blob/master/Source/Core/ServiceTask.swift#L118) API for configuring the default cookie behavior of the request
+
+# [4.5.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.5.0)
+
+### New Features
+
+- Make the default `URLSession` modifiable within the app instead of relying on the system level shared instance
+
+# [4.4.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.4.1)
+
+- Use default settings for bitcode
+
+# [4.4.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.4.0)
+
+### New Features
+
+- Make the `WebService`'s' `request` method public so external interfaces can more dynamically create `ServiceTask` instances
+
+# [4.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.3.0)
+
+### New Features
+
+- Add `ServiceTaskMetrics` API to enable `ServiceTask` to collect performance metrics during execution
+- Make `passthroughDelegate` property public
+
+### Fixes
+
+- Avoid encoding `URLRequest` multiple times in `ServiceTask`
+
+# [4.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.2.0)
+
+### New Features
+
+- Added `QueryParameterEncoder` API for defining a custom encoding for query parameters
+
+### Fixes
+
+- Cache JSON deserialization so it can be reused in other handlers Previously if there were multiple `responseJSON` handlers in a service task chain, the response body would be deserialized for each `responseJSON` call. This change allows multiple calls to reuse the same deserialized payload.
+
+# [4.1.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.1.1)
+
+- Resolved various Xcode 8.3 warnings
+- Fixed build errors in example project
+- Added `@discardableResult` in Obj-C APIs to resolve unused value warning
+
+# [4.1.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.1.0)
+
+`WebService` can now be initialized with a `URL` type for the baseURL along with the existing `baseURLString`. Example:
+
+```
+let url = URL(string: "http://httpbin.org")
+let service = WebService(baseURL: url)
+```
+
+- Added `baseURL: URL?` property to `WebService`
+- Added an initializer to `WebService` for initializing with a `URL`.
+- Enabled runtime overriding of `absoluteURLString(_:)`
+
+# [4.0.3](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.0.3)
+
+- Remove `lazy` var for Carthage compatibility.
+
+# [4.0.2](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.0.2)
+
+- Update to Xcode 8.1 recommended project settings.
+
+# [4.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v4.0.0)
+
+- Added support for Swift 3
+
+## Breaking
+
+- API naming changes for Swift 3
+- Removed `SessionDataTaskDataSource` API
+
+# [3.3.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.3.1)
+
+- Merge support for PATCH HTTP requests
+
+# [3.3.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.3.0)
+
+- Added support for Xcode 8, Swift 2.3, and iOS SDK 10
+
+# [3.2.1](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.2.1)
+
+- Added support for PATCH HTTP requests.
+
 # [3.2.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v3.2.0)
 
 ### Deprecations

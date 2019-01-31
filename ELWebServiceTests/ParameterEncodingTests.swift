@@ -14,9 +14,9 @@ class ParameterEncodingTests: XCTestCase {
     // MARK: encodeURL
     
     func test_encodeURL_percentEncodesWithSpacesInStrings() {
-        let url = NSURL(string: "http://httpbin.org/get")!
+        let url = URL(string: "http://httpbin.org/get")!
         let parameters = ["percentEncoded" : "this needs percent encoded"]
-        let encoding = Request.ParameterEncoding.Percent
+        let encoding = Request.ParameterEncoding.percent
         
         let encodedURL = encoding.encodeURL(url, parameters: parameters)
         
@@ -24,15 +24,15 @@ class ParameterEncodingTests: XCTestCase {
         XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
         
         let stringValue = encodedURL!.query!
-        let components = stringValue.componentsSeparatedByString("=")
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
     
     func test_encodeURL_percentEncodesWithIntValue() {
-        let url = NSURL(string: "http://httpbin.org/get")!
+        let url = URL(string: "http://httpbin.org/get")!
         let parameters = ["number" : 500]
-        let encoding = Request.ParameterEncoding.Percent
+        let encoding = Request.ParameterEncoding.percent
         
         let encodedURL = encoding.encodeURL(url, parameters: parameters)
         
@@ -40,14 +40,14 @@ class ParameterEncodingTests: XCTestCase {
         XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
         
         let stringValue = encodedURL!.query!
-        let components = stringValue.componentsSeparatedByString("=")
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[1], "500")
     }
     
     func test_encodeURL_percentEncodesWithBoolValue() {
-        let url = NSURL(string: "http://httpbin.org/get")!
+        let url = URL(string: "http://httpbin.org/get")!
         let parameters = ["boolValue" : true]
-        let encoding = Request.ParameterEncoding.Percent
+        let encoding = Request.ParameterEncoding.percent
         
         let encodedURL = encoding.encodeURL(url, parameters: parameters)
         
@@ -55,7 +55,7 @@ class ParameterEncodingTests: XCTestCase {
         XCTAssertNotNil(encodedURL?.query, "Encoded URL query should be not be nil")
         
         let stringValue = encodedURL!.query!
-        let components = stringValue.componentsSeparatedByString("=")
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[1], "1")
     }
     
@@ -63,33 +63,45 @@ class ParameterEncodingTests: XCTestCase {
 
     func test_encodeBody_percentEncodesWithSpacesInStrings() {
         let parameters = ["percentEncoded" : "this needs percent encoded"]
-        let encoding = Request.ParameterEncoding.Percent
+        let encoding = Request.ParameterEncoding.percent
         
         let encodedData = encoding.encodeBody(parameters)
         
         XCTAssertNotNil(encodedData, "Encoded body should be non-nil")
         
-        let stringValue = NSString(data: encodedData!, encoding: NSUTF8StringEncoding)!
-        let components = stringValue.componentsSeparatedByString("=")
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
         XCTAssertEqual(components[0], "percentEncoded")
         XCTAssertEqual(components[1], "this%20needs%20percent%20encoded")
     }
-    
+
+    func test_encodeBody_charSet() {
+        let parameters = ["percentEncoded" : "this + needs percent / encoded"]
+        let encoding = Request.ParameterEncoding.percent
+        let encodedData = encoding.encodeBody(parameters, allowedCharacters: CharacterSet.alphanumerics)
+        XCTAssertNotNil(encodedData, "Encoded body should be non-nil")
+
+        let stringValue = NSString(data: encodedData!, encoding: String.Encoding.utf8.rawValue)!
+        let components = stringValue.components(separatedBy: "=")
+        XCTAssertEqual(components[0], "percentEncoded")
+        XCTAssertEqual(components[1], "this%20%2B%20needs%20percent%20%2F%20encoded")
+    }
+
     func test_encodeBody_encodesJSONParameters() {
-        let encoding = Request.ParameterEncoding.JSON
-        let parameters: [String: AnyObject] = ["foo" : "bar", "paramName" : "paramValue", "number" : 42]
+        let encoding = Request.ParameterEncoding.json
+        let parameters: [String: Any] = ["foo" : "bar", "paramName" : "paramValue", "number" : 42]
         
         let data = encoding.encodeBody(parameters)
         XCTAssert(data != nil, "Encoded JSON data should not be nil")
         
-        let json = try? NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions())
+        let json = try? JSONSerialization.jsonObject(with: data!, options: JSONSerialization.ReadingOptions())
         XCTAssertNotNil(json, "Serialized JSON should not be nil")
         
         // test original parameters against encoded
-        if let json = json as? [String : AnyObject] {
+        if let json = json as? [String : Any] {
             ELTestAssertRequestParametersEqual(json, parameters)
         } else {
-            XCTFail("Failed to cast JSON as [String : AnyObject]")
+            XCTFail("Failed to cast JSON as [String : Any]")
         }
     }
 }

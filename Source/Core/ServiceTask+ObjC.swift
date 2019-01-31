@@ -15,13 +15,13 @@ extension ServiceTask {
      Set request parameter values and configure them to be JSON-encoded.
      
      This method is designed to only be called from Obj-C. Please use
-     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     `setParameters(parameters: [String: Any], encoding: Request.ParameterEncoding)`
      when calling from Swift.
      
      - parameter parameters: Request parameter values.
     */
-    @objc public func setJSONEncodedParametersObjC(parameters: [String: AnyObject]) -> Self {
-        setParameters(parameters, encoding: .JSON)
+    @discardableResult @objc public func setJSONEncodedParametersObjC(_ parameters: [String: Any]) -> Self {
+        setParameters(parameters, encoding: .json)
         return self
     }
     
@@ -29,13 +29,13 @@ extension ServiceTask {
      Set request parameter values and configure them to be Percent-encoded.
      
      This method is designed to be called from Obj-C only. Please use
-     `setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding)`
+     `setParameters(parameters: [String: Any], encoding: Request.ParameterEncoding)`
      when calling from Swift.
      
      - parameter parameters: Request parameter values.
     */
-    @objc public func setPercentEncodedParametersObjC(parameters: [String: AnyObject]) -> Self {
-        setParameters(parameters, encoding: .Percent)
+    @discardableResult @objc public func setPercentEncodedParametersObjC(_ parameters: [String: Any]) -> Self {
+        setParameters(parameters, encoding: .percent)
         return self
     }
         
@@ -46,8 +46,8 @@ extension ServiceTask {
      `setParameterEncoding(encoding: .JSON)` when calling
      from Swift.
     */
-    @objc public func setJSONParameterEncodingObjC() -> Self {
-        setParameterEncoding(.JSON)
+    @discardableResult @objc public func setJSONParameterEncodingObjC() -> Self {
+        setParameterEncoding(.json)
         return self
     }
     
@@ -58,8 +58,8 @@ extension ServiceTask {
      `setParameterEncoding(encoding: .Percent)` when calling
      from Swift.
     */
-    @objc public func setPercentParameterEncodingObjC() -> Self {
-        setParameterEncoding(.Percent)
+    @discardableResult @objc public func setPercentParameterEncodingObjC() -> Self {
+        setParameterEncoding(.percent)
         return self
     }
 }
@@ -69,7 +69,7 @@ extension ServiceTask {
 extension ServiceTask {
     
     /// Response handler type for Obj-C
-    typealias ObjCResponseHandler = (NSData?, NSURLResponse?) -> ObjCHandlerResult?
+    typealias ObjCResponseHandler = (Data?, URLResponse?) -> ObjCHandlerResult?
 
     /**
      Add a response handler to be called on a background thread after a successful
@@ -80,7 +80,7 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
      */
-    @objc public func responseObjC(handler: (NSData?, NSURLResponse?) -> ObjCHandlerResult?) -> Self {
+    @discardableResult @objc public func responseObjC(_ handler: @escaping (Data?, URLResponse?) -> ObjCHandlerResult?) -> Self {
         return response { data, response in
             return ServiceTaskResult(objCHandlerResult: handler(data, response))
         }
@@ -95,7 +95,7 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
      */
-    @objc public func responseJSONObjC(handler: (AnyObject, NSURLResponse?) -> ObjCHandlerResult?) -> Self {
+    @discardableResult @objc public func responseJSONObjC(_ handler: @escaping (Any, URLResponse?) -> ObjCHandlerResult?) -> Self {
         return responseJSON { json, response in
             return ServiceTaskResult(objCHandlerResult: handler(json, response))
         }
@@ -114,9 +114,9 @@ extension ServiceTask {
      - parameter handler: Transformation handler to execute.
      - returns: Self instance to support chaining.
      */
-    @objc public func transformObjC(handler: (AnyObject?) -> ObjCHandlerResult?) -> Self {
+    @discardableResult @objc public func transformObjC(_ handler: @escaping (Any?) -> ObjCHandlerResult?) -> Self {
         return transform { value in
-            return ServiceTaskResult(objCHandlerResult: handler(value as! AnyObject?))
+            return ServiceTaskResult(objCHandlerResult: handler(value))
         }
     }
 
@@ -134,7 +134,7 @@ extension ServiceTask {
      - parameter handler: Recovery handler to execute when an error occurs.
      - returns: Self instance to support chaining.
      */
-    @objc public func recoverObjC(handler: (NSError) -> ObjCHandlerResult?) -> Self {
+    @discardableResult @objc public func recoverObjC(_ handler: @escaping (NSError) -> ObjCHandlerResult?) -> Self {
         return recover { error in
             return ServiceTaskResult(objCHandlerResult: handler(error as NSError))
         }
@@ -149,7 +149,7 @@ extension ServiceTask {
      - parameter handler: Error handler to execute when an error occurs.
      - returns: Self instance to support chaining.
     */
-    @objc public func responseErrorObjC(handler: (NSError) -> Void) -> Self {
+    @discardableResult @objc public func responseErrorObjC(_ handler: @escaping (NSError) -> Void) -> Self {
         return responseError { error in
             handler(error as NSError)
         }
@@ -169,9 +169,9 @@ extension ServiceTask {
      - parameter handler: The closure to execute as the updateUI handler.
      - returns: Self instance to support chaining.
     */
-    @objc public func updateUIObjC(handler: (AnyObject?) -> Void) -> Self {
+    @discardableResult @objc public func updateUIObjC(_ handler: @escaping (Any?) -> Void) -> Self {
         return updateUI { value in
-            handler(value as! AnyObject?)
+            handler(value)
         }
     }
     
@@ -185,7 +185,7 @@ extension ServiceTask {
      - parameter handler: Error handler to execute when an error occurs.
      - returns: Self instance to support chaining.
     */
-    @objc public func updateErrorUIObjC(handler: (NSError) -> Void) -> Self {
+    @discardableResult @objc public func updateErrorUIObjC(_ handler: @escaping (NSError) -> Void) -> Self {
         return updateErrorUI { error in
             handler(error as NSError)
         }

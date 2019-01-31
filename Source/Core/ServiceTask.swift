@@ -15,60 +15,69 @@ import Foundation
  via the `state` property.
 */
 @objc public final class ServiceTask: NSObject {
-    public typealias ResponseProcessingHandler = (NSData?, NSURLResponse?) throws -> ServiceTaskResult
+    public typealias ResponseProcessingHandler = (Data?, URLResponse?) throws -> ServiceTaskResult
     
     /// A closure type alias for a success handler.
     public typealias UpdateUIHandler = (Any?) -> Void
 
     /// A closure type alias for an error handler.
-    public typealias ErrorHandler = (ErrorType) -> Void
+    public typealias ErrorHandler = (Error) -> Void
     
     /// State of the service task.
-    public var state: NSURLSessionTaskState {
+    public var state: URLSessionTask.State {
         if let state = dataTask?.state {
             return state
         }
         
-        return .Suspended
+        return .suspended
     }
     
-    private var request: Request
+    /// Performance metrics collected during the execution of a service task
+    public fileprivate(set) var metrics = ServiceTaskMetrics()
     
-    private var urlRequest: NSURLRequest {
-        return request.urlRequestValue
-    }
+    fileprivate var request: Request
+    
+    lazy fileprivate var urlRequest: URLRequest = {
+        return self.request.urlRequestValue as URLRequest
+    }()
     
     /// Dispatch queue that queues up and dispatches handler blocks
-    private let handlerQueue: NSOperationQueue
+    fileprivate let handlerQueue: OperationQueue
     
     /// Session data task that refers the lifetime of the request.
-    private var dataTask: DataTask?
+    fileprivate var dataTask: DataTask?
     
     /// Result of the service task
-    private var taskResult: ServiceTaskResult? {
+    fileprivate var taskResult: ServiceTaskResult? {
         didSet {
             // Use observer to watch for error result to send to passthrough
             guard let result = taskResult else { return }
             switch result {
-            case .Failure(let error):
+            case .failure(let error):
                 if responseError == nil {
                     passthroughDelegate?.serviceResultFailure(urlResponse, data: responseData, request: urlRequest, error: error)
                 }
-            case .Empty, .Value(_): return
+            case .empty, .value(_): return
             }
         }
     }
     
     /// Response body data
-    private var responseData: NSData?
+    fileprivate var responseData: Data?
     
     /// URL response
-    private var urlResponse: NSURLResponse?
+    fileprivate var urlResponse: URLResponse?
     
-    private var responseError: NSError?
+    fileprivate var responseError: Error?
     
     /// Type responsible for creating NSURLSessionDataTask objects
-    private var session: Session?
+    fileprivate var session: Session?
+    
+    fileprivate var json: Any?
+    
+    fileprivate var metricsHandler: MetricsHandler?
+    
+    fileprivate var hasEverBeenSuspended = false
     
     /// Delegate interface for handling raw response and request events
     internal weak var passthroughDelegate: ServicePassthroughDelegate?
@@ -87,9 +96,9 @@ import Foundation
         self.request = request
         self.session = session
         self.handlerQueue = {
-            let queue = NSOperationQueue()
+            let queue = OperationQueue()
             queue.maxConcurrentOperationCount = 1
-            queue.suspended = true
+            queue.isSuspended = true
             return queue
         }()
     }
@@ -102,60 +111,113 @@ import Foundation
 // MARK: - Request API
 
 extension ServiceTask {
+    
+    /**
+     Sets a boolean that indicates whether the receiver should use the default
+     cookie handling for the request.
+     
+     - parameter handle: true if the receiver should use the default cookie
+     handling for the request, false otherwise. The default is true.
+     - returns: Self instance to support chaining.
+     */
+    @discardableResult public func setShouldHandleCookies(_ handle: Bool) -> Self {
+        request.shouldHandleCookies = handle
+        return self
+    }
+    
     /// TODO: Needs docs
-    public func setParameters(parameters: [String: AnyObject], encoding: Request.ParameterEncoding? = nil) -> Self {
+    @discardableResult public func setParameters(_ parameters: [String: Any], encoding: Request.ParameterEncoding? = nil) -> Self {
         request.parameters = parameters
-        request.parameterEncoding = encoding ?? .Percent
+        request.parameterEncoding = encoding ?? .percent
         
         return self
     }
-    
-    /// TODO: Needs docs
-    public func setBody(data: NSData) -> Self {
+
+    @discardableResult public func setBody(_ data: Data) -> Self {
         request.body = data
         return self
     }
-    
-    /// TODO: Needs docs
-    public func setJSON(json: AnyObject) -> Self {
-        request.contentType = Request.ContentType.json
-        request.body = try? NSJSONSerialization.dataWithJSONObject(json, options: NSJSONWritingOptions(rawValue: 0))
+
+    /// Sets the `body` of the request to the provided `data` and the `Content-Type` header to `contentType`.
+    ///
+    /// - Parameters:
+    ///   - data: A `Data` instance.
+    ///   - contentType: The `Content-Type` header value describing the type of `data`.
+    /// - Returns: `self`
+    @discardableResult public func setBody(_ data: Data, contentType: String) -> Self {
+        request.body = data
+        request.contentType = contentType
         return self
+    }
+
+    /// TODO: Needs docs
+    @discardableResult public func setJSON(_ json: Any) -> Self {
+        request.contentType = Request.ContentType.json
+        request.body = try? JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
+        return self
+    }
+
+    /// Sets the `body` of the `Request` to the provided `json` data and the `Content-Type` header
+    /// to `application/json`.
+    ///
+    /// - Parameter json: A `Data` instance containing JSON data.
+    /// - Returns: `self`
+    @discardableResult public func setJSONData(_ json: Data) -> Self {
+        return setBody(json, contentType: Request.ContentType.json)
     }
     
     /// TODO: Needs docs
-    public func setHeaders(headers: [String: String]) -> Self {
+    @discardableResult public func setHeaders(_ headers: [String: String]) -> Self {
         request.headers = headers
         return self
     }
     
     /// TODO: Needs docs
-    public func setHeaderValue(value: String, forName name: String) -> Self {
+    @discardableResult public func setHeaderValue(_ value: String, forName name: String) -> Self {
         request.headers[name] = value
         return self
     }
     
     /// TODO: Needs docs
-    public func setCachePolicy(cachePolicy: NSURLRequestCachePolicy) -> Self {
+    @discardableResult public func setCachePolicy(_ cachePolicy: NSURLRequest.CachePolicy) -> Self {
         request.cachePolicy = cachePolicy
         return self
     }
     
     /// TODO: Needs docs
-    public func setParameterEncoding(encoding: Request.ParameterEncoding) -> Self {
+    @discardableResult public func setParameterEncoding(_ encoding: Request.ParameterEncoding) -> Self {
         request.parameterEncoding = encoding
         return self
     }
     
     /// Sets the key/value pairs that will be encoded as the query in the URL.
-    public func setQueryParameters(parameters: [String: AnyObject]) -> Self {
+    @discardableResult public func setQueryParameters(_ parameters: [String: Any]) -> Self {
         request.queryParameters = parameters
         return self
     }
     
+    /**
+     Sets the key/value pairs that will be encoded as the query in the URL.
+     
+     - parameter parameters: Query parameter data.
+     - parameter handler: A callback that is invoked when the query parameters are encoded in the URL. Enables you to define custom encoding behavior.
+     - returns: Self instance to support chaining.
+    */
+    @discardableResult public func setQueryParameters(_ parameters: [String: Any], encoder: @escaping QueryParameterEncoder) -> Self {
+        setQueryParameters(parameters)
+        request.queryParameterEncoder = encoder
+        return self
+    }
+    
     /// Sets the key/value pairs that are encoded as form data in the request body.
-    public func setFormParameters(parameters: [String: AnyObject]) -> Self {
+    @discardableResult public func setFormParameters(_ parameters: [String: Any]) -> Self {
         request.formParameters = parameters
+        return self
+    }
+
+    /// Sets the key/value pairs that are encoded as form data in the request body.
+    @discardableResult public func setFormParametersAllowedCharacters(_ allowedCharacters: CharacterSet) -> Self {
+        request.formParametersAllowedCharacters = allowedCharacters
         return self
     }
 }
@@ -164,19 +226,29 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// Resume the underlying data task.
-    public func resume() -> Self {
+    @discardableResult public func resume() -> Self {
         if dataTask == nil {
             dataTask = session?.dataTask(request: urlRequest) { data, response, error in
                 self.handleResponse(response, data: data, error: error)
             }
         }
         
+        metrics.fetchStartDate = Date()
         dataTask?.resume()
+        
+        // run metrics handler at end of queue
+        if !hasEverBeenSuspended {
+            handlerQueue.addOperation {
+                self.sendMetrics()
+            }
+        }
+        
         return self
     }
     
     /// Suspend the underlying data task.
     public func suspend() {
+        hasEverBeenSuspended = true
         dataTask?.suspend()
     }
     
@@ -186,16 +258,17 @@ extension ServiceTask {
     }
     
     /// Handle the response and kick off the handler queue
-    internal func handleResponse(response: NSURLResponse?, data: NSData?, error: NSError?) {
+    internal func handleResponse(_ response: URLResponse?, data: Data?, error: Error?) {
+        metrics.responseEndDate = Date()
         urlResponse = response
         responseData = data
         responseError = error
         
         if let responseError = responseError {
-            taskResult = ServiceTaskResult.Failure(responseError)
+            taskResult = ServiceTaskResult.failure(responseError)
         }
         
-        handlerQueue.suspended = false
+        handlerQueue.isSuspended = false
     }
 }
 
@@ -212,19 +285,19 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
     */
-    public func response(handler: ResponseProcessingHandler) -> Self {
-        handlerQueue.addOperationWithBlock {
+    public func response(_ handler: @escaping ResponseProcessingHandler) -> Self {
+        handlerQueue.addOperation {
             if let taskResult = self.taskResult {
                 switch taskResult {
-                case .Failure(_): return // bail out to avoid next handler from running
-                case .Empty, .Value(_): break
+                case .failure(_): return // bail out to avoid next handler from running
+                case .empty, .value(_): break
                 }
             }
             
             do {
                 self.taskResult = try handler(self.responseData, self.urlResponse)
             } catch let error {
-                self.taskResult = .Failure(error)
+                self.taskResult = .failure(error)
             }
         }
 
@@ -241,17 +314,17 @@ extension ServiceTask {
      - parameter handler: Transformation handler to execute.
      - returns: Self instance to support chaining.
      */
-    public func transform(handler: ResultTransformer) -> Self {
-        handlerQueue.addOperationWithBlock {
+    public func transform(_ handler: @escaping ResultTransformer) -> Self {
+        handlerQueue.addOperation {
             guard let taskResult = self.taskResult else {
                 return
             }
             
             do {
-                let resultValue = try taskResult.value()
+                let resultValue = try taskResult.taskValue()
                 self.taskResult = try handler(resultValue)
             } catch let error {
-                self.taskResult = .Failure(error)
+                self.taskResult = .failure(error)
             }
         }
         
@@ -269,18 +342,20 @@ extension ServiceTask {
      - parameter handler: The closure to execute as the updateUI handler.
      - returns: Self instance to support chaining.
     */
-    public func updateUI(handler: UpdateUIHandler) -> Self {
-        handlerQueue.addOperationWithBlock {
+    public func updateUI(_ handler: @escaping UpdateUIHandler) -> Self {
+        handlerQueue.addOperation {
             guard let taskResult = self.taskResult else {
                 return
             }
             
             do {
-                let value = try taskResult.value()
+                let value = try taskResult.taskValue()
                 
-                dispatch_sync(dispatch_get_main_queue()) {
+                DispatchQueue.main.sync {
                     self.passthroughDelegate?.updateUIBegin(self.urlResponse)
+                    self.metrics.updateUIStartDate = Date()
                     handler(value)
+                    self.metrics.updateUIEndDate = Date()
                     self.passthroughDelegate?.updateUIEnd(self.urlResponse)
                 }
             } catch _ {
@@ -296,7 +371,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for handling the response as JSON.
-    public typealias JSONHandler = (AnyObject, NSURLResponse?) throws -> ServiceTaskResult
+    public typealias JSONHandler = (Any, URLResponse?) throws -> ServiceTaskResult
     
     /**
      Add a response handler to serialize the response body as a JSON object. The
@@ -305,15 +380,46 @@ extension ServiceTask {
      - parameter handler: Response handler to execute upon receiving a response.
      - returns: Self instance to support chaining.
     */
-    public func responseJSON(handler: JSONHandler) -> Self {
+    public func responseJSON(_ handler: @escaping JSONHandler) -> Self {
         return response { data, response in
             guard let data = data else {
-                throw ServiceTaskError.JSONSerializationFailedNilResponseBody
+                throw ServiceTaskError.jsonSerializationFailedNilResponseBody
             }
             
-            let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)
-            return try handler(json, response)
+            if let json = self.json {
+                return try handler(json, response)
+            } else {
+                self.metrics.responseJSONStartDate = Date()
+                let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
+                self.json = json
+                let result = try handler(json, response)
+                self.metrics.responseJSONEndDate = Date()
+                return result
+            }
         }
+    }
+}
+
+// MARK: - Metrics
+
+extension ServiceTask {
+    public typealias MetricsHandler = (ServiceTaskMetrics, URLResponse?) -> Void
+    
+    /**
+     Set a callback that will be invoked when service task metrics have been
+     collected
+     
+     - parameter handler: Callback to invoke when metrics have been collected.
+     - returns: Self instance to support chaining.
+     */
+    public func metricsCollected(_ handler: @escaping MetricsHandler) -> Self {
+        metricsHandler = handler
+        return self
+    }
+    
+    func sendMetrics() {
+        passthroughDelegate?.didFinishCollectingTaskMetrics(metrics: metrics, request: urlRequest, response: urlResponse, data: responseData, error: responseError)
+        metricsHandler?(metrics, urlResponse)
     }
 }
 
@@ -321,7 +427,7 @@ extension ServiceTask {
 
 extension ServiceTask {
     /// A closure type alias for an error-recovery handler.
-    public typealias ErrorRecoveryHandler = (ErrorType) throws -> ServiceTaskResult
+    public typealias ErrorRecoveryHandler = (Error) throws -> ServiceTaskResult
 
     /**
     Add a response handler to be called if a request results in an error.
@@ -329,12 +435,12 @@ extension ServiceTask {
     - parameter handler: Error handler to execute when an error occurs.
     - returns: Self instance to support chaining.
     */
-    public func responseError(handler: ErrorHandler) -> Self {
-        handlerQueue.addOperationWithBlock {
+    public func responseError(_ handler: @escaping ErrorHandler) -> Self {
+        handlerQueue.addOperation {
             if let taskResult = self.taskResult {
                 switch taskResult {
-                case .Failure(let error): handler(error)
-                case .Empty, .Value(_): break
+                case .failure(let error): handler(error)
+                case .empty, .value(_): break
                 }
             }
         }
@@ -349,15 +455,15 @@ extension ServiceTask {
      - parameter handler: Error handler to execute when an error occurs.
      - returns: Self instance to support chaining.
     */
-    public func updateErrorUI(handler: ErrorHandler) -> Self {
-        handlerQueue.addOperationWithBlock {
+    public func updateErrorUI(_ handler: @escaping ErrorHandler) -> Self {
+        handlerQueue.addOperation {
             if let taskResult = self.taskResult {
                 switch taskResult {
-                case .Failure(let error):
-                    dispatch_sync(dispatch_get_main_queue()) {
+                case .failure(let error):
+                    DispatchQueue.main.sync {
                         handler(error)
                     }
-                case .Empty, .Value(_): break
+                case .empty, .value(_): break
                 }
             }
         }
@@ -376,21 +482,21 @@ extension ServiceTask {
      - parameter handler: Recovery handler to execute when an error occurs.
      - returns: Self instance to support chaining.
     */
-    public func recover(handler: ErrorRecoveryHandler) -> Self {
-        handlerQueue.addOperationWithBlock {
+    public func recover(_ handler: @escaping ErrorRecoveryHandler) -> Self {
+        handlerQueue.addOperation {
             guard let taskResult = self.taskResult else {
                 return
             }
 
             switch taskResult {
-            case .Failure(let error):
+            case .failure(let error):
                 do {
                     self.taskResult = try handler(error)
                 } catch let error {
-                    self.taskResult = .Failure(error)
+                    self.taskResult = .failure(error)
                 }
 
-            case .Empty, .Value(_):
+            case .empty, .value(_):
                 return // bail out; do not run this handler
             }
         }
@@ -402,7 +508,7 @@ extension ServiceTask {
 // MARK: - Errors
 
 /// Errors that can occur when processing a response
-public enum ServiceTaskError: ErrorType {
+public enum ServiceTaskError: Error {
     /// Failed to serialize a response body as JSON due to the data being nil.
-    case JSONSerializationFailedNilResponseBody
+    case jsonSerializationFailedNilResponseBody
 }

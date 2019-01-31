@@ -29,12 +29,12 @@ class BrewClientAPITests: XCTestCase {
         let session = RequestRecordingSession()
         let client = MockBrewClient(session: session)
         
-        client.fetchBrewWithBrewID(brewID).resume()
+        client.fetchBrew(brewID: brewID).resume()
         
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
         
-        let url = recordedURLRequest?.URL
+        let url = recordedURLRequest?.url
         XCTAssertNotNil(url)
         
         let path = url?.path
@@ -46,20 +46,20 @@ class BrewClientAPITests: XCTestCase {
 // MARK: - Resposnse Handling Tests
 
 extension BrewClientAPITests {
-    var brewJSONStub: AnyObject {
-        let brewery = ["name": "Long Trail Brewing Company", "location": "Vermont"]
-        let brew = ["name": "Limbo IPA", "id": "1", "style": "Imperial IPA", "brewery": brewery]
+    var brewJSONStub: [String : Any] {
+        let brewery: [String : Any] = ["name": "Long Trail Brewing Company", "location": "Vermont"]
+        let brew: [String : Any] = ["name": "Limbo IPA", "id": "1", "style": "Imperial IPA", "brewery": brewery]
         return ["brews": [brew]]
     }
     
     func test_responseAsBrews_callsCompletionHandlerWhenJSONIsValid() {
-        let expectation = expectationWithDescription("responseAsBrews handler called when JSON is valid")
+        let expectation = self.expectation(description: "responseAsBrews handler called when JSON is valid")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 200, json: brewJSONStub))
         let client = MockBrewClient(session: session)
         
         client
-            .fetchBrewWithBrewID("12345")
+            .fetchBrew(brewID: "12345")
             .responseAsBrews { brews in
                 XCTAssertEqual(brews.count, 1)
                 expectation.fulfill()
@@ -69,17 +69,17 @@ extension BrewClientAPITests {
             .resume()
         
         
-        waitForExpectationsWithTimeout(2.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
     
     func test_responseAsBrews_callsErrorHandlerWhenJSONIsInvalid() {
-        let expectation = expectationWithDescription("updateErrorUI handler called when JSON is invalid")
+        let expectation = self.expectation(description: "updateErrorUI handler called when JSON is invalid")
         let session = MockSession()
         session.addStub(MockResponse(statusCode: 200, json: ["brewsssss": ["bad json"]]))
         let client = MockBrewClient(session: session)
         
         client
-            .fetchBrewWithBrewID("12345")
+            .fetchBrew(brewID: "12345")
             .responseAsBrews { brews in
                 XCTFail("responseAsBrews handler should not be called when JSON is invalid")
             }.updateErrorUI { error in
@@ -88,6 +88,6 @@ extension BrewClientAPITests {
             .resume()
         
         
-        waitForExpectationsWithTimeout(2.0, handler: nil)
+        waitForExpectations(timeout: 2.0, handler: nil)
     }
 }
