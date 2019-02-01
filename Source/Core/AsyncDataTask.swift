@@ -58,12 +58,8 @@ class AsyncDataTask: DataTask {
 
             provideData { [weak self] result in
                 runOnMainThread {
-                    guard let self = self else {
-                        return
-                    }
-
-                    self.dataState = .completed(result)
-                    self.complete(result)
+                    self?.dataState = .completed(result)
+                    self?.complete(result)
                 }
             }
         case .materializing:
