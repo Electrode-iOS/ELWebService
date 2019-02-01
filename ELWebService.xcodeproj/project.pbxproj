@@ -35,6 +35,8 @@
 		3E8CA4AB20E587CB00CBDA69 /* ServiceTaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */; };
 		3E8CA4AE20E587CB00CBDA69 /* ELWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E8CA4B020E587CB00CBDA69 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
+		B6A79DEF2204E24500059604 /* AsyncData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CE2203C70400B19F23 /* AsyncData.swift */; };
+		B6A79DF02204E24500059604 /* AsyncDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */; };
 		B6D3D2CB2203B02700B19F23 /* AsyncDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */; };
 		B6D3D2CD2203BE6B00B19F23 /* AsyncDataTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CC2203BE6B00B19F23 /* AsyncDataTaskTests.swift */; };
 		B6D3D2CF2203C70400B19F23 /* AsyncData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CE2203C70400B19F23 /* AsyncData.swift */; };
@@ -370,7 +372,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E8CA4A320E587CB00CBDA69 /* ServiceTask.swift in Sources */,
+				B6A79DF02204E24500059604 /* AsyncDataTask.swift in Sources */,
 				3E8CA4A420E587CB00CBDA69 /* Request.swift in Sources */,
+				B6A79DEF2204E24500059604 /* AsyncData.swift in Sources */,
 				3E8CA4A520E587CB00CBDA69 /* WebService.swift in Sources */,
 				3E8CA4A620E587CB00CBDA69 /* Mocking.swift in Sources */,
 				3E8CA4A720E587CB00CBDA69 /* Session.swift in Sources */,
