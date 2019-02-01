@@ -726,6 +726,125 @@ extension ServiceTaskTests {
         XCTAssertEqual(recordedURLRequest!.cachePolicy, NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData)
     }
 
+    // setBodyAsync
+
+    func test_setBodyAsync_callsBlock() {
+        let request = Request(.GET, url: "/test_setBodyAsync_callsBlockOnBackgroundThread")
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+
+        var wasCalled = false
+        let done = expectation(description: "Done")
+
+        _ = task
+            .setBody {
+                wasCalled = true
+                return "Hello".data(using: .utf8)!
+            }
+            .response { _, _ in
+                done.fulfill()
+                return .empty
+            }
+            .responseError { error in
+                XCTFail("Response error handler should not be called")
+                done.fulfill()
+            }
+
+        XCTAssertFalse(wasCalled, "Block should not be called until task is started")
+
+        task.resume()
+
+        waitForExpectations(timeout: 5.0) { timeoutError in
+            guard timeoutError == nil else { return }
+
+            XCTAssertTrue(wasCalled)
+            XCTAssertEqual(session.recordedRequests.count, 1)
+            XCTAssertEqual(session.recordedRequests.first?.urlRequestValue.httpBody, "Hello".data(using: .utf8))
+        }
+    }
+
+    func test_setBodyAsync_propagatesError() {
+        let request = Request(.GET, url: "/test_setBodyAsync_propagatesError")
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+
+        struct BackgroundBodyError: Error {}
+        let done = expectation(description: "Done")
+
+        task
+            .setBody {
+                throw BackgroundBodyError()
+            }
+            .response { _, _ in
+                XCTFail("Response handler should not be called")
+                done.fulfill()
+                return .empty
+            }
+            .responseError { error in
+                XCTAssert(error is BackgroundBodyError)
+                done.fulfill()
+            }
+            .resume()
+
+        waitForExpectations(timeout: 5.0) { timeoutError in
+            guard timeoutError == nil else { return }
+
+            XCTAssertEqual(session.recordedRequests.count, 0)
+        }
+    }
+
+    func test_setBodyAsync_waitsForBody() {
+        let request = Request(.GET, url: "/test_setBodyAsync_waitsForBody")
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+
+        var sendBody: ((AsyncDataResult) -> Void)?
+
+        task
+            .setBody { sendBody = $0 }
+            .resume()
+
+        XCTAssertNotNil(sendBody)
+        XCTAssertEqual(task.state, .running)
+        XCTAssertEqual(session.recordedRequests.count, 0, "Request should not be sent until body is provided")
+
+        sendBody?(.success("Hello".data(using: .utf8)!))
+
+        XCTAssertEqual(session.recordedRequests.count, 1)
+        XCTAssertEqual(session.recordedRequests.first?.urlRequestValue.httpBody, "Hello".data(using: .utf8))
+    }
+
+    func test_setBodyAsync_propagatesCancellation() {
+        let request = Request(.GET, url: "/test_setBodyAsync_propagatesCancellation")
+        let session = RequestRecordingSession()
+        let task = ServiceTask(request: request, session: session)
+
+        let done = expectation(description: "Done")
+
+        task
+            .setBody { _ in
+            }
+            .response { _, _ in
+                XCTFail("Response handler should not be called")
+                done.fulfill()
+                return .empty
+            }
+            .responseError { error in
+                XCTAssertEqual((error as NSError).domain, NSURLErrorDomain)
+                XCTAssertEqual((error as NSError).code, NSURLErrorCancelled)
+                done.fulfill()
+            }
+            .resume()
+
+        task.cancel()
+
+        waitForExpectations(timeout: 5.0) { timeoutError in
+            guard timeoutError == nil else { return }
+
+            XCTAssertEqual(session.recordedRequests.count, 0)
+        }
+    }
+
     // setJSON
     
     func test_setParametersEncoding_setsParameterEncodingInRequest() {

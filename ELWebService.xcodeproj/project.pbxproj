@@ -35,6 +35,11 @@
 		3E8CA4AB20E587CB00CBDA69 /* ServiceTaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */; };
 		3E8CA4AE20E587CB00CBDA69 /* ELWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E8CA4B020E587CB00CBDA69 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
+		B6A79DEF2204E24500059604 /* AsyncData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CE2203C70400B19F23 /* AsyncData.swift */; };
+		B6A79DF02204E24500059604 /* AsyncDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */; };
+		B6D3D2CB2203B02700B19F23 /* AsyncDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */; };
+		B6D3D2CD2203BE6B00B19F23 /* AsyncDataTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CC2203BE6B00B19F23 /* AsyncDataTaskTests.swift */; };
+		B6D3D2CF2203C70400B19F23 /* AsyncData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CE2203C70400B19F23 /* AsyncData.swift */; };
 		CAF0AF991C5054DE0007761C /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EDF1C5011FB007ADE1B /* WebService.swift */; };
 		CAF0AF9B1C5054E60007761C /* ServiceTaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */; };
 		CAF0AF9C1C5054E90007761C /* ServiceTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE21C5011FB007ADE1B /* ServiceTask.swift */; };
@@ -78,6 +83,9 @@
 		17D187961AB0B173000742BF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17D187991AB0B173000742BF /* ELWebService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ELWebService.h; sourceTree = "<group>"; };
 		3E8CA4B520E587CB00CBDA69 /* ELWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ELWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncDataTask.swift; sourceTree = "<group>"; };
+		B6D3D2CC2203BE6B00B19F23 /* AsyncDataTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncDataTaskTests.swift; sourceTree = "<group>"; };
+		B6D3D2CE2203C70400B19F23 /* AsyncData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +119,7 @@
 			children = (
 				178219FF1C623B2C00D3837D /* ELWebServiceTests-Bridging-Header.h */,
 				17088ED51C5010EA007ADE1B /* Info.plist */,
+				B6D3D2CC2203BE6B00B19F23 /* AsyncDataTaskTests.swift */,
 				177ECD731C8738F70049EB6F /* MockingTests.swift */,
 				1772B15B1C88F0BA006587E0 /* NSURLComponentsTests.swift */,
 				17821A001C623B2D00D3837D /* ObjCInteropTests.m */,
@@ -166,6 +175,8 @@
 		17D1E56A1AD5538000384D2D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B6D3D2CE2203C70400B19F23 /* AsyncData.swift */,
+				B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */,
 				175B36431C85ED6400F385DD /* Mocking.swift */,
 				17088EE31C5011FB007ADE1B /* Request.swift */,
 				1720E8231C6A483100DBB925 /* ServicePassthroughDelegate.swift */,
@@ -330,6 +341,7 @@
 				17821A011C623B2D00D3837D /* ObjCInteropTests.m in Sources */,
 				17088EEC1C501208007ADE1B /* RequestTests.swift in Sources */,
 				17821A031C623D2C00D3837D /* ServiceTask+ResponseInjection.swift in Sources */,
+				B6D3D2CD2203BE6B00B19F23 /* AsyncDataTaskTests.swift in Sources */,
 				177ECD761C8743B50049EB6F /* ServiceTaskTests.swift in Sources */,
 				17088EEB1C501208007ADE1B /* WebServiceTests.swift in Sources */,
 				1772B1601C88F11E006587E0 /* ParameterEncodingTests.swift in Sources */,
@@ -342,6 +354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAF0AF9C1C5054E90007761C /* ServiceTask.swift in Sources */,
+				B6D3D2CB2203B02700B19F23 /* AsyncDataTask.swift in Sources */,
 				CAF0AF9D1C5054ED0007761C /* Request.swift in Sources */,
 				CAF0AF991C5054DE0007761C /* WebService.swift in Sources */,
 				175B36441C85ED6400F385DD /* Mocking.swift in Sources */,
@@ -349,6 +362,7 @@
 				17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */,
 				1720E8241C6A483100DBB925 /* ServicePassthroughDelegate.swift in Sources */,
 				17D064691F3425A6007E1035 /* ServiceTaskMetrics.swift in Sources */,
+				B6D3D2CF2203C70400B19F23 /* AsyncData.swift in Sources */,
 				CAF0AF9B1C5054E60007761C /* ServiceTaskResult.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -358,7 +372,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E8CA4A320E587CB00CBDA69 /* ServiceTask.swift in Sources */,
+				B6A79DF02204E24500059604 /* AsyncDataTask.swift in Sources */,
 				3E8CA4A420E587CB00CBDA69 /* Request.swift in Sources */,
+				B6A79DEF2204E24500059604 /* AsyncData.swift in Sources */,
 				3E8CA4A520E587CB00CBDA69 /* WebService.swift in Sources */,
 				3E8CA4A620E587CB00CBDA69 /* Mocking.swift in Sources */,
 				3E8CA4A720E587CB00CBDA69 /* Session.swift in Sources */,

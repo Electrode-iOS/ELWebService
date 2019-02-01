@@ -36,7 +36,10 @@ import Foundation
     public fileprivate(set) var metrics = ServiceTaskMetrics()
     
     fileprivate var request: Request
-    
+
+    /// A closure that will be used to asynchronously create the data for the request body.
+    private var bodyProvider: AsyncDataProvider?
+
     lazy fileprivate var urlRequest: URLRequest = {
         return self.request.urlRequestValue as URLRequest
     }()
@@ -222,14 +225,153 @@ extension ServiceTask {
     }
 }
 
+// MARK: - Async Request Body API
+
+extension ServiceTask {
+    /// Sets the `body` of the request to the result of calling the `provideBody` closure.
+    ///
+    /// When this task is resumed for the first time, the `provideBody` closure is invoked on the main thread.
+    ///
+    /// The `provideBody` closure receives a callback as its sole argument. The callback should be invoked with
+    /// `.success(data)` when the data is available, or with `.failure(error)` if an error occurs. The callback may
+    /// be invoked from any thread.
+    ///
+    /// If successful, the data is used for the body of the outgoing request. Otherwise, the error is propagated to
+    /// the registered `responseError` handlers.
+    ///
+    /// - Parameters:
+    ///   - provideBody: An `AsyncDataProvider` closure that produces the data for the request body.
+    /// - Returns: `self`
+    @discardableResult func setBody(_ provideBody: @escaping AsyncDataProvider) -> Self {
+        self.bodyProvider = provideBody
+        request.body = nil
+        return self
+    }
+
+    /// Sets the `body` of the request to the result of calling the `provideBody` closure and sets the
+    /// `Content-Type` header to `contentType`.
+    ///
+    /// When this task is resumed for the first time, the `provideBody` closure is invoked on the main thread.
+    ///
+    /// The `provideBody` closure receives a callback as its sole argument. The callback should be invoked with
+    /// `.success(data)` when the data is available, or with `.failure(error)` if an error occurs. The callback may
+    /// be invoked from any thread.
+    ///
+    /// If successful, the data is used for the body of the outgoing request. Otherwise, the error is propagated to
+    /// the registered `responseError` handlers.
+    ///
+    /// - Parameters:
+    ///   - provideBody: An `AsyncDataProvider` closure that produces the data for the request body.
+    ///   - contentType: The `Content-Type` header value describing the type of `data`.
+    /// - Returns: `self`
+    @discardableResult func setBody(_ provideBody: @escaping AsyncDataProvider, contentType: String) -> Self {
+        request.contentType = contentType
+        return setBody(provideBody)
+    }
+
+    /// Sets the `body` of the request to the result of calling the `provideBody` closure and sets the
+    /// `Content-Type` header to `application/json`.
+    ///
+    /// When this task is resumed for the first time, the `provideBody` closure is invoked on the main thread.
+    ///
+    /// The `provideBody` closure receives a callback as its sole argument. The callback should be invoked with
+    /// `.success(data)` when the data is available, or with `.failure(error)` if an error occurs. The callback may
+    /// be invoked from any thread.
+    ///
+    /// If successful, the data is used for the body of the outgoing request. Otherwise, the error is propagated to
+    /// the registered `responseError` handlers.
+    ///
+    /// - Parameters:
+    ///   - provideBody: An `AsyncDataProvider` closure that produces the data for the request body.
+    ///   - contentType: The `Content-Type` header value describing the type of `data`.
+    /// - Returns: `self`
+    @discardableResult func setJSONData(_ provideBody: @escaping AsyncDataProvider) -> Self {
+        return setBody(provideBody, contentType: Request.ContentType.json)
+    }
+}
+
+extension ServiceTask {
+    /// A closure that provides data for the request body that is intended to be run on a background thread.
+    public typealias RequestBodyProvider = () throws -> Data
+
+    /// Sets the `body` of the request to the result of calling the `bodyProvider` closure.
+    ///
+    /// When this task is resumed for the first time, the `bodyProvider` closure is invoked on a background thread.
+    /// The resulting data is used as the body of the outgoing request. If the closure throws an error, the error is
+    /// propagated to the registered `resoponseError` handlers.
+    ///
+    /// - Parameters:
+    ///   - bodyProvider: A `RequestBodyProvider` closure that produces the data for the request body.
+    /// - Returns: `self`
+    @discardableResult public func setBody(_ provideBody: @escaping RequestBodyProvider) -> Self {
+        return setBody(asyncify(provideBody))
+    }
+
+    /// Sets the `body` of the request to the result of calling the `provideBody` closure and sets the
+    /// `Content-Type` header to `contentType`.
+    ///
+    /// When this task is resumed for the first time, the `provideBody` closure is invoked on a background thread.
+    /// The resulting data is used as the body of the outgoing request. If the closure throws an error, the error is
+    /// propagated to the registered `resoponseError` handlers.
+    ///
+    /// - Parameters:
+    ///   - provideBody: A `RequestBodyProvider` closure that produces the data for the request body.
+    ///   - contentType: The `Content-Type` header value describing the type of `data`.
+    /// - Returns: `self`
+    @discardableResult public func setBody(_ provideBody: @escaping RequestBodyProvider, contentType: String) -> Self {
+        return setBody(asyncify(provideBody), contentType: contentType)
+    }
+
+    /// Sets the `body` of the request to the result of calling the `provideBody` closure and sets the
+    /// `Content-Type` header to `application/json`.
+    ///
+    /// When this task is resumed for the first time, the `provideBody` closure is invoked on a background thread.
+    /// The resulting data is used as the body of the outgoing request. If the closure throws an error, the error is
+    /// propagated to the registered `resoponseError` handlers.
+    ///
+    /// - Parameters:
+    ///   - provideBody: A `RequestBodyProvider` closure that produces the data for the request body.
+    /// - Returns: `self`
+    @discardableResult public func setJSONData(_ provideBody: @escaping RequestBodyProvider) -> Self {
+        return setJSONData(asyncify(provideBody))
+    }
+}
+
+/// Converts a `RequestBodyProvider` block into an `AsyncDataProvider` block.
+private func asyncify(queue: DispatchQueue = .global(),
+                      _ bodyProvider: @escaping ServiceTask.RequestBodyProvider) -> AsyncDataProvider {
+    return { callback in
+        queue.async {
+            do {
+                callback(.success(try bodyProvider()))
+            } catch {
+                callback(.failure(error))
+            }
+        }
+    }
+}
+
 // MARK: - NSURLSesssionDataTask
 
 extension ServiceTask {
     /// Resume the underlying data task.
     @discardableResult public func resume() -> Self {
         if dataTask == nil {
-            dataTask = session?.dataTask(request: urlRequest) { data, response, error in
-                self.handleResponse(response, data: data, error: error)
+            if let bodyProvider = bodyProvider {
+                self.bodyProvider = nil
+
+                dataTask = AsyncDataTask(bodyProvider) { result in
+                    switch result {
+                    case .success(let body):
+                        self.request.body = body
+                        self.initSessionDataTask()
+                        self.dataTask?.resume()
+                    case .failure(let error):
+                        self.handleResponse(nil, data: nil, error: error)
+                    }
+                }
+            } else {
+                initSessionDataTask()
             }
         }
         
@@ -245,7 +387,13 @@ extension ServiceTask {
         
         return self
     }
-    
+
+    private func initSessionDataTask() {
+        self.dataTask =  session?.dataTask(request: urlRequest) { data, response, error in
+            self.handleResponse(response, data: data, error: error)
+        }
+    }
+
     /// Suspend the underlying data task.
     public func suspend() {
         hasEverBeenSuspended = true
