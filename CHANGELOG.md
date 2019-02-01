@@ -1,3 +1,7 @@
+# [6.6.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.6.0)
+
+- Add `ServiceTask.setBody()` and `ServiceTask.setJSONData()` APIs for encoding body data on a background queue.
+
 # [6.5.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.5.0)
 
 - Add support for percent-encoding the body while specifying allowed characters.
