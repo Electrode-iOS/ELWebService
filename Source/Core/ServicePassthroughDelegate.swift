@@ -26,9 +26,19 @@ public protocol ServicePassthroughDelegate: class {
     func serviceResultFailure(_ response: URLResponse?, data: Data?, request: URLRequest?, error: Error)
     
     func modifiedRequest(_ request: URLRequest) -> URLRequest?
+
+    /// Throw error to indicate response is invalid. If an error is thrown, it's set as the result of the service task.
+    /// This allows all service task error handlers to handle common response errors.
+    func validateResponse(_ response: URLResponse?, data: Data?, error: Error?) throws
     
     /// Called when service task metrics are available upon response completion
     func didFinishCollectingTaskMetrics(metrics: ServiceTaskMetrics, request: URLRequest, response: URLResponse?, data: Data?, error: Error?)
+}
+
+extension ServicePassthroughDelegate {
+    public func validateResponse(_ response: URLResponse?, data: Data?, error: Error?) throws {
+        // do nothing by default for backward-compatibility
+    }
 }
 
 extension ServicePassthroughDelegate {
