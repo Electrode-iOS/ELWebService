@@ -1,3 +1,7 @@
+# [6.7.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.7.0)
+
+- Add `ServicePassthroughDelegat.validateResponsee` to enable validating responses and throwing errors for invalid responses that can be handled by response handlers.
+
 # [6.6.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.6.0)
 
 - Add `ServiceTask.setBody()` and `ServiceTask.setJSONData()` APIs for encoding body data on a background queue.
