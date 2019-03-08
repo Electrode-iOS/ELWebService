@@ -415,6 +415,12 @@ extension ServiceTask {
         if let responseError = responseError {
             taskResult = ServiceTaskResult.failure(responseError)
         }
+
+        do {
+            try self.passthroughDelegate?.validateResponse(response, data: data, error: error)
+        } catch let validationError {
+            taskResult = ServiceTaskResult.failure(validationError)
+        }
         
         handlerQueue.isSuspended = false
     }
