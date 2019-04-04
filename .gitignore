@@ -1,6 +1,8 @@
 # Xcode
 #
 build/
+DerivedData/
+
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -17,3 +19,11 @@ DerivedData
 *.ipa
 *.xcuserstate
 .DS_Store
+
+
+### Xcode Patch ###
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+/*.gcno
