@@ -155,10 +155,10 @@ public struct Request {
      The HTTP header fields of the request. Each key/value pair represents a 
      HTTP header field value using the key as the field name.
     */
-    internal(set) var headers = [String : String]()
+    var headers = [String : String]()
     
     /// The cache policy of the request. See NSURLRequestCachePolicy.
-    internal(set) var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
+    var cachePolicy = NSURLRequest.CachePolicy.useProtocolCachePolicy
     
     /// The type of parameter encoding to use when encoding request parameters.
     public var parameterEncoding = ParameterEncoding.percent {
@@ -170,13 +170,13 @@ public struct Request {
     }
     
     /// The HTTP `Content-Type` header field value of the request.
-    internal(set) var contentType: String? {
+    var contentType: String? {
         set { headers[Headers.contentType] = newValue }
         get { return headers[Headers.contentType] }
     }
     
     /// The HTTP `User-Agent` header field value of the request.
-    internal(set) var userAgent: String? {
+    var userAgent: String? {
         set { headers[Headers.userAgent] = newValue }
         get { return headers[Headers.userAgent] }
     }
