@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode10.1
+osx_image: xcode10.2
 script:
-   - xcodebuild -scheme ELWebService -sdk iphonesimulator clean test -destination 'OS=12.1,name=iPhone XR' CODE_SIGNING_REQUIRED=NO
-   - xcodebuild -scheme ELWebService_static -sdk iphonesimulator clean build -destination 'OS=12.1,name=iPhone XR' CODE_SIGNING_REQUIRED=NO
+   - xcodebuild -scheme ELWebService -sdk iphonesimulator clean test -destination 'OS=12.2,name=iPhone XR' CODE_SIGNING_REQUIRED=NO
+   - xcodebuild -scheme ELWebService_static -sdk iphonesimulator clean build -destination 'OS=12.2,name=iPhone XR' CODE_SIGNING_REQUIRED=NO
