@@ -1,3 +1,7 @@
+# [7.0.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v7.0.0)
+
+- Migrate to Swift 5
+
 # [6.7.0](https://github.com/Electrode-iOS/ELWebService/releases/tag/v6.7.0)
 
 - Add `ServicePassthroughDelegat.validateResponsee` to enable validating responses and throwing errors for invalid responses that can be handled by response handlers.
