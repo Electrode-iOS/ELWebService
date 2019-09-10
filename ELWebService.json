@@ -1,3 +1,4 @@
 {
-  "8.0.0": "https://api.github.com/repos/Electrode-iOS/ELWebService/releases/download/v8.0.0/ELWebService.framework.zip"
+  "8.0.0": "https://api.github.com/repos/Electrode-iOS/ELWebService/releases/download/v8.0.0/ELWebService.framework.zip",
+  "7.0.1": "https://github.com/Electrode-iOS/ELWebService/releases/download/v7.0.1/ELWebService.framework.zip"
 }
