@@ -155,7 +155,7 @@ extension ServiceTask {
 
     /// TODO: Needs docs
     @discardableResult public func setJSON(_ json: Any) -> Self {
-        request.contentType = Request.ContentType.json
+        request.contentType = HTTP.ContentType.json.stringValue
         request.body = try? JSONSerialization.data(withJSONObject: json, options: JSONSerialization.WritingOptions(rawValue: 0))
         return self
     }
@@ -166,7 +166,7 @@ extension ServiceTask {
     /// - Parameter json: A `Data` instance containing JSON data.
     /// - Returns: `self`
     @discardableResult public func setJSONData(_ json: Data) -> Self {
-        return setBody(json, contentType: Request.ContentType.json)
+        return setBody(json, contentType: HTTP.ContentType.json.stringValue)
     }
     
     /// TODO: Needs docs
@@ -286,7 +286,7 @@ extension ServiceTask {
     ///   - contentType: The `Content-Type` header value describing the type of `data`.
     /// - Returns: `self`
     @discardableResult func setJSONData(_ provideBody: @escaping AsyncDataProvider) -> Self {
-        return setBody(provideBody, contentType: Request.ContentType.json)
+        return setBody(provideBody, contentType: HTTP.ContentType.json.stringValue)
     }
 }
 

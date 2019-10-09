@@ -180,7 +180,7 @@ extension WebService {
      - returns: A ServiceTask instance that refers to the lifetime of processing
      a given request.
      */
-    public func request(_ method: Request.Method, path: String) -> ServiceTask {
+    public func request(_ method: HTTP.Method, path: String) -> ServiceTask {
         return serviceTask(request: Request(method, url: absoluteURL(path)))
     }
 

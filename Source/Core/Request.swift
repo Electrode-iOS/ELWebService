@@ -19,32 +19,6 @@ public typealias QueryParameterEncoder = (_ url: URL?, _ parameters: [String: An
  Encapsulates the data required to send an HTTP request.
 */
 public struct Request {
-    
-    /// The `Method` enum defines the supported HTTP methods.
-    public enum Method: String {
-        case GET = "GET"
-        case HEAD = "HEAD"
-        case POST = "POST"
-        case PUT = "PUT"
-        case PATCH = "PATCH"
-        case DELETE = "DELETE"
-
-        /**
-         Whether requests using this method should encode parameters in the URL, instead of the body.
-
-         `GET`, `HEAD` and `DELETE` requests encode parameters in the URL, `PUT`, `POST` and `PATCH` encode
-         them in the body.
-         */
-        func encodesParametersInURL() -> Bool {
-            switch self {
-            case .GET, .HEAD, .DELETE:
-                return true
-            default:
-                return false
-            }
-        }
-    }
-    
     // MARK: Parameter Encodings
     
     /// A `ParameterEncoding` value defines how to encode request parameters
@@ -89,24 +63,8 @@ public struct Request {
         }
     }
     
-    /// A group of static constants for referencing HTTP header field names.
-    public struct Headers {
-        public static let userAgent = "User-Agent"
-        public static let contentType = "Content-Type"
-        public static let contentLength = "Content-Length"
-        public static let accept = "Accept"
-        public static let cacheControl = "Cache-Control"
-    }
-    
-    /// A group of static constants for referencing supported HTTP 
-    /// `Content-Type` header values.
-    public struct ContentType {
-        public static let formEncoded = "application/x-www-form-urlencoded"
-        public static let json = "application/json"
-    }
-        
     /// The HTTP method of the request.
-    public let method: Method
+    public let method: HTTP.Method
     
     public let requestURL: URL
 
@@ -137,7 +95,7 @@ public struct Request {
         didSet {
             if let formData = formParameters?.percentEncodedData(with: formParametersAllowedCharacters) {
                 body = formData
-                contentType = ContentType.formEncoded
+                contentType = HTTP.ContentType.formEncoded.stringValue
             }
         }
     }
@@ -164,21 +122,21 @@ public struct Request {
     public var parameterEncoding = ParameterEncoding.percent {
         didSet {
             if parameterEncoding == .json {
-                contentType = ContentType.json
+                contentType = HTTP.ContentType.json.stringValue
             }
         }
     }
     
     /// The HTTP `Content-Type` header field value of the request.
     var contentType: String? {
-        set { headers[Headers.contentType] = newValue }
-        get { return headers[Headers.contentType] }
+        set { headers[HTTP.Header.contentType.stringValue] = newValue }
+        get { return headers[HTTP.Header.contentType.stringValue] }
     }
     
     /// The HTTP `User-Agent` header field value of the request.
     var userAgent: String? {
-        set { headers[Headers.userAgent] = newValue }
-        get { return headers[Headers.userAgent] }
+        set { headers[HTTP.Header.userAgent.stringValue] = newValue }
+        get { return headers[HTTP.Header.userAgent.stringValue] }
     }
     
     // MARK: Initialization
@@ -189,7 +147,7 @@ public struct Request {
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
      */
-    init(_ method: Method, url: URL) {
+    init(_ method: HTTP.Method, url: URL) {
         self.method = method
         self.requestURL = url
     }
@@ -200,7 +158,7 @@ public struct Request {
      - parameter method: The HTTP request method.
      - parameter url: The URL string of the HTTP request.
     */
-    init(_ method: Method, url urlString: String) {
+    init(_ method: HTTP.Method, url urlString: String) {
         let aURL = URL(string: urlString)!
         self.init(method, url: aURL)
     }
@@ -233,8 +191,8 @@ extension Request: URLRequestEncodable {
                 if let data = parameterEncoding.encodeBody(parameters) {
                     urlRequest.httpBody = data
                     
-                    if urlRequest.value(forHTTPHeaderField: Headers.contentType) == nil {
-                        urlRequest.setValue(ContentType.formEncoded, forHTTPHeaderField: Headers.contentType)
+                    if urlRequest.value(forHTTPHeaderField: HTTP.Header.contentType.stringValue) == nil {
+                        urlRequest.setValue(HTTP.ContentType.formEncoded.stringValue, forHTTPHeaderField: HTTP.Header.contentType.stringValue)
                     }
                 }
             }

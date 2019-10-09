@@ -709,7 +709,7 @@ extension ServiceTaskTests {
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
         XCTAssertEqual(recordedURLRequest!.httpBody, bodyData)
-        XCTAssertEqual(recordedURLRequest?.allHTTPHeaderFields?[Request.Headers.contentType], contentType)
+        XCTAssertEqual(recordedURLRequest?.allHTTPHeaderFields?[HTTP.Header.contentType.stringValue], contentType)
     }
 
 
@@ -876,7 +876,7 @@ extension ServiceTaskTests {
         let recordedURLRequest = session.recordedRequests.first?.urlRequestValue
         XCTAssertNotNil(recordedURLRequest)
         XCTAssertEqual(recordedURLRequest!.httpBody, bodyData)
-        XCTAssertEqual(recordedURLRequest?.allHTTPHeaderFields?[Request.Headers.contentType], contentType)
+        XCTAssertEqual(recordedURLRequest?.allHTTPHeaderFields?[HTTP.Header.contentType.stringValue], contentType)
     }
     
     // setParameters

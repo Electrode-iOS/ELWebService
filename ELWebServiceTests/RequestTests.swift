@@ -45,10 +45,10 @@ class RequestTests: XCTestCase {
         
         XCTAssertEqual(request.headers["Content-Type"]!, contentType)
         XCTAssertEqual(request.headers["User-Agent"]!, userAgent)
-        XCTAssertEqual(Request.Headers.userAgent, "User-Agent")
-        XCTAssertEqual(Request.Headers.contentType, "Content-Type")
-        XCTAssertEqual(Request.Headers.accept, "Accept")
-        XCTAssertEqual(Request.Headers.cacheControl, "Cache-Control")
+        XCTAssertEqual(HTTP.Header.userAgent.stringValue, "User-Agent")
+        XCTAssertEqual(HTTP.Header.contentType.stringValue, "Content-Type")
+        XCTAssertEqual(HTTP.Header.accept.stringValue, "Accept")
+        XCTAssertEqual(HTTP.Header.cacheControl.stringValue, "Cache-Control")
     }
     
     func test_headerProperties_getValuesFromTheCorrectHeaderFields() {
@@ -96,7 +96,7 @@ class RequestTests: XCTestCase {
         
         request.parameterEncoding = .json
         
-        XCTAssertEqual(request.contentType, Request.ContentType.json)
+        XCTAssertEqual(request.contentType, HTTP.ContentType.json.stringValue)
     }
     
     func test_setBody_overwritesExistingBodyData() {
@@ -154,7 +154,7 @@ class RequestTests: XCTestCase {
         request.formParameters = ["percentEncoded" : "this needs percent encoded"]
         
         XCTAssertNotNil(request.contentType)
-        XCTAssertEqual(request.contentType!, Request.ContentType.formEncoded)
+        XCTAssertEqual(request.contentType!, HTTP.ContentType.formEncoded.stringValue)
     }
     
     func test_formParameters_encodesDataInRequestBody() {
@@ -196,7 +196,7 @@ class RequestTests: XCTestCase {
         test_urlRequestValue_parametersInURL(.DELETE)
     }
     
-    func test_urlRequestValue_parametersInURL(_ method: Request.Method) {
+    func test_urlRequestValue_parametersInURL(_ method: HTTP.Method) {
         var request = Request(method, url: "http://httpbin.org/")
         request.parameters = ["x" : "1"]
         
@@ -210,7 +210,7 @@ class RequestTests: XCTestCase {
         test_urlRequestValue_parametersInBody(.POST)
     }
     
-    func test_urlRequestValue_parametersInBody(_ method: Request.Method) {
+    func test_urlRequestValue_parametersInBody(_ method: HTTP.Method) {
         var request = Request(method, url: "http://httpbin.org/")
         request.parameters = ["x" : "1"]
         

@@ -35,6 +35,8 @@
 		3E8CA4AB20E587CB00CBDA69 /* ServiceTaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17088EE11C5011FB007ADE1B /* ServiceTaskResult.swift */; };
 		3E8CA4AE20E587CB00CBDA69 /* ELWebService.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D187991AB0B173000742BF /* ELWebService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3E8CA4B020E587CB00CBDA69 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 17C96AAA1AB0CBB800D49071 /* LICENSE */; };
+		5A738AB9234E564E00643BF7 /* StringValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A738AB8234E564E00643BF7 /* StringValue.swift */; };
+		5A738ABD234E5BE700643BF7 /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A738ABC234E5BE700643BF7 /* HTTP.swift */; };
 		B6A79DEF2204E24500059604 /* AsyncData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CE2203C70400B19F23 /* AsyncData.swift */; };
 		B6A79DF02204E24500059604 /* AsyncDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */; };
 		B6D3D2CB2203B02700B19F23 /* AsyncDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */; };
@@ -83,6 +85,8 @@
 		17D187961AB0B173000742BF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17D187991AB0B173000742BF /* ELWebService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ELWebService.h; sourceTree = "<group>"; };
 		3E8CA4B520E587CB00CBDA69 /* ELWebService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ELWebService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A738AB8234E564E00643BF7 /* StringValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringValue.swift; sourceTree = "<group>"; };
+		5A738ABC234E5BE700643BF7 /* HTTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
 		B6D3D2CA2203B02700B19F23 /* AsyncDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncDataTask.swift; sourceTree = "<group>"; };
 		B6D3D2CC2203BE6B00B19F23 /* AsyncDataTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncDataTaskTests.swift; sourceTree = "<group>"; };
 		B6D3D2CE2203C70400B19F23 /* AsyncData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncData.swift; sourceTree = "<group>"; };
@@ -186,6 +190,8 @@
 				17BA678E1C8416C500A26309 /* Session.swift */,
 				17088EDF1C5011FB007ADE1B /* WebService.swift */,
 				17D064681F3425A6007E1035 /* ServiceTaskMetrics.swift */,
+				5A738AB8234E564E00643BF7 /* StringValue.swift */,
+				5A738ABC234E5BE700643BF7 /* HTTP.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -365,6 +371,8 @@
 				17BA678F1C8416C500A26309 /* Session.swift in Sources */,
 				17547AD61C6121E200D4B030 /* ServiceTask+ObjC.swift in Sources */,
 				1720E8241C6A483100DBB925 /* ServicePassthroughDelegate.swift in Sources */,
+				5A738ABD234E5BE700643BF7 /* HTTP.swift in Sources */,
+				5A738AB9234E564E00643BF7 /* StringValue.swift in Sources */,
 				17D064691F3425A6007E1035 /* ServiceTaskMetrics.swift in Sources */,
 				B6D3D2CF2203C70400B19F23 /* AsyncData.swift in Sources */,
 				CAF0AF9B1C5054E60007761C /* ServiceTaskResult.swift in Sources */,
