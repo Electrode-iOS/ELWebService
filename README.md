@@ -37,7 +37,7 @@ Below is a quick overview of how to get started using ELWebService. See the [ELW
 
 `WebService` provides an API for making a HTTP request and processing the response data.
 
-```
+```swift
 let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 
 service
@@ -51,7 +51,7 @@ service
 
 To handle the event of a failure provide a closure for error handling by calling the `responseError()` method.
 
-```
+```swift
 let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 
 service
@@ -72,7 +72,7 @@ The error handler will only be called after a request results in an error. If an
 
 Use the `responseJSON()` method to serialize a successful response as a JSON value of type `Any`.
 
-```
+```swift
 let service = WebService(baseURLString: "https://brewhapi.herokuapp.com/")
 
 service
@@ -89,7 +89,7 @@ service
 
 Send a `GET` request with URL query parameters.
 
-```
+```swift
 let service = WebService(baseURLString: "http://httpbin.org")
 let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
 
@@ -110,7 +110,7 @@ GET /get?percentEncoded=this%20needs%20percent%20encoded&foo=bar HTTP/1.1
 
 Send a `POST` request with form parameter data in the request body.
 
-```
+```swift
 let service = WebService(baseURLString: "http://httpbin.org")
 let parameters = ["foo" : "bar", "percentEncoded" : "this needs percent encoded"]
 
@@ -134,7 +134,7 @@ percentEncoded=this%20needs%20percent%20encoded&foo=bar
 
 Send a `POST` request with JSON encoded parameters.
 
-```
+```swift
 let service = WebService(baseURLString: "http://httpbin.org")
 
 service
@@ -157,7 +157,7 @@ Content-Length: 25
 
 Error handlers are registered by providing a closure to run in the case the handler chain results in a failure.
 
-```
+```swift
 service
     .GET("/brewers")
     .responseError { error in
@@ -168,7 +168,7 @@ service
 
 Sometimes your code may fail during processing a response and you will want to handle that failure in an error handler. For example, if you were parsing a JSON payload as an array of model types but the payload failed to be parsed as expected you can use `throw` to propogate an error of type `ErrorType` to indicate the parsing failure. When throwing an error from a response handler, all subsequent response handlers in the chain will not run and instead any registered error handlers will be called. 
 
-```
+```swift
 service
     .GET("/brewers")
     .responseJSON { json, response in
@@ -188,7 +188,7 @@ service
 
 ELWebService supports Objective-C via specially-named response handler methods. See the [Objective-C Interoperability section](/docs/Programming-Guide.md#objective-c-interoperability) in the [ELWebService Programming Guide](/docs/Programming-Guide.md) for more information.
 
-```
+```swift
 extension ServiceTask {
     internal typealias ObjCResponseHandler = (Data?, URLResponse?) -> ObjCHandlerResult?
 
@@ -208,7 +208,7 @@ extension ServiceTask {
 
 ELWebService provides a simple but flexible mocking API that allows you to mock your web service's underlying session, data tasks, and data task result, the data passed to the data task's completion handler.
 
-```
+```swift
 let expectation = expectationWithDescription("responseAsBrews handler called when JSON is valid")
 
 // create a mock session
